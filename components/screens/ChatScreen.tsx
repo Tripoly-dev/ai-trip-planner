@@ -26,6 +26,7 @@ import { LanguageToggle } from "@/components/ui/LanguageToggle";
 import { ProgressBar } from "@/components/ui/ProgressBar";
 import { ThemeChip } from "@/components/ui/ThemeChip";
 import { TripolyMark } from "@/components/ui/TripolyMark";
+import { TripSummaryCard } from "@/components/ui/TripSummaryCard";
 import { TRAVEL_THEMES } from "@/lib/constants";
 import {
   formatINR,
@@ -447,7 +448,10 @@ export function ChatScreen() {
         : "Hold to speak";
 
   return (
-    <main className="flex min-h-dvh flex-col bg-white">
+    <main className="flex min-h-dvh flex-col bg-white lg:flex-row">
+      {/* Left column — the existing mobile chat, unchanged, just capped to 480px and given a
+          divider at lg: (section 13: "Left: chat (480px)"). */}
+      <div className="flex min-h-dvh flex-1 flex-col lg:w-[480px] lg:flex-none lg:border-r lg:border-tripoly-border">
       <div className="flex-shrink-0 border-b border-tripoly-border px-5 pb-3.5 pt-5">
         <div className="mb-4 flex items-center justify-between">
           <TripolyMark variant="dark" size={22} />
@@ -541,6 +545,15 @@ export function ChatScreen() {
               <path d="M19 11a7 7 0 01-14 0M12 18v3" stroke="#fff" strokeWidth="2" strokeLinecap="round" />
             </svg>
           </button>
+        </div>
+      </div>
+      </div>
+
+      {/* Right column — desktop only. Section 13: "Right: live trip summary card updating
+          as user answers." */}
+      <div className="hidden lg:flex lg:flex-1 lg:items-start lg:justify-center lg:bg-[#fafafa] lg:p-10">
+        <div className="w-full max-w-[420px] lg:sticky lg:top-10">
+          <TripSummaryCard />
         </div>
       </div>
     </main>

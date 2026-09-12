@@ -12,7 +12,7 @@
 
 import { useRef, useState } from "react";
 import Link from "next/link";
-import { BottomNav } from "@/components/ui/BottomNav";
+import { BottomNav, DESKTOP_SIDEBAR_WIDTH_CLASS } from "@/components/ui/BottomNav";
 import { DestinationCard } from "@/components/ui/DestinationCard";
 import { FunFactCard } from "@/components/ui/FunFactCard";
 import { BENTO_ROW_1, BENTO_ROW_2, DESTINATION_CAROUSEL, FUN_FACTS } from "@/lib/constants";
@@ -55,13 +55,14 @@ function FunFactCarousel() {
       <div
         ref={scrollerRef}
         onScroll={handleScroll}
-        className="no-scrollbar -mr-5 flex gap-2.5 overflow-x-auto"
+        className="no-scrollbar -mr-5 flex gap-2.5 overflow-x-auto lg:mr-0 lg:grid lg:grid-cols-3 lg:gap-4 lg:overflow-visible"
       >
         {FUN_FACTS.map((fact) => (
           <FunFactCard key={fact.id} text={fact.text} />
         ))}
       </div>
-      <div className="mt-2.5 mb-6 flex items-center justify-center gap-1.5">
+      {/* Dots track horizontal scroll position — meaningless once cards are a wrapping grid. */}
+      <div className="mt-2.5 mb-6 flex items-center justify-center gap-1.5 lg:hidden">
         {FUN_FACTS.map((fact, i) => (
           <div
             key={fact.id}
@@ -86,8 +87,8 @@ export function HomeScreen() {
   const avatarLetter = displayName.charAt(0).toUpperCase();
 
   return (
-    <main className="relative min-h-dvh bg-white pb-24">
-      <div className="px-5 pt-6">
+    <main className={`relative min-h-dvh bg-white pb-24 lg:pb-10 ${DESKTOP_SIDEBAR_WIDTH_CLASS}`}>
+      <div className="px-5 pt-6 lg:mx-auto lg:max-w-[1200px] lg:px-10 lg:pt-10">
         {/* Greeting row */}
         <div className="mb-[22px] flex items-center justify-between">
           <div>
@@ -157,7 +158,7 @@ export function HomeScreen() {
         <FunFactCarousel />
 
         <div className="mb-3 font-sans text-[15px] font-bold text-tripoly-text">Where to next?</div>
-        <div className="no-scrollbar -mr-5 flex gap-3 overflow-x-auto">
+        <div className="no-scrollbar -mr-5 flex gap-3 overflow-x-auto lg:mr-0 lg:grid lg:grid-cols-5 lg:gap-4 lg:overflow-visible">
           {DESTINATION_CAROUSEL.map((d) => (
             <DestinationCard key={d.id} name={d.name} tagline={d.tagline} />
           ))}

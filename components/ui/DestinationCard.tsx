@@ -14,7 +14,10 @@ export interface DestinationCardProps {
   onClick?: () => void;
 }
 
-const cardClass = "relative h-[200px] w-[155px] flex-shrink-0 overflow-hidden rounded-2xl text-left";
+// lg:w-full lg:flex-shrink — on desktop these sit in a CSS grid (HomeScreen), which sizes
+// the column; the fixed mobile pixel width and flex-shrink-0 only apply below lg.
+const cardClass =
+  "relative h-[200px] w-[155px] flex-shrink-0 overflow-hidden rounded-2xl text-left lg:w-full lg:flex-shrink";
 
 function CardContent({ name, tagline, imageUrl }: Pick<DestinationCardProps, "name" | "tagline" | "imageUrl">) {
   return (

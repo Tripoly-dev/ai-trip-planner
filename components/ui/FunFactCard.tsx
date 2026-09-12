@@ -9,8 +9,10 @@ export interface FunFactCardProps {
   onClick?: () => void;
 }
 
+// lg:w-full lg:flex-shrink — on desktop these sit in a CSS grid (HomeScreen), which sizes
+// the column; the fixed mobile pixel width and flex-shrink-0 only apply below lg.
 const cardClass =
-  "flex w-[295px] min-h-[88px] flex-shrink-0 items-start gap-3 rounded-2xl bg-tripoly-muted p-3.5 px-4 text-left";
+  "flex w-[295px] min-h-[88px] flex-shrink-0 items-start gap-3 rounded-2xl bg-tripoly-muted p-3.5 px-4 text-left lg:w-full lg:flex-shrink";
 
 function CardContent({ text, ctaLabel }: { text: string; ctaLabel: string }) {
   return (

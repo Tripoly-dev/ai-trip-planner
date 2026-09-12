@@ -59,7 +59,13 @@ export function PdfScreen() {
   }
 
   return (
-    <main className="min-h-dvh bg-[#fafafa] pb-10 pt-6">
+    <main className="min-h-dvh bg-[#fafafa] pb-10 pt-6 lg:py-16">
+      {/* Desktop "A4 centered, max-width 794px" (section 13) — a page mat around the actual
+          captured content, not a resize of it. contentRef (below) is what html2canvas
+          captures for the downloaded PDF, and it stays a fixed 430px on every device so the
+          exported file is identical regardless of what screen it was downloaded from —
+          confirmed with you, since Step 10 already verified that output. */}
+      <div className="lg:mx-auto lg:max-w-[794px] lg:rounded-3xl lg:bg-white lg:p-12 lg:shadow-tripoly-card">
       <div
         ref={contentRef}
         className="relative mx-auto max-w-[430px] overflow-hidden bg-white shadow-tripoly-card"
@@ -147,6 +153,7 @@ export function PdfScreen() {
             Something went wrong generating the PDF. Please try again.
           </div>
         )}
+      </div>
       </div>
     </main>
   );

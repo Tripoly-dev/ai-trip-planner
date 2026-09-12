@@ -22,7 +22,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
-import { BottomNav } from "@/components/ui/BottomNav";
+import { BottomNav, DESKTOP_SIDEBAR_WIDTH_CLASS } from "@/components/ui/BottomNav";
 import { ItineraryDayCard } from "@/components/ui/ItineraryDayCard";
 import { useTripStore, type Itinerary, type ItineraryView } from "@/store/useTripStore";
 
@@ -236,8 +236,14 @@ export function ItineraryScreen() {
   const cinematic = itineraryView === "05B";
 
   return (
-    <main className="flex h-dvh flex-col overflow-hidden bg-white pb-[76px]">
-      <div className={`relative h-[325px] flex-shrink-0 ${cinematic ? "overflow-hidden bg-[#0d1b14]" : "bg-[#e9efe9]"}`}>
+    <main
+      className={`flex h-dvh flex-col overflow-hidden bg-white pb-[76px] lg:flex-row lg:pb-0 ${DESKTOP_SIDEBAR_WIDTH_CLASS}`}
+    >
+      {/* Left column at lg: — section 13: "Left: map (50%)". Fixed 325px height + flow
+          position is the mobile (05A/05B) markup, unchanged below lg. */}
+      <div
+        className={`relative h-[325px] flex-shrink-0 lg:h-dvh lg:w-1/2 ${cinematic ? "overflow-hidden bg-[#0d1b14]" : "bg-[#e9efe9]"}`}
+      >
         {cinematic ? (
           <>
             <div
@@ -290,8 +296,11 @@ export function ItineraryScreen() {
         </button>
       </div>
 
-      <div className="relative -mt-4 flex flex-1 flex-col overflow-hidden rounded-t-3xl bg-white px-5 pt-5">
-        <div className="mx-auto mb-3.5 h-1 w-9 flex-shrink-0 rounded-full bg-[#e0e0e0]" />
+      {/* Right column at lg: — section 13: "Right: day cards scrollable (50%)". The -mt-4
+          overlap + rounded-top-corner is a mobile bottom-sheet effect over the map above it;
+          cancelled at lg: where this is a full-height side-by-side column instead. */}
+      <div className="relative -mt-4 flex flex-1 flex-col overflow-hidden rounded-t-3xl bg-white px-5 pt-5 lg:mt-0 lg:w-1/2 lg:flex-none lg:rounded-none lg:border-l lg:border-tripoly-border lg:px-8 lg:pt-8">
+        <div className="mx-auto mb-3.5 h-1 w-9 flex-shrink-0 rounded-full bg-[#e0e0e0] lg:hidden" />
         <div className="mb-3 flex-shrink-0 font-sans text-[22px] font-bold text-black">Your Itinerary ✈️</div>
 
         <div className="mb-1.5 flex flex-shrink-0 gap-2 overflow-x-auto pb-3.5">
