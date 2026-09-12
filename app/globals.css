@@ -1,26 +1,61 @@
 @import "tailwindcss";
 
 :root {
+  /* Core surface colors */
   --background: #ffffff;
-  --foreground: #171717;
+  --foreground: #000000;
+
+  /* Tripoly brand */
+  --color-tripoly-green: #16cf76;
+  --color-tripoly-accent: #0faf60;
+  --color-tripoly-muted: #f0fdf7;
+
+  /* Text */
+  --color-tripoly-text: #000000;
+  --color-tripoly-text-muted: #888888;
+  --color-tripoly-error: #ff4c4c;
+
+  /* Surfaces & bubbles */
+  --color-tripoly-border: #f0f0f0;
+  --color-tripoly-bubble-bot: #f0fdf7;
+  --color-tripoly-bubble-offtopic: #f2f2f2;
+  --color-tripoly-bubble-error: #fff0f0;
+  --color-tripoly-tip-bg: #fffbf0;
+  --color-tripoly-tip-border: #f5c842;
+
+  /* Self-hosted via @fontsource, imported in app/layout.tsx */
+  --font-poppins: "Poppins", sans-serif;
+  --font-playfair: "Playfair Display", serif;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+
+  --color-tripoly-green: var(--color-tripoly-green);
+  --color-tripoly-accent: var(--color-tripoly-accent);
+  --color-tripoly-muted: var(--color-tripoly-muted);
+  --color-tripoly-text: var(--color-tripoly-text);
+  --color-tripoly-text-muted: var(--color-tripoly-text-muted);
+  --color-tripoly-error: var(--color-tripoly-error);
+  --color-tripoly-border: var(--color-tripoly-border);
+  --color-tripoly-bubble-bot: var(--color-tripoly-bubble-bot);
+  --color-tripoly-bubble-offtopic: var(--color-tripoly-bubble-offtopic);
+  --color-tripoly-bubble-error: var(--color-tripoly-bubble-error);
+  --color-tripoly-tip-bg: var(--color-tripoly-tip-bg);
+  --color-tripoly-tip-border: var(--color-tripoly-tip-border);
+
+  --font-poppins: var(--font-poppins);
+  --font-playfair: var(--font-playfair);
+
+  /* Section 5: card shadow + CTA green glow shadow */
+  --shadow-tripoly-card: 0 4px 20px rgba(0, 0, 0, 0.08);
+  --shadow-tripoly-glow: 0 4px 20px rgba(22, 207, 118, 0.25);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
+/* Design is a fixed light brand surface — no dark-mode variant in the handoff spec */
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-poppins), sans-serif;
 }
