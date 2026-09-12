@@ -108,11 +108,11 @@ export default function ComponentsPreviewPage() {
       </Section>
 
       <Section title="BottomNav">
-        {/* Extra height above 76px here only so the elevated Ask FAB isn't clipped in this
-            preview frame — real screens give it room the same way (see Step 4/9). */}
-        <div className="relative h-[110px] w-[375px] rounded-2xl border border-tripoly-border">
-          <BottomNav active="itinerary" />
-        </div>
+        {/* BottomNav is position:fixed (pinned to the real viewport bottom, as used on the
+            actual Home/Itinerary screens) — it renders at the bottom of this whole preview
+            page rather than inside this box. */}
+        <p className="text-xs text-tripoly-text-muted">Rendered fixed at the bottom of this page ↓</p>
+        <BottomNav active="itinerary" />
       </Section>
     </main>
   );

@@ -88,7 +88,7 @@ function NavItem({
 export function BottomNav({ active }: BottomNavProps) {
   return (
     <nav
-      className="absolute inset-x-0 bottom-0 z-10 flex h-[76px] items-start justify-around border-t border-tripoly-border bg-white pb-3 shadow-[0_-4px_12px_rgba(0,0,0,0.06)]"
+      className="fixed inset-x-0 bottom-0 z-10 flex h-[76px] items-start justify-around border-t border-tripoly-border bg-white pb-3 shadow-[0_-4px_12px_rgba(0,0,0,0.06)]"
       aria-label="Primary"
     >
       <NavItem href="/home" label="Home" isActive={active === "home"} icon={(c) => <HomeIcon color={c} />} />
