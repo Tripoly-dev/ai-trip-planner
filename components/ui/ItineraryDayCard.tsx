@@ -7,11 +7,7 @@
 // actual meals.breakfast/lunch/dinner text from Claude isn't surfaced on this card.
 
 import type { DayPlan } from "@/store/useTripStore";
-
-function StarRating({ stars }: { stars: number }) {
-  const filled = Math.max(0, Math.min(5, Math.round(stars)));
-  return <>{"★".repeat(filled)}{"☆".repeat(5 - filled)}</>;
-}
+import { StarRating } from "@/components/ui/StarRating";
 
 export function ItineraryDayCard({ day }: { day: DayPlan }) {
   return (
