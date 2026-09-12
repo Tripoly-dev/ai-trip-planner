@@ -30,7 +30,9 @@ import { TripSummaryCard } from "@/components/ui/TripSummaryCard";
 import { TRAVEL_THEMES } from "@/lib/constants";
 import {
   formatINR,
+  isLikelyOffTopic,
   matchGroupType,
+  OFF_TOPIC_MESSAGE,
   parseBudget,
   validateDestination,
   validateDuration,
@@ -154,9 +156,9 @@ export function ChatScreen() {
       });
   }
 
-  // Pushes a bot/error message, and speaks it only when the user's own last turn
+  // Pushes a bot/error/offtopic message, and speaks it only when the user's own last turn
   // was voice — typing stays silent (confirmed with you for Step 6).
-  function respond(role: "bot" | "error", content: string) {
+  function respond(role: "bot" | "error" | "offtopic", content: string) {
     pushMessage(role, content);
     if (lastInputSource.current === "voice") {
       speak(content);
@@ -218,6 +220,13 @@ export function ChatScreen() {
       } else {
         respond("error", "Please answer yes or no.");
       }
+      return;
+    }
+
+    // Off-topic gate — only the two genuinely open-ended fields need it (see lib/validators.ts
+    // comment for why duration/budget/travelers/groupType/theme don't).
+    if ((currentStep === 1 || currentStep === 2) && isLikelyOffTopic(text)) {
+      respond("offtopic", OFF_TOPIC_MESSAGE);
       return;
     }
 

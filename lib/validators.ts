@@ -3,12 +3,19 @@
 // text (voice arrives as text once Step 6 wires Sarvam STT, so these functions don't
 // need to know which source it came from).
 //
-// Two rules from section 8 are explicitly AI-dependent and are NOT implemented here:
+// One rule from section 8 is explicitly AI-dependent and is NOT implemented here:
 //   - Destination "is this a real place" check (section 8: "Claude API validates") — Step 7.
-//   - General off-topic detection for arbitrary free text — needs Claude, deferred to
-//     Step 7 as well. Every validator below still rejects malformed input with its own
-//     specific error message (e.g. a name with digits), it just doesn't attempt to detect
-//     "this doesn't even look like an attempt to answer" the way an LLM could.
+//
+// Off-topic detection (section 8: "any field" — non-travel input rejected with the ✈️
+// message) is implemented below as isLikelyOffTopic, rule-based per the Step 7 decision
+// (no Claude call per keystroke). Found missing during Step 12 final QA — the bubble style
+// existed (ChatBubble's "offtopic" role) but nothing ever triggered it. Wired into the two
+// fields that actually had no content check before this (Name, Destination — "any text" /
+// "letters only" both happily accept an unrelated question) and the amendment field, which
+// is equally open-ended. Not layered onto duration/budget/travelers/groupType/theme: those
+// already reject non-matching input via their own format/whitelist checks with a more
+// specific, more useful message ("numbers only", "pick one of the options") than a generic
+// off-topic bounce would give.
 
 import type { GroupType } from "@/store/useTripStore";
 
@@ -124,4 +131,30 @@ function finalizeBudget(amount: number): ValidationResult<number> {
 
 export function formatINR(amount: number): string {
   return `₹${amount.toLocaleString("en-IN")}`;
+}
+
+// Verbatim from section 8's validation table.
+export const OFF_TOPIC_MESSAGE = "✈️ I'm Tripoly's Itinerary Planner. I can only help you plan your perfect trip!";
+
+const OFF_TOPIC_PATTERNS: RegExp[] = [
+  // "who/what/when/why/how is/are/do/does/can/will..." — a real answer to a chat-flow
+  // question is never itself phrased as a question back.
+  /^(who|what|when|why|how)\s+(is|are|was|were|do|does|did|can|will|would)\b/,
+  /\b(joke|riddle|weather today|capital of|president|prime minister|stock price|meaning of life)\b/,
+  /\b(write (me )?(a|an) (poem|essay|code|story|song)|solve this|calculate|translate this)\b/,
+  /^(hi|hello|hey|yo)[.! ]*$/,
+];
+
+/**
+ * Rule-based off-topic detector (Step 7 decision: no Claude call per keystroke).
+ * `allowQuestion` skips the trailing-"?" rule — the amendment field legitimately gets
+ * phrased as a question ("can we add a beach day?"), unlike Name/Destination.
+ */
+export function isLikelyOffTopic(input: string, opts: { allowQuestion?: boolean } = {}): boolean {
+  const trimmed = input.trim();
+  // Too short to confidently classify either way — let the field's own validator handle it.
+  if (trimmed.length < 4) return false;
+  if (!opts.allowQuestion && /\?\s*$/.test(trimmed)) return true;
+  const lower = trimmed.toLowerCase();
+  return OFF_TOPIC_PATTERNS.some((re) => re.test(lower));
 }

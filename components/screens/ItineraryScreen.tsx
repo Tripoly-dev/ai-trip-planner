@@ -24,6 +24,7 @@ import { useEffect, useRef, useState } from "react";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import { BottomNav, DESKTOP_SIDEBAR_WIDTH_CLASS } from "@/components/ui/BottomNav";
 import { ItineraryDayCard } from "@/components/ui/ItineraryDayCard";
+import { isLikelyOffTopic, OFF_TOPIC_MESSAGE } from "@/lib/validators";
 import { useTripStore, type Itinerary, type ItineraryView } from "@/store/useTripStore";
 
 const MIN_AMENDMENT_LENGTH = 10;
@@ -118,6 +119,13 @@ export function ItineraryScreen() {
 
     if (text.length < MIN_AMENDMENT_LENGTH) {
       setStatus({ kind: "error", text: "Tell me a bit more about what you'd like to change." });
+      return;
+    }
+    // allowQuestion: true — amendments are legitimately phrased as questions/requests
+    // ("can we add a beach day?"), unlike Name/Destination in ChatScreen.
+    if (isLikelyOffTopic(text, { allowQuestion: true })) {
+      setStatus({ kind: "error", text: OFF_TOPIC_MESSAGE });
+      if (source === "voice") speak(OFF_TOPIC_MESSAGE);
       return;
     }
     if (!itinerary) return;
