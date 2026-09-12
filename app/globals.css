@@ -59,3 +59,51 @@ body {
   color: var(--foreground);
   font-family: var(--font-poppins), sans-serif;
 }
+
+/* Screen 4 — Processing (app/processing). Values taken verbatim from the mockup's
+   <style> block. Applied via classes rather than inline style objects because
+   offset-path/offset-distance aren't in React's typed CSSProperties. */
+@keyframes planeLoop {
+  0% {
+    offset-distance: 0%;
+    transform: rotate(0deg) scale(1);
+  }
+  100% {
+    offset-distance: 100%;
+    transform: rotate(360deg) scale(1);
+  }
+}
+
+@keyframes dashMove {
+  to {
+    stroke-dashoffset: -40;
+  }
+}
+
+@keyframes dotPulse {
+  0%,
+  80%,
+  100% {
+    opacity: 0.25;
+    transform: scale(0.7);
+  }
+  40% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.processing-plane-trail {
+  animation: dashMove 1.4s linear infinite;
+}
+
+.processing-plane-icon {
+  offset-path: path(
+    "M40,170 C40,90 100,40 130,40 C180,40 220,90 220,140 C220,180 180,190 150,170 C120,150 130,110 170,100"
+  );
+  animation: planeLoop 4s linear infinite;
+}
+
+.processing-dot {
+  animation: dotPulse 1.4s ease-in-out infinite;
+}
