@@ -107,3 +107,57 @@ body {
 .processing-dot {
   animation: dotPulse 1.4s ease-in-out infinite;
 }
+
+/* Screen 5A/5B — Itinerary (components/screens/ItineraryScreen). Values taken
+   verbatim from the mockup's <style> block. */
+@keyframes ringPulse {
+  0% {
+    transform: scale(1);
+    opacity: 0.55;
+  }
+  100% {
+    transform: scale(1.9);
+    opacity: 0;
+  }
+}
+
+@keyframes pinDrop {
+  0% {
+    transform: translateY(-24px) scale(0.6);
+    opacity: 0;
+  }
+  60% {
+    transform: translateY(2px) scale(1.08);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes flightDraw {
+  from {
+    stroke-dashoffset: 300;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+.itinerary-pin-ring {
+  animation: ringPulse 1.8s ease-out infinite;
+}
+
+.itinerary-pin-icon {
+  animation: pinDrop 0.7s ease-out;
+}
+
+.itinerary-flight-path {
+  animation: flightDraw 2s ease-out forwards;
+}
+
+.itinerary-flight-plane {
+  offset-path: path("M70,240 Q160,100 300,90");
+  animation: planeLoop 2s linear forwards;
+}
