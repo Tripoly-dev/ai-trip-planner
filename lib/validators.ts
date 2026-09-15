@@ -3,6 +3,15 @@
 // text (voice arrives as text once Step 6 wires Sarvam STT, so these functions don't
 // need to know which source it came from).
 //
+// Context extraction (found needed during live testing after Step 12): early versions
+// of these validators required the ENTIRE input to match an exact format — "8" was
+// accepted for duration but "around 8 days" was rejected outright, and the name field
+// stored "My name is Kaushik" verbatim instead of pulling out "Kaushik". Real typed/
+// spoken answers are rarely that terse, so every validator below now extracts the
+// relevant value from natural phrasing (a lead-in phrase for Name/Destination, a
+// number embedded anywhere in the sentence for Duration/Travelers/Budget) rather than
+// requiring the whole input to already be in the target shape.
+//
 // One rule from section 8 is explicitly AI-dependent and is NOT implemented here:
 //   - Destination "is this a real place" check (section 8: "Claude API validates") — Step 7.
 //
@@ -25,36 +34,58 @@ export interface ValidationResult<T> {
   error?: string;
 }
 
+const WORD_NUMBERS: Record<string, number> = {
+  zero: 0, one: 1, two: 2, three: 3, four: 4, five: 5, six: 6, seven: 7, eight: 8, nine: 9,
+  ten: 10, eleven: 11, twelve: 12, thirteen: 13, fourteen: 14, fifteen: 15, sixteen: 16,
+  seventeen: 17, eighteen: 18, nineteen: 19, twenty: 20, thirty: 30, forty: 40, fifty: 50,
+};
+// Longest-first so "seventeen" matches whole rather than stopping at "seven".
+const WORD_NUMBER_PATTERN = new RegExp(
+  `\\b(${Object.keys(WORD_NUMBERS).sort((a, b) => b.length - a.length).join("|")})\\b`,
+);
+
+/** Finds the first number anywhere in the input, as a digit run or a spelled-out word. */
+function extractInteger(input: string): number | null {
+  const lower = input.toLowerCase();
+  const digitMatch = lower.match(/\d+/);
+  if (digitMatch) return parseInt(digitMatch[0], 10);
+  const wordMatch = lower.match(WORD_NUMBER_PATTERN);
+  if (wordMatch) return WORD_NUMBERS[wordMatch[1]];
+  return null;
+}
+
+const NAME_LEAD_INS = /^(my name is|i am|i'm|this is|call me|it'?s)\s+/i;
+
 export function validateName(input: string): ValidationResult<string> {
-  const trimmed = input.trim();
-  if (trimmed.length < 2) {
+  const stripped = input.trim().replace(NAME_LEAD_INS, "").replace(/[.!]+$/, "").trim();
+  if (stripped.length < 2) {
     return { valid: false, error: "Please enter a valid name (letters only)." };
   }
   // Letters + spaces only — rejects digits and travel-jargon shorthand like "7N/8D".
-  if (!/^[a-zA-Z\s]+$/.test(trimmed)) {
+  if (!/^[a-zA-Z\s]+$/.test(stripped)) {
     return { valid: false, error: "Please enter a valid name (letters only)." };
   }
-  return { valid: true, value: trimmed };
+  return { valid: true, value: stripped };
 }
 
+const DESTINATION_LEAD_INS =
+  /^(i want to (go|travel) to|i'?d like to (go|travel) to|let'?s go to|i('m| am) planning (a trip )?to|planning (a trip )?to|destination is|going to|we want to go to)\s+/i;
+
 export function validateDestination(input: string): ValidationResult<string> {
-  const trimmed = input.trim();
-  if (trimmed.length < 3) {
+  const stripped = input.trim().replace(DESTINATION_LEAD_INS, "").trim();
+  if (stripped.length < 3) {
     return { valid: false, error: "Please enter at least 3 characters." };
   }
   // Real-place verification (Claude API) lands in Step 7 — every destination that
   // passes the length check is accepted for now.
-  return { valid: true, value: trimmed };
+  return { valid: true, value: stripped };
 }
 
 export function validateDuration(input: string): ValidationResult<number> {
-  const trimmed = input.trim();
-  // Numbers only — "No text like 'one week'" per spec, so word-numbers are rejected here
-  // (unlike budget, which explicitly does accept them).
-  if (!/^\d+$/.test(trimmed)) {
-    return { valid: false, error: "Numbers only, please (max 10 days)." };
+  const n = extractInteger(input);
+  if (n === null) {
+    return { valid: false, error: "Please tell me the number of days (max 10)." };
   }
-  const n = parseInt(trimmed, 10);
   if (n < 1 || n > 10) {
     return { valid: false, error: "Please enter between 1 and 10 days." };
   }
@@ -62,11 +93,10 @@ export function validateDuration(input: string): ValidationResult<number> {
 }
 
 export function validateTravelerCount(input: string): ValidationResult<number> {
-  const trimmed = input.trim();
-  if (!/^\d+$/.test(trimmed)) {
-    return { valid: false, error: "Numbers only, please." };
+  const n = extractInteger(input);
+  if (n === null) {
+    return { valid: false, error: "Please tell me how many travelers." };
   }
-  const n = parseInt(trimmed, 10);
   if (n < 1 || n > 50) {
     return { valid: false, error: "Please enter between 1 and 50 travelers." };
   }
@@ -84,36 +114,45 @@ export function matchGroupType(input: string): ValidationResult<GroupType> {
   return { valid: true, value: match };
 }
 
-const WORD_NUMBERS: Record<string, number> = {
-  zero: 0, one: 1, two: 2, three: 3, four: 4, five: 5, six: 6, seven: 7, eight: 8, nine: 9,
-  ten: 10, eleven: 11, twelve: 12, thirteen: 13, fourteen: 14, fifteen: 15, sixteen: 16,
-  seventeen: 17, eighteen: 18, nineteen: 19, twenty: 20, thirty: 30, forty: 40, fifty: 50,
-};
-
 const LAKH = 100_000;
 const MIN_BUDGET = 1_000;
 
 /** Parses budget formats from section 8: "2 lakhs", "2L", "2,00,000", "200000", "two lakhs". */
 export function parseBudget(input: string): ValidationResult<number> {
-  const trimmed = input.trim().toLowerCase().replace(/[₹,\s]/g, "");
+  // Spaces kept here (only ₹ and thousands-separator commas stripped) so word
+  // boundaries stay meaningful for the sentence-embedded fallback below.
+  const cleaned = input.trim().toLowerCase().replace(/[₹,]/g, "");
+  const stripped = cleaned.replace(/\s/g, "");
 
-  // "2l" / "2lakh" / "2lakhs" — digit + lakh suffix.
-  const digitLakhMatch = trimmed.match(/^(\d+(?:\.\d+)?)(l|lakh|lakhs)$/);
+  // Exact formats from section 8 — bare "2 lakhs" / "2L" / "2,00,000" / "two lakhs".
+  const digitLakhMatch = stripped.match(/^(\d+(?:\.\d+)?)(l|lakh|lakhs)$/);
   if (digitLakhMatch) {
-    const amount = Math.round(parseFloat(digitLakhMatch[1]) * LAKH);
-    return finalizeBudget(amount);
+    return finalizeBudget(Math.round(parseFloat(digitLakhMatch[1]) * LAKH));
   }
-
-  // "twolakh" / "twolakhs" (already stripped spaces above) — word-number + lakh suffix.
-  const wordLakhMatch = trimmed.match(/^([a-z]+)(lakh|lakhs)$/);
+  const wordLakhMatch = stripped.match(/^([a-z]+)(lakh|lakhs)$/);
   if (wordLakhMatch && wordLakhMatch[1] in WORD_NUMBERS) {
-    const amount = WORD_NUMBERS[wordLakhMatch[1]] * LAKH;
-    return finalizeBudget(amount);
+    return finalizeBudget(WORD_NUMBERS[wordLakhMatch[1]] * LAKH);
+  }
+  if (/^\d+$/.test(stripped)) {
+    return finalizeBudget(parseInt(stripped, 10));
   }
 
-  // Plain digits (commas already stripped): "200000".
-  if (/^\d+$/.test(trimmed)) {
-    return finalizeBudget(parseInt(trimmed, 10));
+  // Fallback: the same shapes, but embedded in a full sentence ("my budget is
+  // around 2 lakhs") rather than the bare number section 8's examples show.
+  const embeddedDigitLakh = cleaned.match(/(\d+(?:\.\d+)?)\s*(lakhs?|l)\b/);
+  if (embeddedDigitLakh) {
+    return finalizeBudget(Math.round(parseFloat(embeddedDigitLakh[1]) * LAKH));
+  }
+  const embeddedWordLakh = cleaned.match(new RegExp(`\\b(${Object.keys(WORD_NUMBERS).sort((a, b) => b.length - a.length).join("|")})\\s*(lakhs?)\\b`));
+  if (embeddedWordLakh) {
+    return finalizeBudget(WORD_NUMBERS[embeddedWordLakh[1]] * LAKH);
+  }
+  // A plain digit run of at least 3 digits inside a sentence — budgets are never
+  // below the ₹1,000 minimum, so a duration or traveler count mentioned in the
+  // same breath (single or double digits) won't be mistaken for one.
+  const embeddedDigits = cleaned.match(/\d{3,}/);
+  if (embeddedDigits) {
+    return finalizeBudget(parseInt(embeddedDigits[0], 10));
   }
 
   return { valid: false, error: "Please enter a valid budget (e.g. ₹2 lakhs, 2L, or ₹2,00,000)." };
