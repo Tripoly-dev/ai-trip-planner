@@ -37,8 +37,16 @@ export interface SttResult {
 
 /** Transcribes an audio clip in the language it was spoken. Throws on API/network failure. */
 export async function sttTranscribe(audio: Blob, language: Language): Promise<SttResult> {
+  // Chrome's MediaRecorder reports mimeType as "audio/webm;codecs=opus" by default.
+  // Sarvam's allowed-type check is an exact string match and only lists bare
+  // "audio/webm" (no codec suffix) — the codec param alone causes a 400 on every
+  // request, even though the underlying bytes are a type Sarvam accepts fine.
+  // Strip it before sending; the audio content itself is unchanged.
+  const cleanType = audio.type.split(";")[0] || "audio/webm";
+  const cleanAudio = new Blob([await audio.arrayBuffer()], { type: cleanType });
+
   const form = new FormData();
-  form.append("file", audio, "recording.webm");
+  form.append("file", cleanAudio, "recording.webm");
   form.append("model", "saaras:v3");
   form.append("mode", "transcribe");
   form.append("language_code", toSarvamLanguageCode(language));
