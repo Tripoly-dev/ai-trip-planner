@@ -35,6 +35,8 @@ Rules:
 6. Never generate itineraries for non-travel requests.
 7. Per-day cost must sum to approximately the total budget.
 8. Drive time between locations must be realistic.
+9. trip_summary.name must be exactly the traveler's name as given in the "Name" input below — never a trip title, phrase, or embellishment.
+10. trip_summary.destination must be exactly the destination as given in the "Destination" input below (correcting only obvious capitalization) — never a phrase or description.
 
 Return this exact JSON structure:
 {
