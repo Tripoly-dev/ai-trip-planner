@@ -37,6 +37,8 @@ Rules:
 8. Drive time between locations must be realistic.
 9. trip_summary.name must be exactly the traveler's name as given in the "Name" input below — never a trip title, phrase, or embellishment.
 10. trip_summary.destination must be exactly the destination as given in the "Destination" input below (correcting only obvious capitalization) — never a phrase or description.
+11. Write like a knowledgeable local friend, not a brochure: specific, sensory, a little opinionated. Never use generic filler ("explore the city", "enjoy local culture", "experience the vibrant nightlife").
+12. Name real-sounding, destination-appropriate specifics wherever the schema below asks for one — an actual neighborhood, dish, viewpoint, or landmark, not a category label. If you're not confident a specific name is accurate, describe the specific experience concretely instead of inventing a name that could be wrong.
 
 Return this exact JSON structure:
 {
@@ -60,7 +62,7 @@ Return this exact JSON structure:
       "hotel": {
         "name": "",
         "stars": 4,
-        "description": ""
+        "description": "1-2 sentences: what makes THIS hotel worth it (a specific view, location, or feature) — not a generic 'comfortable stay'"
       },
       "meals": {
         "breakfast": "",
@@ -74,8 +76,8 @@ Return this exact JSON structure:
       },
       "estimated_daily_cost": 8400,
       "drive_time": "1h 10m",
-      "day_description": "Short 2-line prose description of the day's vibe",
-      "tip": ""
+      "day_description": "2-3 vivid, sensory sentences capturing this specific day — not a generic summary",
+      "tip": "One specific, non-obvious local tip for this day (timing, a local custom, what to skip) — not generic travel advice"
     }
   ]
 }

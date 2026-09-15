@@ -22,24 +22,27 @@ export async function generateItineraryPdf(element: HTMLElement, filename: strin
     backgroundColor: "#ffffff",
   });
 
-  // No external image URLs are used anywhere in this layout (photo areas are CSS
-  // gradients), so there's nothing for html2canvas to fail to load cross-origin.
-  const imgData = canvas.toDataURL("image/png");
+  // JPEG at 0.8 quality instead of lossless PNG — PNG was the main driver of the
+  // ~24MB file size (a full-resolution 2x-scale screenshot has no flat-color/vector
+  // content that would benefit from lossless encoding, and now that the layout also
+  // carries real photos, JPEG is the more appropriate format for photographic content
+  // anyway). jsPDF's `compress: true` adds further stream compression on top.
+  const imgData = canvas.toDataURL("image/jpeg", 0.8);
 
-  const pdf = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
+  const pdf = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4", compress: true });
   const imgWidthMm = A4_WIDTH_MM;
   const imgHeightMm = (canvas.height * imgWidthMm) / canvas.width;
 
   let heightLeft = imgHeightMm;
   let positionMm = 0;
 
-  pdf.addImage(imgData, "PNG", 0, positionMm, imgWidthMm, imgHeightMm);
+  pdf.addImage(imgData, "JPEG", 0, positionMm, imgWidthMm, imgHeightMm);
   heightLeft -= A4_HEIGHT_MM;
 
   while (heightLeft > 0) {
     positionMm -= A4_HEIGHT_MM;
     pdf.addPage();
-    pdf.addImage(imgData, "PNG", 0, positionMm, imgWidthMm, imgHeightMm);
+    pdf.addImage(imgData, "JPEG", 0, positionMm, imgWidthMm, imgHeightMm);
     heightLeft -= A4_HEIGHT_MM;
   }
 
