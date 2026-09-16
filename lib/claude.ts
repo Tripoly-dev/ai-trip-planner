@@ -39,6 +39,8 @@ Rules:
 10. trip_summary.destination must be exactly the destination as given in the "Destination" input below (correcting only obvious capitalization) — never a phrase or description.
 11. Write like a knowledgeable local friend, not a brochure: specific, sensory, a little opinionated. Never use generic filler ("explore the city", "enjoy local culture", "experience the vibrant nightlife").
 12. Name real-sounding, destination-appropriate specifics wherever the schema below asks for one — an actual neighborhood, dish, viewpoint, or landmark, not a category label. If you're not confident a specific name is accurate, describe the specific experience concretely instead of inventing a name that could be wrong.
+13. If Destination is a country or broad region rather than a single city (e.g. "Thailand", "Japan", "Rajasthan"), do not keep the traveler in one city for the whole trip — plan across its most famous cities/areas, the way a well-traveled local friend would route a first-time visitor. Exceptions: a short trip (3 nights or fewer) where one well-chosen base is more realistic than city-hopping, or a Relaxed theme, which should favor staying put — at most one change of base (e.g. a calm home base plus a single day trip), never a packed multi-city hop. When you do move the traveler between cities/areas, give each stop enough nights to be worth the move (2+ nights per stop as a rule of thumb) and reflect the change in that day's "location" field and in drive_time/estimated_daily_cost.
+14. Prioritize what the destination is actually famous for — its best-known landmarks, neighborhoods, dishes, and experiences — over obscure alternatives, while still following rule 12: name them specifically and describe them vividly, never as a generic checklist item.
 
 Return this exact JSON structure:
 {
@@ -58,7 +60,7 @@ Return this exact JSON structure:
     {
       "day": 1,
       "title": "Day 1 — Arrival & Slow Start",
-      "location": "",
+      "location": "the specific city/area this day is based in — change this across days for a multi-stop trip (rule 13), don't leave it the same for all 7 days by default",
       "hotel": {
         "name": "",
         "stars": 4,
