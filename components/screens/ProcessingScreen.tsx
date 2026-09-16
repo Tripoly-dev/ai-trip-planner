@@ -7,18 +7,23 @@
 // generic subtext described in section 7's prose; matched the mockup and cycle
 // the emphasis between the three lines while the real request is in flight.
 //
-// Recovery behavior confirmed with you:
-//  - destination_not_found (the one failure the JSON contract defines): clear
-//    destination + travelTheme, rewind to the destination question (step 2),
-//    and bounce back to /chat with the spec's exact re-ask line. Everything
-//    from duration onward gets re-asked too — the state machine has no partial
-//    "resume from step 2" path, and this is a rare edge case, so a full rewind
-//    from destination is the simplest correct behavior rather than a new resume
-//    mechanism.
-//  - Any other failure (network error, API outage, malformed response — none of
-//    which the spec addresses): clear only travelTheme, rewind to step 6, and
-//    bounce back to /chat with a generic apology so re-tapping a theme chip
-//    retries generation. Keeps Processing itself free of buttons, per spec.
+// Recovery behavior — simplified as part of the pure-conversational rebuild, now that
+// ChatScreen has no step machine to rewind (store/useTripStore.ts dropped ChatStep/
+// currentStep/setStep entirely):
+//  - destination_not_found (the one failure the JSON contract defines): clear only
+//    destination and bounce back to /chat with the spec's exact re-ask line.
+//    lib/fields.ts's nextMissingField() then correctly re-asks for destination while
+//    every other already-collected field (duration, budget, travelers, group, theme)
+//    stays put — the old step machine had no partial-resume path, which is why the
+//    original version cleared travelTheme and rewound everything from destination
+//    onward too; that limitation no longer exists, so nothing else needs clearing.
+//  - Any other failure (network error, API outage, malformed response — none of which
+//    the spec addresses): nothing about the collected fields was actually wrong, so
+//    nothing is cleared. Bounce back to /chat with a generic apology — the recap's
+//    "Generate My Trip" button (TripSummaryCard) is immediately available again as a
+//    one-click retry, replacing the old "rewind to the theme step so re-tapping a
+//    theme chip retries generation" workaround, which only existed because the state
+//    machine had no other way to expose a retry affordance.
 
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
@@ -48,7 +53,6 @@ export function ProcessingScreen() {
   const travelTheme = useTripStore((s) => s.travelTheme);
   const language = useTripStore((s) => s.language);
   const setField = useTripStore((s) => s.setField);
-  const setStep = useTripStore((s) => s.setStep);
   const addMessage = useTripStore((s) => s.addMessage);
   const setItinerary = useTripStore((s) => s.setItinerary);
 
@@ -129,8 +133,6 @@ export function ProcessingScreen() {
         if (data.valid === false) {
           if (data.error === "destination_not_found") {
             setField("destination", "");
-            setField("travelTheme", null);
-            setStep(2);
             bounceToChat("I couldn't find that destination, please try again.");
             return;
           }
@@ -145,8 +147,6 @@ export function ProcessingScreen() {
         router.push("/itinerary");
       })
       .catch(() => {
-        setField("travelTheme", null);
-        setStep(6);
         bounceToChat("Something went wrong generating your itinerary — let's try that again!");
       });
     // eslint-disable-next-line react-hooks/exhaustive-deps

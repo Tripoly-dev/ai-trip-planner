@@ -1,36 +1,43 @@
 "use client";
 
 // Screen 3 — Voice + Text Chat. Per TRIPOLY_HANDOFF.md section 7 (layout) and
-// section 10 (Sarvam AI integration). Section 8's validation rules are now
-// implemented via lib/validators.ts (local fast path) + lib/fieldExtraction.ts
-// (Claude fallback) rather than literally, per the Option A redesign below.
+// section 10 (Sarvam AI integration).
 //
-// Option A redesign (this file's current shape) — replaces the original scripted-
-// form behavior after live testing showed it didn't hold up in Hindi or against
-// any phrasing it hadn't anticipated:
-//  - No more rule-based off-topic gate (isLikelyOffTopic/OFF_TOPIC_MESSAGE). A
-//    genuine question or detour now falls through to the Claude fallback in
-//    lib/fieldExtraction.ts, which answers it helpfully and steers back, in the
-//    active language — instead of a blunt "I can only help you plan your trip"
-//    bounce. (isLikelyOffTopic/OFF_TOPIC_MESSAGE still exist in lib/validators.ts,
-//    unchanged, for ItineraryScreen's separate amendment-box check.)
-//  - No more pendingConfirm / "I heard 'X'. Is that correct?" step, for any field,
-//    including Budget (which used to always confirm, typed or voice). A voice
-//    answer now goes through a review step instead (below) — since the user can
-//    already see and edit the transcribed text before it's ever submitted, a
-//    separate confirm-back turn was redundant.
-//  - Every bot line and local-validator error is now bilingual, picked from
-//    lib/chatCopy.ts via the live `language` toggle at the moment each message is
-//    generated — not hardcoded English. Language can change freely between
-//    questions; nothing is "locked in."
-//  - Mic UX rebuilt: tap-to-toggle instead of press-and-hold, a live waveform
-//    shown in the input area (not the mic button) while recording, a Cancel
-//    button during recording, and a review step after transcription — the
-//    transcript lands in the editable input box instead of auto-submitting, with
-//    a Send (✓) button to submit it as typed/edited, or Clear (✕) to discard it.
-//  - TTS still only auto-plays for bot replies that follow a voice-sourced user
-//    turn (a submitted voice review counts as voice-sourced) — typing stays
-//    silent/text-only.
+// Full pure-conversational rebuild (confirmed with you, replacing the Option A
+// redesign below it superseded): the fixed 1-6 step machine (ChatStep/currentStep/
+// setStep in store/useTripStore.ts) is gone. There is no longer a "step" the user must
+// answer in order — every free-text message goes to the unified /api/chat-turn
+// endpoint (lib/chatTurn.ts) with a snapshot of everything already collected, and
+// Claude can extract zero, one, or several of the 7 fields from a single message,
+// always returning one natural in-language reply. This is the direct fix for what you
+// reported after live-testing Option A: information given early in the conversation
+// wasn't visible three turns later because each fallback call only ever knew about ONE
+// field in isolation. The known cost/latency tradeoff of calling Claude on every
+// free-text turn (not just on local-parse failure) is the one you explicitly accepted
+// when choosing this over the smaller, contained fix.
+//
+// What's unchanged from Option A:
+//  - Every bot line is bilingual, picked from lib/chatCopy.ts via the live `language`
+//    toggle at the moment each message is generated.
+//  - Mic UX: tap-to-toggle, live waveform in the input area, Cancel during recording,
+//    a review step after transcription (transcript lands in the editable input box,
+//    Send/Clear instead of auto-submit).
+//  - TTS only auto-plays for bot replies following a voice-sourced user turn.
+//
+// What's new in this rebuild:
+//  - Quick-chip taps (duration/budget/travelers/group/theme) stay 100% local/free —
+//    an exact canonical value never needs Claude to confirm it's valid — but which
+//    chips show is now driven by lib/fields.ts's nextMissingField() (the first still-
+//    missing field in priority order), not a step number, so out-of-order answers are
+//    recognized correctly instead of assuming a fixed sequence.
+//  - Trip Generation no longer auto-fires the instant the last field lands (previously
+//    always the theme, since theme was hardcoded as the last step). Once
+//    nextMissingField() is null, a recap (TripSummaryCard, reused inline here for
+//    mobile) appears with an explicit "Generate My Trip" button — the deterministic
+//    completion gate is code, never the model's own sense of "I think that's everything."
+//  - Voice replies stream via a GET /api/tts (Sarvam's streaming endpoint) played
+//    through a native <audio> element instead of waiting for a full base64 clip —
+//    closes the ~5s gap before voice used to start speaking.
 
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { useRouter } from "next/navigation";
@@ -41,21 +48,17 @@ import { ThemeChip } from "@/components/ui/ThemeChip";
 import { TripolyMark } from "@/components/ui/TripolyMark";
 import { TripSummaryCard } from "@/components/ui/TripSummaryCard";
 import { VoiceWaveform } from "@/components/ui/VoiceWaveform";
-import { chatCopy, t } from "@/lib/chatCopy";
+import { chatCopy, t, type Bilingual } from "@/lib/chatCopy";
 import { TRAVEL_THEMES } from "@/lib/constants";
-import type { FieldKey } from "@/lib/fieldExtraction";
+import { nextMissingField, type FieldKey } from "@/lib/fields";
 import {
   matchGroupType,
   parseBudget,
-  validateDestination,
   validateDuration,
-  validateName,
-  validateTravelerCount,
   type ValidationResult,
 } from "@/lib/validators";
-import { useTripStore, type GroupType, type Message, type TravelTheme } from "@/store/useTripStore";
+import { useTripStore, type GroupType, type Message, type TravelTheme, type TripStore } from "@/store/useTripStore";
 
-type TravelerSubStep = "count" | "group";
 type InputSource = "typed" | "voice";
 
 const DURATION_QUICK_OPTIONS = [5, 7, 10];
@@ -75,12 +78,10 @@ function newId() {
 
 // Whether MediaRecorder + getUserMedia are available — read via useSyncExternalStore
 // rather than useState+useEffect: it's an external (browser) capability that never
-// changes mid-session, so there's nothing to subscribe to, but the value legitimately
-// differs between the server snapshot (no window/navigator) and the client snapshot.
-// useSyncExternalStore is the primitive React provides for exactly this — it renders
-// the SSR-safe server snapshot on first paint, then reconciles to the real client
-// value right after hydration, with no "setState in an effect" and no hydration
-// mismatch warning.
+// changes mid-session, but the value legitimately differs between the server snapshot
+// (no window/navigator) and the client snapshot. This renders the SSR-safe server
+// snapshot on first paint, then reconciles to the real client value right after
+// hydration, with no "setState in an effect" and no hydration mismatch warning.
 function micSupportSnapshot() {
   return (
     typeof navigator !== "undefined" &&
@@ -114,23 +115,27 @@ export function ChatScreen() {
   const messages = useTripStore((s) => s.messages);
   const addMessage = useTripStore((s) => s.addMessage);
   const setField = useTripStore((s) => s.setField);
-  const currentStep = useTripStore((s) => s.currentStep);
-  const setStep = useTripStore((s) => s.setStep);
+  const applyFields = useTripStore((s) => s.applyFields);
   const language = useTripStore((s) => s.language);
+  const name = useTripStore((s) => s.name);
   const destination = useTripStore((s) => s.destination);
+  const duration = useTripStore((s) => s.duration);
   const totalBudget = useTripStore((s) => s.totalBudget);
+  const travelerCount = useTripStore((s) => s.travelerCount);
+  const groupType = useTripStore((s) => s.groupType);
   const travelTheme = useTripStore((s) => s.travelTheme);
   const isListening = useTripStore((s) => s.isListening);
   const isProcessing = useTripStore((s) => s.isProcessing);
   const isExtracting = useTripStore((s) => s.isExtracting);
 
   const [inputValue, setInputValue] = useState("");
-  const [travelerSubStep, setTravelerSubStep] = useState<TravelerSubStep>("count");
   // True once a voice transcript has landed in the input box for the user to review/
-  // edit — set on successful transcription, cleared on Send or Clear. Replaces the
-  // old pendingConfirm mechanism: the user reviews the text itself instead of the
-  // bot re-asking "is that correct?".
+  // edit — set on successful transcription, cleared on Send or Clear.
   const [voiceReviewPending, setVoiceReviewPending] = useState(false);
+  // True once the user has explicitly confirmed the recap — freezes input during the
+  // brief transition to /processing so nothing typed after confirming gets lost or
+  // races the navigation.
+  const [confirmed, setConfirmed] = useState(false);
   const [activeStream, setActiveStream] = useState<MediaStream | null>(null);
   const micSupported = useSyncExternalStore(subscribeNoop, micSupportSnapshot, micSupportServerSnapshot);
 
@@ -150,85 +155,110 @@ export function ChatScreen() {
         ? "review"
         : "idle";
 
+  const missing: FieldKey | null = nextMissingField({
+    name,
+    destination,
+    duration,
+    totalBudget,
+    travelerCount,
+    groupType,
+    travelTheme,
+  });
+
   function pushMessage(role: Message["role"], content: string) {
     addMessage({ id: newId(), role, content, timestamp: new Date() });
   }
 
   function speak(text: string) {
-    fetch("/api/tts", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ text, language }),
-    })
-      .then((res) => (res.ok ? res.json() : null))
-      .then((data) => {
-        if (!data?.audioBase64) return;
-        audioRef.current?.pause();
-        const audio = new Audio(`data:audio/wav;base64,${data.audioBase64}`);
-        audioRef.current = audio;
-        // Autoplay can be blocked outside a direct user gesture in some browsers —
-        // the text bubble is already visible either way, so this fails silently.
-        audio.play().catch(() => {});
-      })
-      .catch(() => {
-        // TTS is a voice-mode enhancement, not a hard requirement — fail silently
-        // and let the text bubble carry the message (also covers a missing/invalid
-        // SARVAM_API_KEY, e.g. before a real key is configured).
-      });
+    // Streams via Sarvam's HTTP streaming TTS endpoint (lib/sarvam.ts's
+    // ttsSynthesizeStream, proxied through GET /api/tts) — the browser's <audio>
+    // element requests and plays it progressively, instead of the old fetch-JSON-
+    // base64 round trip that had to wait for the entire clip before any sound played.
+    audioRef.current?.pause();
+    const url = `/api/tts?text=${encodeURIComponent(text)}&language=${language}`;
+    const audio = new Audio(url);
+    audioRef.current = audio;
+    // Autoplay can be blocked outside a direct user gesture in some browsers — the
+    // text bubble is already visible either way, so this fails silently. A failed
+    // stream (e.g. missing/invalid SARVAM_API_KEY) surfaces as a media error event,
+    // not a thrown exception, so nothing extra to catch here.
+    audio.play().catch(() => {});
   }
 
-  // Pushes a bot/error message, and speaks it only when the user's own last turn
-  // was voice — typing stays silent (unchanged from the original Step 6 decision).
-  function respond(role: "bot" | "error" | "offtopic", content: string) {
+  // Pushes a bot/error message, and speaks it only when the user's own last turn was
+  // voice — typing stays silent.
+  function respond(role: "bot" | "error", content: string) {
     pushMessage(role, content);
     if (lastInputSource.current === "voice") {
       speak(content);
     }
   }
 
-  // Falls back to Claude-based extraction (lib/fieldExtraction.ts) only when the local
-  // regex parse in lib/validators.ts couldn't confidently handle the answer — clean/
-  // simple input (quick-chip taps, bare numbers, exact formats, common English phrasing)
-  // never pays the extra round trip; anything else (Hindi, mixed language, unanticipated
-  // phrasing, or a genuine question/detour) gets real understanding instead of a hard
-  // fail — including a helpful, in-language conversational reply for detours, per the
-  // redesigned prompt in lib/fieldExtraction.ts.
-  //
-  // `viaClaudeReply` on a failed result: true only when `error` is Claude's own
-  // crafted conversational text (a detour answer, a warm re-ask, a polite decline —
-  // lib/fieldExtraction.ts always produces one of these, never a flat template), as
-  // opposed to a plain mechanical message from lib/validators.ts (local rejection,
-  // or a fallback used because the Claude call itself failed). Callers use this to
-  // pick the right chat bubble — Claude's own reply reads as the assistant talking,
-  // not as an error, so it shouldn't render in the red/error bubble style.
-  async function resolveField<T>(
-    field: FieldKey,
-    text: string,
-    localResult: ValidationResult<T>,
-  ): Promise<ValidationResult<T> & { viaClaudeReply?: boolean }> {
-    if (localResult.valid) return localResult;
-    setField("isExtracting", true);
-    try {
-      const res = await fetch("/api/extract-field", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ field, rawInput: text, language }),
-      });
-      const data = await res.json();
-      if (res.ok && data.valid) {
-        return { valid: true, value: data.value as T };
-      }
-      if (res.ok && typeof data.error === "string" && data.error) {
-        return { valid: false, error: data.error, viaClaudeReply: true };
-      }
-      return { valid: false, error: localResult.error };
-    } catch {
-      // Network/API failure — fall back to the original local error rather than
-      // blocking silently.
-      return localResult;
-    } finally {
-      setField("isExtracting", false);
+  function buildCollected(): Partial<Record<FieldKey, string | number>> {
+    const collected: Partial<Record<FieldKey, string | number>> = {};
+    if (name) collected.name = name;
+    if (destination) collected.destination = destination;
+    if (duration > 0) collected.duration = duration;
+    if (totalBudget > 0) collected.budget = totalBudget;
+    if (travelerCount > 0) collected.travelerCount = travelerCount;
+    if (groupType) collected.groupType = groupType;
+    if (travelTheme) collected.theme = travelTheme;
+    return collected;
+  }
+
+  // Applies whatever fields a chat-turn (local or Claude-extracted) produced, in one
+  // atomic store update — see store/useTripStore.ts's applyFields for why this needs
+  // to be atomic rather than a sequence of setField calls (perPersonBudget).
+  function applyChatTurnUpdates(updates: Partial<Record<FieldKey, string | number>>) {
+    const patch: Partial<TripStore> = {};
+    if (updates.name !== undefined) patch.name = String(updates.name);
+    if (updates.destination !== undefined) patch.destination = String(updates.destination);
+    if (updates.duration !== undefined) patch.duration = Number(updates.duration);
+    if (updates.budget !== undefined) patch.totalBudget = Number(updates.budget);
+    if (updates.travelerCount !== undefined) patch.travelerCount = Number(updates.travelerCount);
+    if (updates.groupType !== undefined) patch.groupType = updates.groupType as GroupType;
+    if (updates.theme !== undefined) patch.travelTheme = updates.theme as TravelTheme;
+    if (Object.keys(patch).length > 0) applyFields(patch);
+  }
+
+  // After a LOCAL (no-API-call) field update — a quick-chip tap — decides what to say
+  // next by reading the store fresh (Zustand's set() is synchronous, so this reflects
+  // the update just applied) and asking lib/fields.ts what's still missing. Never a
+  // fixed "next step" — see lib/chatCopy.ts's askFor for why that broke down.
+  function advanceAfterLocalUpdate() {
+    const s = useTripStore.getState();
+    const next = nextMissingField({
+      name: s.name,
+      destination: s.destination,
+      duration: s.duration,
+      totalBudget: s.totalBudget,
+      travelerCount: s.travelerCount,
+      groupType: s.groupType,
+      travelTheme: s.travelTheme,
+    });
+    if (next === null) {
+      respond("bot", t(chatCopy.readyToGenerate, language));
+      return;
     }
+    const ask = (chatCopy.askFor as Partial<Record<FieldKey, Bilingual>>)[next];
+    if (ask) respond("bot", t(ask, language));
+  }
+
+  function applyLocalField<T extends string | number>(
+    field: FieldKey,
+    result: ValidationResult<T>,
+    displayLabel: string,
+  ) {
+    lastInputSource.current = "typed"; // a tap is never voice-sourced
+    pushMessage("user", displayLabel);
+    if (!result.valid) {
+      // Defense only — every quick chip passes an exact canonical value, so this
+      // should never actually fire.
+      respond("error", result.error!);
+      return;
+    }
+    applyChatTurnUpdates({ [field]: result.value } as Partial<Record<FieldKey, string | number>>);
+    advanceAfterLocalUpdate();
   }
 
   // Seed the conversation once.
@@ -253,128 +283,81 @@ export function ChatScreen() {
     };
   }, []);
 
-  function commitTheme(theme: TravelTheme) {
-    setField("travelTheme", theme);
+  function handleConfirmGenerate() {
+    if (confirmed) return;
+    setConfirmed(true);
+    lastInputSource.current = "typed";
     respond("bot", t(chatCopy.generatingItinerary(destination), language));
     setTimeout(() => router.push("/processing"), 900);
   }
 
-  function handleThemeChipClick(theme: TravelTheme) {
-    const meta = TRAVEL_THEMES.find((opt) => opt.theme === theme);
-    lastInputSource.current = "typed"; // a tap is never voice-sourced
-    pushMessage("user", `${meta?.emoji ?? ""} ${theme}`.trim());
-    commitTheme(theme);
+  function pickDuration(d: number) {
+    applyLocalField<number>("duration", validateDuration(String(d), language), `${d} days`);
   }
 
+  function pickBudget(option: { label: string; value: string }) {
+    applyLocalField<number>("budget", parseBudget(option.value, language), option.label);
+  }
+
+  function pickGroupType(g: string) {
+    applyLocalField<GroupType>("groupType", matchGroupType(g, language), g);
+  }
+
+  function handleThemeChipClick(theme: TravelTheme) {
+    const meta = TRAVEL_THEMES.find((opt) => opt.theme === theme);
+    applyLocalField<TravelTheme>("theme", { valid: true, value: theme }, `${meta?.emoji ?? ""} ${theme}`.trim());
+  }
+
+  // Every free-text turn — typed or a reviewed voice transcript — goes to the unified
+  // endpoint with a snapshot of everything already collected. This is the one call
+  // that replaces the old per-step local-parse-then-Claude-fallback pipeline; see the
+  // file header for why free text can no longer stay local-only in a stepless flow.
   async function handleSubmit(raw: string, source: InputSource = "typed") {
     const text = raw.trim();
-    if (!text || travelTheme) return;
+    if (!text || confirmed) return;
 
-    // Any submit — typed, chip tap, or a reviewed voice transcript — ends the
-    // review state, if one was in progress.
     setVoiceReviewPending(false);
     lastInputSource.current = source;
     pushMessage("user", text);
     setInputValue("");
 
-    switch (currentStep) {
-      case 1: {
-        const local = validateName(text, language);
-        const extracted = await resolveField("name", text, local);
-        if (!extracted.valid) return respond(extracted.viaClaudeReply ? "bot" : "error", extracted.error!);
-        const name = String(extracted.value).trim();
-        if (name.length < 2) {
-          return respond("error", t(chatCopy.errors.nameTooShortAfterExtraction, language));
-        }
-        setField("name", name);
-        respond("bot", t(chatCopy.afterName(name), language));
-        setStep(2);
+    setField("isExtracting", true);
+    try {
+      const res = await fetch("/api/chat-turn", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message: text, language, collected: buildCollected() }),
+      });
+      const data = await res.json();
+
+      if (!res.ok) {
+        respond("error", t(chatCopy.errors.chatTurnFailed, language));
         return;
       }
-      case 2: {
-        const local = validateDestination(text, language);
-        const extracted = await resolveField("destination", text, local);
-        if (!extracted.valid) return respond(extracted.viaClaudeReply ? "bot" : "error", extracted.error!);
-        const destinationValue = String(extracted.value).trim();
-        if (destinationValue.length < 3) {
-          return respond("error", t(chatCopy.errors.destinationTooShort, language));
-        }
-        setField("destination", destinationValue);
-        respond("bot", t(chatCopy.afterDestination, language));
-        setStep(3);
-        return;
+
+      const updates = (data.updates ?? {}) as Partial<Record<FieldKey, string | number>>;
+      const invalidMessages: string[] = Array.isArray(data.invalidMessages) ? data.invalidMessages : [];
+
+      if (Object.keys(updates).length > 0) applyChatTurnUpdates(updates);
+
+      // A field Claude claimed but that failed the server-side validator safety net
+      // always wins over Claude's own drafted reply — same "mechanical rejection
+      // reads as an error bubble, Claude's own words read as a normal bubble"
+      // distinction the original red-bubble bug fix established.
+      if (invalidMessages.length > 0) {
+        invalidMessages.forEach((m) => respond("error", m));
+      } else if (typeof data.reply === "string" && data.reply) {
+        respond("bot", data.reply);
       }
-      case 3: {
-        const local = validateDuration(text, language);
-        const extracted = await resolveField("duration", text, local);
-        if (!extracted.valid) return respond(extracted.viaClaudeReply ? "bot" : "error", extracted.error!);
-        // Re-run the extracted value through the same bounds check regardless of
-        // source (a no-op when it already came from the local path; a real safety
-        // net against an out-of-range value from the Claude fallback).
-        const r = validateDuration(String(extracted.value), language);
-        if (!r.valid) return respond("error", r.error!);
-        setField("duration", r.value!);
-        respond("bot", t(chatCopy.afterDuration, language));
-        setStep(4);
-        return;
-      }
-      case 4: {
-        const local = parseBudget(text, language);
-        const extracted = await resolveField("budget", text, local);
-        if (!extracted.valid) return respond(extracted.viaClaudeReply ? "bot" : "error", extracted.error!);
-        const r = parseBudget(String(extracted.value), language);
-        if (!r.valid) return respond("error", r.error!);
-        setField("totalBudget", r.value!);
-        respond("bot", t(chatCopy.afterBudget, language));
-        setTravelerSubStep("count");
-        setStep(5);
-        return;
-      }
-      case 5: {
-        if (travelerSubStep === "count") {
-          const local = validateTravelerCount(text, language);
-          const extracted = await resolveField("travelerCount", text, local);
-          if (!extracted.valid) return respond(extracted.viaClaudeReply ? "bot" : "error", extracted.error!);
-          const r = validateTravelerCount(String(extracted.value), language);
-          if (!r.valid) return respond("error", r.error!);
-          setField("travelerCount", r.value!);
-          setField("perPersonBudget", Math.round(totalBudget / r.value!));
-          respond("bot", t(chatCopy.afterTravelerCount, language));
-          setTravelerSubStep("group");
-          return;
-        }
-        const local = matchGroupType(text, language);
-        const extracted = await resolveField<GroupType>("groupType", text, local);
-        if (!extracted.valid) return respond(extracted.viaClaudeReply ? "bot" : "error", extracted.error!);
-        // Claude is instructed to return exactly one of the four canonical labels —
-        // re-run it through the existing exact-match check as a safety net rather
-        // than trusting the API response verbatim.
-        const r = matchGroupType(String(extracted.value), language);
-        if (!r.valid) return respond("error", t(chatCopy.errors.groupTypeChoice, language));
-        setField("groupType", r.value!);
-        respond("bot", t(chatCopy.afterGroupType, language));
-        setStep(6);
-        return;
-      }
-      case 6: {
-        const localMatch = TRAVEL_THEMES.find((opt) => opt.theme.toLowerCase() === text.toLowerCase());
-        const local: ValidationResult<TravelTheme> = localMatch
-          ? { valid: true, value: localMatch.theme }
-          : { valid: false, error: t(chatCopy.errors.themeChoice, language) };
-        const extracted = await resolveField<TravelTheme>("theme", text, local);
-        if (!extracted.valid) return respond(extracted.viaClaudeReply ? "bot" : "error", extracted.error!);
-        // Same re-verification pattern as Group Type — confirm Claude's answer maps
-        // to one of the five real theme values rather than trusting it verbatim.
-        const match = TRAVEL_THEMES.find((opt) => opt.theme.toLowerCase() === String(extracted.value).toLowerCase());
-        if (!match) return respond("error", t(chatCopy.errors.themeChoice, language));
-        commitTheme(match.theme);
-        return;
-      }
+    } catch {
+      respond("error", t(chatCopy.errors.chatTurnFailed, language));
+    } finally {
+      setField("isExtracting", false);
     }
   }
 
   async function startRecording() {
-    if (!micSupported || travelTheme || isListening || isProcessing) return;
+    if (!micSupported || confirmed || isListening || isProcessing) return;
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       streamRef.current = stream;
@@ -430,9 +413,8 @@ export function ChatScreen() {
           return;
         }
 
-        // Doesn't auto-submit: the transcript lands in the editable input box for
-        // the user to review, edit, Send, or Clear — replaces the old confirm-back
-        // step (see file header).
+        // Doesn't auto-submit: the transcript lands in the editable input box for the
+        // user to review, edit, Send, or Clear.
         setInputValue(data.transcript);
         setVoiceReviewPending(true);
       } catch {
@@ -444,9 +426,9 @@ export function ChatScreen() {
     mr.stop();
   }
 
-  // Discards an in-progress recording without transcribing it — no onstop handler
-  // is attached for this stop cycle (that only happens inside stopRecording), so
-  // the browser just tears the recorder down and nothing gets sent to /api/stt.
+  // Discards an in-progress recording without transcribing it — no onstop handler is
+  // attached for this stop cycle (that only happens inside stopRecording), so the
+  // browser just tears the recorder down and nothing gets sent to /api/stt.
   function cancelRecording() {
     const mr = mediaRecorderRef.current;
     if (mr && mr.state !== "inactive") {
@@ -472,26 +454,20 @@ export function ChatScreen() {
     setVoiceReviewPending(false);
   }
 
-  const chipsSuppressed = uiMode !== "idle";
-  const showDurationChips = currentStep === 3 && !chipsSuppressed;
-  const showBudgetChips = currentStep === 4 && !chipsSuppressed;
-  const showGroupChips = currentStep === 5 && travelerSubStep === "group" && !chipsSuppressed;
-  const showThemeChips = currentStep === 6 && !travelTheme && !chipsSuppressed;
+  const chipsSuppressed = uiMode !== "idle" || confirmed;
+  const showDurationChips = missing === "duration" && !chipsSuppressed;
+  const showBudgetChips = missing === "budget" && !chipsSuppressed;
+  const showGroupChips = missing === "groupType" && !chipsSuppressed;
+  const showThemeChips = missing === "theme" && !chipsSuppressed;
+  const showRecap = missing === null && !confirmed;
 
   const hint = (() => {
     if (uiMode === "review") return t(chatCopy.hints.reviewVoice, language);
     if (uiMode === "recording") return t(chatCopy.hints.listening, language);
     if (uiMode === "transcribing") return t(chatCopy.hints.transcribing, language);
     if (isExtracting) return t(chatCopy.hints.thinking, language);
-    switch (currentStep) {
-      case 1: return t(chatCopy.hints.name, language);
-      case 2: return t(chatCopy.hints.destination, language);
-      case 3: return t(chatCopy.hints.duration, language);
-      case 4: return t(chatCopy.hints.budget, language);
-      case 5: return travelerSubStep === "count" ? t(chatCopy.hints.travelerCount, language) : t(chatCopy.hints.groupType, language);
-      case 6: return t(chatCopy.hints.theme, language);
-      default: return "";
-    }
+    if (missing === null) return t(chatCopy.hints.ready, language);
+    return t(chatCopy.hints[missing], language);
   })();
 
   const micTitle = !micSupported
@@ -512,7 +488,7 @@ export function ChatScreen() {
           <TripolyMark variant="dark" size={22} />
           <LanguageToggle value={language} onChange={(l) => setField("language", l)} variant="outline" />
         </div>
-        <ProgressBar currentStep={currentStep} />
+        <ProgressBar />
       </div>
 
       <div ref={scrollRef} className="flex-1 space-y-3.5 overflow-y-auto p-5">
@@ -525,7 +501,7 @@ export function ChatScreen() {
         {showDurationChips && (
           <div className="flex flex-wrap gap-2 pl-[34px]">
             {DURATION_QUICK_OPTIONS.map((d) => (
-              <QuickChip key={d} label={`${d} days`} onClick={() => handleSubmit(String(d))} />
+              <QuickChip key={d} label={`${d} days`} onClick={() => pickDuration(d)} />
             ))}
           </div>
         )}
@@ -533,7 +509,7 @@ export function ChatScreen() {
         {showBudgetChips && (
           <div className="flex flex-wrap gap-2 pl-[34px]">
             {BUDGET_QUICK_OPTIONS.map((b) => (
-              <QuickChip key={b.value} label={b.label} onClick={() => handleSubmit(b.value)} />
+              <QuickChip key={b.value} label={b.label} onClick={() => pickBudget(b)} />
             ))}
             <QuickChip label={t(chatCopy.quickChipCustom, language)} onClick={() => document.getElementById("chat-input")?.focus()} />
           </div>
@@ -542,7 +518,7 @@ export function ChatScreen() {
         {showGroupChips && (
           <div className="flex flex-wrap gap-2 pl-[34px]">
             {GROUP_TYPE_OPTIONS.map((g) => (
-              <QuickChip key={g} label={g} onClick={() => handleSubmit(g)} />
+              <QuickChip key={g} label={g} onClick={() => pickGroupType(g)} />
             ))}
           </div>
         )}
@@ -552,6 +528,15 @@ export function ChatScreen() {
             {TRAVEL_THEMES.map(({ theme, emoji }) => (
               <ThemeChip key={theme} theme={theme} emoji={emoji} onClick={handleThemeChipClick} />
             ))}
+          </div>
+        )}
+
+        {/* Mobile recap — desktop already has the always-visible TripSummaryCard in the
+            right column below; this is the same component, reused inline in the message
+            flow so the recap + explicit confirm step is reachable on mobile too. */}
+        {showRecap && (
+          <div className="pl-[34px] pr-1">
+            <TripSummaryCard onConfirm={handleConfirmGenerate} />
           </div>
         )}
       </div>
@@ -571,7 +556,7 @@ export function ChatScreen() {
               onKeyDown={(e) => {
                 if (e.key === "Enter") handleSubmit(inputValue, uiMode === "review" ? "voice" : "typed");
               }}
-              disabled={!!travelTheme || uiMode === "transcribing" || isExtracting}
+              disabled={confirmed || uiMode === "transcribing" || isExtracting}
               placeholder={t(chatCopy.placeholder, language)}
               className="h-[46px] flex-1 rounded-full bg-tripoly-bubble-offtopic px-[18px] font-sans text-sm text-tripoly-text placeholder:text-[#999] disabled:opacity-50"
             />
@@ -628,11 +613,11 @@ export function ChatScreen() {
               </div>
               <button
                 type="button"
-                disabled={!micSupported || !!travelTheme || uiMode === "transcribing" || isExtracting}
+                disabled={!micSupported || confirmed || uiMode === "transcribing" || isExtracting}
                 title={micTitle}
                 onClick={handleMicClick}
                 className={`flex h-[46px] w-[46px] flex-shrink-0 items-center justify-center rounded-full transition-all ${
-                  !micSupported || travelTheme
+                  !micSupported || confirmed
                     ? "cursor-not-allowed bg-tripoly-green opacity-40"
                     : uiMode === "recording"
                       ? "scale-110 cursor-pointer bg-tripoly-error shadow-[0_0_0_6px_rgba(239,68,68,0.15)]"
@@ -659,10 +644,10 @@ export function ChatScreen() {
       </div>
 
       {/* Right column — desktop only. Section 13: "Right: live trip summary card updating
-          as user answers." */}
+          as user answers." Now also carries the explicit confirm button once complete. */}
       <div className="hidden lg:flex lg:flex-1 lg:items-start lg:justify-center lg:bg-[#fafafa] lg:p-10">
         <div className="w-full max-w-[420px] lg:sticky lg:top-10">
-          <TripSummaryCard />
+          <TripSummaryCard onConfirm={handleConfirmGenerate} />
         </div>
       </div>
     </main>

@@ -9,13 +9,24 @@
 // nothing here is invented copy, only translated/keyed.
 //
 // Deliberately NOT included: the "I heard '<value>'. Is that correct?" confirm-back
-// lines and "Please answer yes or no." — that whole pendingConfirm mechanism is being
-// removed (per your last go-ahead), so those strings have no home to move to.
+// lines and "Please answer yes or no." — that whole pendingConfirm mechanism was
+// removed in the Option A redesign, so those strings have no home to move to.
 // Also NOT included: OFF_TOPIC_MESSAGE (lib/validators.ts) — that stays English-only,
 // unchanged, since it's still used by ItineraryScreen's separate amendment-box check,
 // which is out of scope for this redesign.
+//
+// Pure-conversational rebuild update: the old afterName/afterDestination/afterDuration/
+// afterBudget/afterTravelerCount/afterGroupType lines assumed a FIXED next step (e.g.
+// "afterDuration" always asked for budget next) — that assumption breaks once fields
+// can be collected in any order, so a canned line for "just finished step N" could ask
+// for something already answered. Replaced by `askFor`, keyed by FIELD (not by "what
+// came before"), used only by ChatScreen's local quick-chip acknowledgements — every
+// free-text turn gets its reply from Claude itself (lib/chatTurn.ts), which always has
+// full context of what's actually still missing. Same EN/HI content as the old lines,
+// just re-keyed.
 
 import type { Language } from "@/store/useTripStore";
+import type { FieldKey } from "@/lib/fields";
 
 export type Bilingual = { EN: string; HI: string };
 
@@ -30,34 +41,43 @@ export const chatCopy = {
     HI: "नमस्ते! मैं Tripoly AI हूँ ✈️ आपका नाम क्या है?",
   } satisfies Bilingual,
 
-  afterName: (name: string): Bilingual => ({
-    EN: `Great ${name}! Where would you like to travel?`,
-    HI: `बहुत बढ़िया ${name}! आप कहाँ घूमने जाना चाहेंगे?`,
-  }),
+  // Used only by ChatScreen's local, no-API-call quick-chip acknowledgements (duration/
+  // budget/travelers/group/theme chips) — after applying the tap, ChatScreen looks up
+  // whatever the new next-missing-field actually is and asks for THAT, instead of a
+  // fixed "next step." No "name" entry: there's no quick chip for name, so that local
+  // path never needs to ask for it.
+  askFor: {
+    destination: {
+      EN: "Where would you like to travel?",
+      HI: "आप कहाँ घूमने जाना चाहेंगे?",
+    },
+    duration: {
+      EN: "How many days are you planning? (max 10 days)",
+      HI: "आप कितने दिनों की योजना बना रहे हैं? (अधिकतम 10 दिन)",
+    },
+    budget: {
+      EN: "What is your total trip budget?",
+      HI: "आपका कुल ट्रिप बजट कितना है?",
+    },
+    travelerCount: {
+      EN: "How many travelers?",
+      HI: "कितने यात्री जाएंगे?",
+    },
+    groupType: {
+      EN: "And what's your group type?",
+      HI: "और आपका ग्रुप टाइप क्या है?",
+    },
+    theme: {
+      EN: "What kind of trip are you looking for?",
+      HI: "आप किस तरह की ट्रिप चाहते हैं?",
+    },
+  } satisfies Partial<Record<FieldKey, Bilingual>>,
 
-  afterDestination: {
-    EN: "How many days are you planning? (max 10 days)",
-    HI: "आप कितने दिनों की योजना बना रहे हैं? (अधिकतम 10 दिन)",
-  } satisfies Bilingual,
-
-  afterDuration: {
-    EN: "What is your total trip budget?",
-    HI: "आपका कुल ट्रिप बजट कितना है?",
-  } satisfies Bilingual,
-
-  afterBudget: {
-    EN: "Great! How many travelers?",
-    HI: "बढ़िया! कितने यात्री जाएंगे?",
-  } satisfies Bilingual,
-
-  afterTravelerCount: {
-    EN: "And what's your group type?",
-    HI: "और आपका ग्रुप टाइप क्या है?",
-  } satisfies Bilingual,
-
-  afterGroupType: {
-    EN: "Almost there! What kind of trip are you looking for?",
-    HI: "बस थोड़ा और! आप किस तरह की ट्रिप चाहते हैं?",
+  // Shown (alongside the recap + confirm button) once all 7 fields are collected and
+  // the user isn't actively changing anything.
+  readyToGenerate: {
+    EN: "Everything looks great! Ready to generate your trip?",
+    HI: "सब कुछ तैयार है! क्या मैं आपकी ट्रिप बनाऊं?",
   } satisfies Bilingual,
 
   generatingItinerary: (destination: string): Bilingual => ({
@@ -138,10 +158,18 @@ export const chatCopy = {
       HI: `न्यूनतम बजट ${formattedAmount} है।`,
     }),
 
-    // theme (ChatScreen local match + post-extraction re-check — same string both places)
+    // theme (ChatScreen local match + matchTheme in lib/validators.ts — same string both places)
     themeChoice: {
       EN: "Please pick one of the options below.",
       HI: "कृपया नीचे दिए गए विकल्पों में से एक चुनें।",
+    } satisfies Bilingual,
+
+    // Generic fallback for a /api/chat-turn network/API failure — there's no local
+    // validator result to fall back to anymore (every free-text turn calls Claude),
+    // so this replaces what used to be an implicit fallback to the local error.
+    chatTurnFailed: {
+      EN: "Sorry, something went wrong. Please try again.",
+      HI: "माफ़ कीजिए, कुछ गड़बड़ हो गई। कृपया दोबारा कोशिश करें।",
     } satisfies Bilingual,
   },
 
@@ -232,6 +260,12 @@ export const chatCopy = {
     theme: {
       EN: "Tap a vibe below, or type it",
       HI: "नीचे से एक वाइब चुनें, या टाइप करें",
+    } satisfies Bilingual,
+    // Shown once every field is collected (the recap/confirm moment) — replaces a
+    // per-field hint since there's no longer a single "next field" to describe.
+    ready: {
+      EN: "Ready to generate, or tell me if you'd like to change anything",
+      HI: "जनरेट करने के लिए तैयार — या कुछ बदलना हो तो बताएं",
     } satisfies Bilingual,
   },
 };

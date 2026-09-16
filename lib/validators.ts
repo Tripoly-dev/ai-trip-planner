@@ -33,8 +33,9 @@
 // English-only: ItineraryScreen.tsx still depends on them for its amendment-box check,
 // which is out of scope for this redesign.
 
-import type { GroupType, Language } from "@/store/useTripStore";
+import type { GroupType, Language, TravelTheme } from "@/store/useTripStore";
 import { chatCopy, t } from "@/lib/chatCopy";
+import { matchTravelTheme } from "@/lib/fields";
 
 export interface ValidationResult<T> {
   valid: boolean;
@@ -83,11 +84,12 @@ export function validateName(input: string, language: Language): ValidationResul
   // passed the check above as-is (NAME_LEAD_INS only strips a fixed list of known
   // phrasings, and "this side" wasn't one of them) — the full sentence got stored
   // verbatim as the name, and because this function reported valid:true, the
-  // Claude-based fallback (lib/fieldExtraction.ts) never even ran. A real name is
-  // essentially never more than 3 words, so anything longer is far more likely to be
-  // an unstripped sentence than a name — treat it as unresolved here instead of a
-  // false "valid", so the caller (ChatScreen) falls through to Claude to extract the
-  // actual name out of it.
+  // Claude-based fallback never even ran. A real name is essentially never more than
+  // 3 words, so anything longer is far more likely to be an unstripped sentence than
+  // a name — treat it as unresolved here instead of a false "valid". (This function
+  // itself is now also called as the server-side safety net on Claude's own extracted
+  // name in app/api/chat-turn/route.ts — same reasoning applies there: an
+  // over-long "name" is rejected rather than trusted.)
   if (stripped.split(/\s+/).length > 3) {
     return { valid: false, error: t(chatCopy.errors.nameTooLong, language) };
   }
@@ -115,10 +117,10 @@ export function validateDestination(input: string, language: Language): Validati
   }
   // Anything outside plain ASCII (Hindi/Devanagari script, or English mixed with it,
   // e.g. "Thailand जाना है") can't be confidently normalized by a static rule the way
-  // DESTINATION_LEAD_INS strips a known English prefix — treat it as unresolved here
-  // so the caller (ChatScreen) falls through to the Claude-based extraction in
-  // lib/fieldExtraction.ts, which normalizes it to a standard English place name
-  // instead of this function storing it verbatim.
+  // DESTINATION_LEAD_INS strips a known English prefix — treat it as unresolved here.
+  // Claude-based extraction (lib/chatTurn.ts) normalizes it to a standard English
+  // place name instead of this function storing it verbatim; this function then also
+  // re-runs as the server-side safety net on whatever Claude returns.
   if (!/^[\x20-\x7E]+$/.test(stripped)) {
     return { valid: false, error: t(chatCopy.errors.destinationTooShort, language) };
   }
@@ -165,6 +167,22 @@ export function matchGroupType(input: string, language: Language): ValidationRes
   const match = GROUP_TYPES.find((g) => g.toLowerCase() === trimmed || trimmed.includes(g.toLowerCase()));
   if (!match) {
     return { valid: false, error: t(chatCopy.errors.groupTypeChoice, language) };
+  }
+  return { valid: true, value: match };
+}
+
+// Added for the pure-conversational rebuild: ChatScreen used to match a theme chip's
+// value directly against lib/constants.ts's TRAVEL_THEMES inline (chips are always an
+// exact canonical value, so this was never a rejection path in practice) and, for a
+// Claude-fallback theme answer, re-verified the same way. Now that any free-text
+// message can name a theme, the unified /api/chat-turn endpoint needs this as a real
+// bilingual-error safety-net validator, matching matchGroupType's shape exactly —
+// matchTravelTheme (lib/fields.ts) does the actual lookup so the canonical theme list
+// has one source of truth, shared with TripSummaryCard/ProgressBar's field-presence checks.
+export function matchTheme(input: string, language: Language): ValidationResult<TravelTheme> {
+  const match = matchTravelTheme(input);
+  if (!match) {
+    return { valid: false, error: t(chatCopy.errors.themeChoice, language) };
   }
   return { valid: true, value: match };
 }

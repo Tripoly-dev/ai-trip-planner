@@ -1,13 +1,19 @@
 "use client";
 
-// Chat screen, desktop only (lg: 1024px+) — right-column "live trip summary card" that
-// updates as the user answers, per TRIPOLY_HANDOFF.md section 13. No mobile chat markup or
-// mockup reference exists for this — it's new content, confirmed with you before building:
-// each row appears once that field is actually confirmed in the store, not just typed.
-// Self-contained (reads the store directly) so it drops into ChatScreen without prop drilling
-// and without touching any of ChatScreen's existing conversation/mic logic.
+// Chat screen — "live trip summary card" that updates as the user answers, per
+// TRIPOLY_HANDOFF.md section 13. Self-contained (reads the store directly) so it drops
+// in without prop drilling and without touching ChatScreen's conversation/mic logic.
+//
+// Pure-conversational rebuild: row-building logic moved to lib/fields.ts's
+// buildSummaryRows (one source of truth, also used by ChatScreen's inline mobile recap
+// — see that file). Also gained an optional onConfirm: once every field is present
+// (the same deterministic completion gate ChatScreen/ProgressBar use, via
+// lib/fields.ts's isTripComplete), this becomes the recap + explicit confirm step
+// agreed as part of the rebuild — Trip Generation no longer auto-triggers the instant
+// the last field is set, the user now has to actively confirm.
 
 import { useTripStore } from "@/store/useTripStore";
+import { buildSummaryRows, isTripComplete } from "@/lib/fields";
 
 function SummaryRow({ label, value }: { label: string; value: string }) {
   return (
@@ -18,7 +24,12 @@ function SummaryRow({ label, value }: { label: string; value: string }) {
   );
 }
 
-export function TripSummaryCard() {
+export interface TripSummaryCardProps {
+  /** When provided and every field is present, renders a "Generate My Trip" button. */
+  onConfirm?: () => void;
+}
+
+export function TripSummaryCard({ onConfirm }: TripSummaryCardProps = {}) {
   const name = useTripStore((s) => s.name);
   const destination = useTripStore((s) => s.destination);
   const duration = useTripStore((s) => s.duration);
@@ -28,17 +39,9 @@ export function TripSummaryCard() {
   const groupType = useTripStore((s) => s.groupType);
   const travelTheme = useTripStore((s) => s.travelTheme);
 
-  const rows: { label: string; value: string }[] = [];
-  if (name) rows.push({ label: "Name", value: name });
-  if (destination) rows.push({ label: "Destination", value: destination });
-  if (duration > 0) rows.push({ label: "Duration", value: `${duration} Night${duration === 1 ? "" : "s"}` });
-  if (totalBudget > 0) rows.push({ label: "Total Budget", value: `₹${totalBudget.toLocaleString("en-IN")}` });
-  if (travelerCount > 0) rows.push({ label: "Travelers", value: String(travelerCount) });
-  if (groupType) rows.push({ label: "Group", value: groupType });
-  if (perPersonBudget > 0 && travelerCount > 0) {
-    rows.push({ label: "Per Person", value: `₹${perPersonBudget.toLocaleString("en-IN")}` });
-  }
-  if (travelTheme) rows.push({ label: "Theme", value: travelTheme });
+  const snapshot = { name, destination, duration, totalBudget, perPersonBudget, travelerCount, groupType, travelTheme };
+  const rows = buildSummaryRows(snapshot);
+  const complete = isTripComplete(snapshot);
 
   return (
     <div className="rounded-2xl border border-tripoly-border bg-white p-5 shadow-tripoly-card">
@@ -53,6 +56,16 @@ export function TripSummaryCard() {
             <SummaryRow key={r.label} label={r.label} value={r.value} />
           ))}
         </div>
+      )}
+
+      {complete && onConfirm && (
+        <button
+          type="button"
+          onClick={onConfirm}
+          className="mt-4 flex h-[46px] w-full items-center justify-center rounded-full bg-tripoly-green font-sans text-sm font-semibold text-white"
+        >
+          Generate My Trip →
+        </button>
       )}
     </div>
   );
