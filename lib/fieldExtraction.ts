@@ -30,7 +30,8 @@ export type FieldKey =
   | "budget"
   | "travelerCount"
   | "groupType"
-  | "theme";
+  | "theme"
+  | "confirm";
 
 export interface FieldExtractionResult {
   valid: boolean;
@@ -72,6 +73,12 @@ Reject (valid:false) if it doesn't clearly map to one of the four.`,
 equivalents (e.g. "chill trip" -> Relaxed, "want to try local food" -> Foodie,
 "kuch adventurous" -> Adventure).
 Reject (valid:false) if it doesn't clearly map to one of the five.`,
+  confirm: `The user is answering a yes/no confirmation question. Determine
+whether their reply is affirmative or negative, in any language or script
+(English, Hindi/Devanagari, or Hinglish — e.g. "haan"/"हाँ" -> yes,
+"nahi"/"नहीं" -> no). Return the value as exactly "yes" or "no".
+Reject (valid:false) only if the reply is genuinely ambiguous or doesn't
+answer yes/no at all.`,
 };
 
 function buildPrompt(field: FieldKey, rawInput: string, language: Language): string {

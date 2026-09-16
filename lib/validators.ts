@@ -65,6 +65,18 @@ export function validateName(input: string): ValidationResult<string> {
   if (!/^[a-zA-Z\s]+$/.test(stripped)) {
     return { valid: false, error: "Please enter a valid name (letters only)." };
   }
+  // Bug found in live testing: "This side Kaushik here" is ALL letters+spaces, so it
+  // passed the check above as-is (NAME_LEAD_INS only strips a fixed list of known
+  // phrasings, and "this side" wasn't one of them) — the full sentence got stored
+  // verbatim as the name, and because this function reported valid:true, the
+  // Claude-based fallback (lib/fieldExtraction.ts) never even ran. A real name is
+  // essentially never more than 3 words, so anything longer is far more likely to be
+  // an unstripped sentence than a name — treat it as unresolved here instead of a
+  // false "valid", so the caller (ChatScreen) falls through to Claude to extract the
+  // actual name out of it.
+  if (stripped.split(/\s+/).length > 3) {
+    return { valid: false, error: "Please enter just your name." };
+  }
   return { valid: true, value: stripped };
 }
 
@@ -84,6 +96,15 @@ export function validateDestination(input: string): ValidationResult<string> {
   // instead of this function storing it verbatim.
   if (!/^[\x20-\x7E]+$/.test(stripped)) {
     return { valid: false, error: "Please enter at least 3 characters." };
+  }
+  // Same reasoning as validateName's word-count check: a real destination is rarely
+  // more than 4 words, even multi-word ones ("Rio de Janeiro", "New York City") — an
+  // ASCII sentence longer than that (e.g. "I really wanna visit Bali next year") is
+  // far more likely to be unstripped phrasing DESTINATION_LEAD_INS didn't anticipate
+  // than an actual destination name, so treat it as unresolved and let the Claude
+  // fallback extract it instead of storing the sentence verbatim.
+  if (stripped.split(/\s+/).length > 4) {
+    return { valid: false, error: "Please enter just the destination." };
   }
   // Real-place verification (Claude API) lands in Step 7 — every destination that
   // passes the checks above is accepted for now.

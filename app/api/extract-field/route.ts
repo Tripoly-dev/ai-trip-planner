@@ -13,6 +13,7 @@ const VALID_FIELDS: FieldKey[] = [
   "travelerCount",
   "groupType",
   "theme",
+  "confirm",
 ];
 
 export async function POST(req: NextRequest) {

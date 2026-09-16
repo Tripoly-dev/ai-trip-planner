@@ -246,12 +246,24 @@ export function ChatScreen() {
     setInputValue("");
 
     if (pendingConfirm) {
-      if (/^(y|yes|yeah|yep|correct|right)\b/i.test(text)) {
-        const confirm = pendingConfirm;
+      // Bug found in live testing: this only ever recognized English yes/no, so a
+      // Hindi reply ("यस।") got "Please answer yes or no." forever, with no way
+      // through. Covers common English + Hindi/Hinglish words locally first (fast,
+      // no round trip); anything else falls back to the same Claude-based
+      // understanding as every other field instead of a hard-coded word list.
+      const YES_PATTERN = /^(y|yes|yeah|yep|correct|right|haan|han|haanji|ji|sahi|theek|theek hai|हाँ|हां|जी|ठीक|ठीक है|सही)\b/i;
+      const NO_PATTERN = /^(n|no|nope|wrong|nahi|nahin|na|galat|नहीं|नही|ना|गलत)\b/i;
+      const local: ValidationResult<"yes" | "no"> = YES_PATTERN.test(text)
+        ? { valid: true, value: "yes" }
+        : NO_PATTERN.test(text)
+          ? { valid: true, value: "no" }
+          : { valid: false, error: "Please answer yes or no." };
+      const r = await resolveField<"yes" | "no">("confirm", text, local);
+      const confirm = pendingConfirm;
+      if (r.valid && r.value === "yes") {
         setPendingConfirm(null);
         confirm.onConfirm();
-      } else if (/^(n|no|nope|wrong)\b/i.test(text)) {
-        const confirm = pendingConfirm;
+      } else if (r.valid && r.value === "no") {
         setPendingConfirm(null);
         respond("bot", confirm.reAskText);
       } else {
