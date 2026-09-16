@@ -27,10 +27,14 @@ import { FIELD_PRIORITY, type FieldKey } from "@/lib/fields";
 
 const ANTHROPIC_MESSAGES_URL = "https://api.anthropic.com/v1/messages";
 const MODEL = "claude-sonnet-5";
-// Higher than fieldExtraction.ts's old 400: a reply now may need to acknowledge
-// several just-extracted fields, answer a detour, AND ask the next question, in
-// either language.
-const MAX_TOKENS = 500;
+// Was 500, raised to 1500 — confirmed root cause via a live Vercel log: a long
+// compound Hindi reply (multi-field acknowledgment + a helpful trip-planning
+// answer + the next question, all in Devanagari, which runs more tokens per
+// word than English) was truncated mid-word by the 500 cap, so the JSON
+// returned was incomplete and JSON.parse threw "not valid JSON". 1500 gives
+// enough headroom for the longest realistic case (several extracted fields +
+// an answered detour + the next question) in either language.
+const MAX_TOKENS = 1500;
 const ANTHROPIC_VERSION = "2023-06-01";
 
 export interface ChatTurnResult {
