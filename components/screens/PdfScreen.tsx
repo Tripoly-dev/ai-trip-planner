@@ -80,9 +80,12 @@ export function PdfScreen() {
                 bleed through as mottled blobs instead of a clean placeholder. */}
             <div className="absolute inset-0 bg-white bg-gradient-to-br from-tripoly-green/40 to-black/40" />
             <div className="absolute inset-0 bg-gradient-to-b from-black/[0.05] from-40% to-black/[0.72]" />
-            <div className="absolute left-5 top-5 flex items-center gap-2">
-              <TripolyMark variant="white" size={20} />
-              <div className="font-sans text-base font-extrabold text-white">tripoly</div>
+            {/* TripolyMark's "white" variant is now the full icon+"tripoly" lockup image (the
+                real logo), not just the icon — the separate hand-styled "tripoly" text that used
+                to sit next to the plain icon is removed, since the wordmark is now baked into
+                the image itself and showing both would duplicate it. */}
+            <div className="absolute left-5 top-5 flex items-center">
+              <TripolyMark variant="white" size={22} />
             </div>
             <div className="absolute inset-x-5 bottom-5">
               <div className="font-serif text-[26px] font-bold text-white">

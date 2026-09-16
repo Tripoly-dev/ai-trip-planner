@@ -1,9 +1,29 @@
-// Shared Tripoly logo mark (T + plane), extracted from the mockup where it recurs
-// identically across Welcome, Chat header, and PDF header. Not one of Step 2's 7 named
-// components — added here in Step 3 to avoid triplicating this inline SVG.
+// Shared Tripoly brand mark — Welcome, Chat header, Bottom Nav, Processing header, PDF header.
 //
-// "white" = white T + green plane, for dark/photo backgrounds (Welcome, PDF header).
-// "dark"  = black T + green plane, for light backgrounds (Chat header).
+// Replaces the original hand-drawn placeholder SVG (a "T" shape + plane, invented before the
+// real logo existed) with the actual brand assets you provided, per your two confirmed choices:
+//  - The 3 small/tight spots (ChatScreen 22px, ProcessingScreen 26px, BottomNav 26px) show the
+//    icon alone (no wordmark) — these already pass variant="dark", so that value now renders
+//    /public/brand/tripoly-icon.png, cropped tightly from your file.
+//  - The 2 spots with more room, both on a dark/colored background (PdfScreen header,
+//    Welcome hero) show the full icon+"tripoly" lockup — these already pass variant="white",
+//    so that value now renders /public/brand/tripoly-lockup-white.png: your lockup with just
+//    the black wordmark pixels recolored to white (the green icon, #16CF76 — matching
+//    tripoly-green elsewhere in this app exactly — was left untouched). Generated with Pillow;
+//    verified visually against a dark background before use, since it's a derived asset, not
+//    the file you sent.
+//  - A black-wordmark full lockup (your original file, tightly trimmed) is also saved at
+//    /public/brand/tripoly-lockup-black.png for a future light-background lockup spot, though
+//    nothing currently uses it.
+//
+// Plain <img>, not next/image: matches this codebase's existing established choice for other
+// user-facing images (app/page.tsx's hero photo, DestinationCard's photo slot) — both already
+// opt out of next/image the same way, so this follows the same convention rather than mixing
+// approaches. Source PNGs are 300px tall, comfortably higher-resolution than every display size
+// here (20-30px), so a single asset per variant needs no additional @2x/@3x variants.
+
+const ICON_ASPECT = 361 / 300; // public/brand/tripoly-icon.png
+const LOCKUP_ASPECT = 1062 / 300; // public/brand/tripoly-lockup-white.png
 
 export interface TripolyMarkProps {
   variant?: "white" | "dark";
@@ -11,16 +31,15 @@ export interface TripolyMarkProps {
 }
 
 export function TripolyMark({ variant = "dark", size = 30 }: TripolyMarkProps) {
-  const tColor = variant === "white" ? "#fff" : "#000";
+  const src = variant === "white" ? "/brand/tripoly-lockup-white.png" : "/brand/tripoly-icon.png";
+  const aspect = variant === "white" ? LOCKUP_ASPECT : ICON_ASPECT;
+  const width = Math.round(size * aspect);
 
   return (
-    <svg width={size} height={size} viewBox="0 0 36 36" aria-hidden="true">
-      <rect x="4" y="4" width="10" height="28" rx="3" fill={tColor} />
-      <rect x="4" y="4" width="28" height="9" rx="3" fill={tColor} />
-      <path
-        d="M25 20 L33 15 L33 18 L27 22 L27 27 L30 29 L30 31 L25 30 L20 31 L20 29 L23 27 L23 22 L17 18 L17 15 Z"
-        fill="#16CF76"
-      />
-    </svg>
+    // Decorative — matches the original SVG's aria-hidden treatment. Every usage sits next to
+    // page content (a header, a nav bar) that already identifies the app; empty alt is the
+    // standard way to mark a purely decorative image for assistive tech.
+    // eslint-disable-next-line @next/next/no-img-element
+    <img src={src} alt="" width={width} height={size} style={{ height: size, width }} />
   );
 }
