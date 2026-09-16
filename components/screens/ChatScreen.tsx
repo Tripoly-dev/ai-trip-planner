@@ -27,7 +27,9 @@ import { ProgressBar } from "@/components/ui/ProgressBar";
 import { ThemeChip } from "@/components/ui/ThemeChip";
 import { TripolyMark } from "@/components/ui/TripolyMark";
 import { TripSummaryCard } from "@/components/ui/TripSummaryCard";
+import { VoiceWaveform } from "@/components/ui/VoiceWaveform";
 import { TRAVEL_THEMES } from "@/lib/constants";
+import type { FieldKey } from "@/lib/fieldExtraction";
 import {
   formatINR,
   isLikelyOffTopic,
@@ -38,8 +40,9 @@ import {
   validateDuration,
   validateName,
   validateTravelerCount,
+  type ValidationResult,
 } from "@/lib/validators";
-import { useTripStore, type Message, type TravelTheme } from "@/store/useTripStore";
+import { useTripStore, type GroupType, type Message, type TravelTheme } from "@/store/useTripStore";
 
 type TravelerSubStep = "count" | "group";
 type InputSource = "typed" | "voice";
@@ -115,10 +118,12 @@ export function ChatScreen() {
   const travelTheme = useTripStore((s) => s.travelTheme);
   const isListening = useTripStore((s) => s.isListening);
   const isProcessing = useTripStore((s) => s.isProcessing);
+  const isExtracting = useTripStore((s) => s.isExtracting);
 
   const [inputValue, setInputValue] = useState("");
   const [travelerSubStep, setTravelerSubStep] = useState<TravelerSubStep>("count");
   const [pendingConfirm, setPendingConfirm] = useState<PendingConfirm | null>(null);
+  const [activeStream, setActiveStream] = useState<MediaStream | null>(null);
   const micSupported = useSyncExternalStore(subscribeNoop, micSupportSnapshot, micSupportServerSnapshot);
 
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -165,6 +170,38 @@ export function ChatScreen() {
     }
   }
 
+  // Falls back to Claude-based extraction (lib/fieldExtraction.ts) only when the local
+  // regex parse in lib/validators.ts couldn't confidently handle the answer — clean/
+  // simple input (quick-chip taps, bare numbers, exact formats, common English phrasing)
+  // never pays the extra round trip; anything else (Hindi, mixed language, unanticipated
+  // phrasing like "this side Kaushik") gets real understanding instead of a hard fail.
+  async function resolveField<T>(
+    field: FieldKey,
+    text: string,
+    localResult: ValidationResult<T>,
+  ): Promise<ValidationResult<T>> {
+    if (localResult.valid) return localResult;
+    setField("isExtracting", true);
+    try {
+      const res = await fetch("/api/extract-field", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ field, rawInput: text, language }),
+      });
+      const data = await res.json();
+      if (res.ok && data.valid) {
+        return { valid: true, value: data.value as T };
+      }
+      return { valid: false, error: (typeof data.error === "string" && data.error) || localResult.error };
+    } catch {
+      // Network/API failure — fall back to the original local error rather than
+      // blocking silently.
+      return localResult;
+    } finally {
+      setField("isExtracting", false);
+    }
+  }
+
   // Seed the conversation once.
   useEffect(() => {
     if (seeded.current || messages.length > 0) return;
@@ -200,7 +237,7 @@ export function ChatScreen() {
     commitTheme(theme);
   }
 
-  function handleSubmit(raw: string, source: InputSource = "typed") {
+  async function handleSubmit(raw: string, source: InputSource = "typed") {
     const text = raw.trim();
     if (!text || travelTheme) return;
 
@@ -232,26 +269,36 @@ export function ChatScreen() {
 
     switch (currentStep) {
       case 1: {
-        const r = validateName(text);
-        if (!r.valid) return respond("error", r.error!);
+        const local = validateName(text);
+        const extracted = await resolveField("name", text, local);
+        if (!extracted.valid) return respond("error", extracted.error!);
+        const name = String(extracted.value).trim();
+        if (name.length < 2) {
+          return respond("error", "Please enter a valid name.");
+        }
         const commit = () => {
-          setField("name", r.value!);
-          respond("bot", `Great ${r.value}! Where would you like to travel?`);
+          setField("name", name);
+          respond("bot", `Great ${name}! Where would you like to travel?`);
           setStep(2);
         };
         if (source === "voice") {
           setPendingConfirm({ reAskText: "No worries — what's your name?", onConfirm: commit });
-          respond("bot", `I heard "${r.value}". Is that correct?`);
+          respond("bot", `I heard "${name}". Is that correct?`);
         } else {
           commit();
         }
         return;
       }
       case 2: {
-        const r = validateDestination(text);
-        if (!r.valid) return respond("error", r.error!);
+        const local = validateDestination(text);
+        const extracted = await resolveField("destination", text, local);
+        if (!extracted.valid) return respond("error", extracted.error!);
+        const destinationValue = String(extracted.value).trim();
+        if (destinationValue.length < 3) {
+          return respond("error", "Please enter at least 3 characters.");
+        }
         const commit = () => {
-          setField("destination", r.value!);
+          setField("destination", destinationValue);
           respond("bot", "How many days are you planning? (max 10 days)");
           setStep(3);
         };
@@ -260,14 +307,20 @@ export function ChatScreen() {
             reAskText: "No worries — where would you like to travel?",
             onConfirm: commit,
           });
-          respond("bot", `I heard "${r.value}". Is that correct?`);
+          respond("bot", `I heard "${destinationValue}". Is that correct?`);
         } else {
           commit();
         }
         return;
       }
       case 3: {
-        const r = validateDuration(text);
+        const local = validateDuration(text);
+        const extracted = await resolveField("duration", text, local);
+        if (!extracted.valid) return respond("error", extracted.error!);
+        // Re-run the extracted value through the same bounds check regardless of
+        // source (a no-op when it already came from the local path; a real safety
+        // net against an out-of-range value from the Claude fallback).
+        const r = validateDuration(String(extracted.value));
         if (!r.valid) return respond("error", r.error!);
         const commit = () => {
           setField("duration", r.value!);
@@ -286,7 +339,10 @@ export function ChatScreen() {
         return;
       }
       case 4: {
-        const r = parseBudget(text);
+        const local = parseBudget(text);
+        const extracted = await resolveField("budget", text, local);
+        if (!extracted.valid) return respond("error", extracted.error!);
+        const r = parseBudget(String(extracted.value));
         if (!r.valid) return respond("error", r.error!);
         const commit = () => {
           setField("totalBudget", r.value!);
@@ -304,7 +360,10 @@ export function ChatScreen() {
       }
       case 5: {
         if (travelerSubStep === "count") {
-          const r = validateTravelerCount(text);
+          const local = validateTravelerCount(text);
+          const extracted = await resolveField("travelerCount", text, local);
+          if (!extracted.valid) return respond("error", extracted.error!);
+          const r = validateTravelerCount(String(extracted.value));
           if (!r.valid) return respond("error", r.error!);
           const commit = () => {
             setField("travelerCount", r.value!);
@@ -323,8 +382,14 @@ export function ChatScreen() {
           }
           return;
         }
-        const r = matchGroupType(text);
-        if (!r.valid) return respond("error", r.error!);
+        const local = matchGroupType(text);
+        const extracted = await resolveField<GroupType>("groupType", text, local);
+        if (!extracted.valid) return respond("error", extracted.error!);
+        // Claude is instructed to return exactly one of the four canonical labels —
+        // re-run it through the existing exact-match check as a safety net rather
+        // than trusting the API response verbatim.
+        const r = matchGroupType(String(extracted.value));
+        if (!r.valid) return respond("error", "Please choose one: Family, Couple, Friends, or Solo.");
         const commit = () => {
           setField("groupType", r.value!);
           respond("bot", "Almost there! What kind of trip are you looking for?");
@@ -342,7 +407,15 @@ export function ChatScreen() {
         return;
       }
       case 6: {
-        const match = TRAVEL_THEMES.find((t) => t.theme.toLowerCase() === text.toLowerCase());
+        const localMatch = TRAVEL_THEMES.find((t) => t.theme.toLowerCase() === text.toLowerCase());
+        const local: ValidationResult<TravelTheme> = localMatch
+          ? { valid: true, value: localMatch.theme }
+          : { valid: false, error: "Please pick one of the options below." };
+        const extracted = await resolveField<TravelTheme>("theme", text, local);
+        if (!extracted.valid) return respond("error", extracted.error!);
+        // Same re-verification pattern as Group Type — confirm Claude's answer maps
+        // to one of the five real theme values rather than trusting it verbatim.
+        const match = TRAVEL_THEMES.find((t) => t.theme.toLowerCase() === String(extracted.value).toLowerCase());
         if (!match) return respond("error", "Please pick one of the options below.");
         if (source === "voice") {
           setPendingConfirm({
@@ -371,6 +444,7 @@ export function ChatScreen() {
       mr.start();
       mediaRecorderRef.current = mr;
       setField("isListening", true);
+      setActiveStream(stream); // drives the live waveform (VoiceWaveform) on the mic button
     } catch {
       lastInputSource.current = "voice";
       respond("error", "Couldn't access your microphone. Please check permissions or type your answer.");
@@ -383,6 +457,7 @@ export function ChatScreen() {
 
     setField("isListening", false);
     setField("isProcessing", true);
+    setActiveStream(null);
 
     mr.onstop = async () => {
       streamRef.current?.getTracks().forEach((t) => t.stop());
@@ -436,6 +511,7 @@ export function ChatScreen() {
   const hint = (() => {
     if (isListening) return "🎙️ Listening... release to send";
     if (isProcessing) return "Transcribing...";
+    if (isExtracting) return "Thinking...";
     if (pendingConfirm) return "Reply yes or no";
     switch (currentStep) {
       case 1: return "Letters only, min 2 characters";
@@ -520,40 +596,56 @@ export function ChatScreen() {
             onKeyDown={(e) => {
               if (e.key === "Enter") handleSubmit(inputValue);
             }}
-            disabled={!!travelTheme || isListening || isProcessing}
+            disabled={!!travelTheme || isListening || isProcessing || isExtracting}
             placeholder="Type or speak your answer..."
             className="h-[46px] flex-1 rounded-full bg-tripoly-bubble-offtopic px-[18px] font-sans text-sm text-tripoly-text placeholder:text-[#999] disabled:opacity-50"
           />
-          <button
-            type="button"
-            disabled={!micSupported || !!travelTheme || isProcessing}
-            title={micTitle}
-            onMouseDown={startRecording}
-            onMouseUp={stopRecording}
-            onMouseLeave={() => isListening && stopRecording()}
-            onTouchStart={(e) => {
-              e.preventDefault();
-              startRecording();
-            }}
-            onTouchEnd={(e) => {
-              e.preventDefault();
-              stopRecording();
-            }}
-            className={`flex h-[46px] w-[46px] flex-shrink-0 items-center justify-center rounded-full transition-colors ${
-              !micSupported || travelTheme
-                ? "cursor-not-allowed bg-tripoly-green opacity-40"
-                : isListening
-                  ? "cursor-pointer bg-tripoly-error animate-pulse"
-                  : isProcessing
-                    ? "cursor-wait bg-tripoly-green opacity-60"
-                    : "cursor-pointer bg-tripoly-green"
-            }`}
-          >
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-              <path d="M12 15a3 3 0 003-3V6a3 3 0 10-6 0v6a3 3 0 003 3z" fill="#fff" />
-              <path d="M19 11a7 7 0 01-14 0M12 18v3" stroke="#fff" strokeWidth="2" strokeLinecap="round" />
-            </svg>
-          </button>
+          <div className="group relative flex-shrink-0">
+            {/* Custom hover label — a native `title` tooltip is slow to appear, easy to
+                miss, and doesn't work at all on touch. This shows instantly on hover
+                and is always readable (also kept as `title` below for accessibility/
+                touch long-press). */}
+            <div
+              className="pointer-events-none absolute bottom-full left-1/2 mb-2 -translate-x-1/2 whitespace-nowrap rounded-lg bg-black/80 px-2.5 py-1 font-sans text-[11px] text-white opacity-0 transition-opacity duration-150 group-hover:opacity-100"
+              role="tooltip"
+            >
+              {micTitle}
+            </div>
+            <button
+              type="button"
+              disabled={!micSupported || !!travelTheme || isProcessing || isExtracting}
+              title={micTitle}
+              onMouseDown={startRecording}
+              onMouseUp={stopRecording}
+              onMouseLeave={() => isListening && stopRecording()}
+              onTouchStart={(e) => {
+                e.preventDefault();
+                startRecording();
+              }}
+              onTouchEnd={(e) => {
+                e.preventDefault();
+                stopRecording();
+              }}
+              className={`flex h-[46px] w-[46px] flex-shrink-0 items-center justify-center rounded-full transition-all ${
+                !micSupported || travelTheme
+                  ? "cursor-not-allowed bg-tripoly-green opacity-40"
+                  : isListening
+                    ? "scale-110 cursor-pointer bg-tripoly-error shadow-[0_0_0_6px_rgba(239,68,68,0.15)]"
+                    : isProcessing
+                      ? "cursor-wait bg-tripoly-green opacity-60"
+                      : "cursor-pointer bg-tripoly-green"
+              }`}
+            >
+              {isListening ? (
+                <VoiceWaveform stream={activeStream} active={isListening} />
+              ) : (
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <path d="M12 15a3 3 0 003-3V6a3 3 0 10-6 0v6a3 3 0 003 3z" fill="#fff" />
+                  <path d="M19 11a7 7 0 01-14 0M12 18v3" stroke="#fff" strokeWidth="2" strokeLinecap="round" />
+                </svg>
+              )}
+            </button>
+          </div>
         </div>
       </div>
       </div>

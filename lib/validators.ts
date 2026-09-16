@@ -76,8 +76,17 @@ export function validateDestination(input: string): ValidationResult<string> {
   if (stripped.length < 3) {
     return { valid: false, error: "Please enter at least 3 characters." };
   }
+  // Anything outside plain ASCII (Hindi/Devanagari script, or English mixed with it,
+  // e.g. "Thailand जाना है") can't be confidently normalized by a static rule the way
+  // DESTINATION_LEAD_INS strips a known English prefix — treat it as unresolved here
+  // so the caller (ChatScreen) falls through to the Claude-based extraction in
+  // lib/fieldExtraction.ts, which normalizes it to a standard English place name
+  // instead of this function storing it verbatim.
+  if (!/^[\x20-\x7E]+$/.test(stripped)) {
+    return { valid: false, error: "Please enter at least 3 characters." };
+  }
   // Real-place verification (Claude API) lands in Step 7 — every destination that
-  // passes the length check is accepted for now.
+  // passes the checks above is accepted for now.
   return { valid: true, value: stripped };
 }
 

@@ -135,7 +135,7 @@ JSON structure (not a diff, not just the changed fields).
 }
 
 /** Strips ``` / ```json fences Claude sometimes wraps JSON in (handoff section 16 known issue). */
-function stripMarkdownFences(text: string): string {
+export function stripMarkdownFences(text: string): string {
   const trimmed = text.trim();
   const fenced = trimmed.match(/^```(?:json)?\s*([\s\S]*?)\s*```$/i);
   return fenced ? fenced[1].trim() : trimmed;

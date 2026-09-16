@@ -73,6 +73,7 @@ export interface TripStore {
   messages: Message[];
   isListening: boolean;
   isProcessing: boolean;
+  isExtracting: boolean; // true while a chat answer is being resolved via the /api/extract-field fallback
 
   // Generated itinerary
   itinerary: Itinerary | null;
@@ -101,6 +102,7 @@ const initialState = {
   messages: [],
   isListening: false,
   isProcessing: false,
+  isExtracting: false,
 
   itinerary: null,
   itineraryView: "05A" as ItineraryView,
