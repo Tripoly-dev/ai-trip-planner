@@ -1,9 +1,11 @@
 "use client";
 
-// Live, voice-reactive waveform shown on the mic button while recording (ChatScreen,
-// ItineraryScreen amendment mic). Replaces a static CSS pulse animation — built after
-// live testing feedback that the old feedback (a generic pulsing circle, same
-// regardless of whether you were speaking or silent) didn't read as "listening."
+// Live, voice-reactive waveform shown in ChatScreen's input area while recording.
+// Originally rendered inside the mic button itself (small, white bars on the green
+// button); moved into the input pill as part of the Option A mic redesign so the
+// input area itself shows "I'm listening" instead of a tiny icon-sized hint — more
+// bars, taller, and colored to read clearly against the input pill's light
+// background instead of the green button it used to sit on.
 //
 // Reads real amplitude via the Web Audio API (AnalyserNode on the same MediaStream
 // getUserMedia already opened) rather than faking motion, and drives bar heights
@@ -13,7 +15,7 @@
 
 import { useEffect, useRef } from "react";
 
-const BAR_COUNT = 5;
+const BAR_COUNT = 20;
 
 export function VoiceWaveform({ stream, active }: { stream: MediaStream | null; active: boolean }) {
   const barRefs = useRef<(HTMLDivElement | null)[]>([]);
@@ -29,7 +31,10 @@ export function VoiceWaveform({ stream, active }: { stream: MediaStream | null; 
     const audioContext = new AudioContextCtor();
     const source = audioContext.createMediaStreamSource(stream);
     const analyser = audioContext.createAnalyser();
-    analyser.fftSize = 64;
+    // Bumped from 64 (16 usable bins) to 128 (32 usable bins) now that there are 20
+    // bars instead of 5 — keeps a few real frequency bins averaged per bar instead
+    // of most bars reading the same one or two bins.
+    analyser.fftSize = 128;
     analyser.smoothingTimeConstant = 0.6;
     source.connect(analyser);
 
@@ -61,15 +66,15 @@ export function VoiceWaveform({ stream, active }: { stream: MediaStream | null; 
   if (!active) return null;
 
   return (
-    <div className="flex h-[18px] items-center gap-[3px]" aria-hidden="true">
+    <div className="flex h-[24px] w-full items-center justify-between gap-[2px]" aria-hidden="true">
       {Array.from({ length: BAR_COUNT }).map((_, i) => (
         <div
           key={i}
           ref={(el) => {
             barRefs.current[i] = el;
           }}
-          className="h-full w-[3px] flex-shrink-0 origin-center rounded-full bg-white"
-          style={{ transform: "scaleY(0.3)" }}
+          className="h-full max-w-[3px] flex-1 origin-center rounded-full bg-tripoly-error"
+          style={{ transform: "scaleY(0.25)" }}
         />
       ))}
     </div>

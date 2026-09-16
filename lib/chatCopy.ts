@@ -1,0 +1,237 @@
+// Bilingual (EN/HI) static copy for the chat flow — every routine bot line and every
+// local-validator error message the user can see, in both languages. This is what
+// lets ChatScreen and lib/validators.ts stop hardcoding English and instead pick the
+// right string for whatever language is active *at that moment* (read live per
+// message — see ChatScreen's `language` usage).
+//
+// Source of truth for every EN string below: the literal text that was hardcoded in
+// components/screens/ChatScreen.tsx and lib/validators.ts before this file existed —
+// nothing here is invented copy, only translated/keyed.
+//
+// Deliberately NOT included: the "I heard '<value>'. Is that correct?" confirm-back
+// lines and "Please answer yes or no." — that whole pendingConfirm mechanism is being
+// removed (per your last go-ahead), so those strings have no home to move to.
+// Also NOT included: OFF_TOPIC_MESSAGE (lib/validators.ts) — that stays English-only,
+// unchanged, since it's still used by ItineraryScreen's separate amendment-box check,
+// which is out of scope for this redesign.
+
+import type { Language } from "@/store/useTripStore";
+
+export type Bilingual = { EN: string; HI: string };
+
+/** Picks the string for the given language. Trivial, but keeps call sites uniform. */
+export function t(copy: Bilingual, language: Language): string {
+  return copy[language];
+}
+
+export const chatCopy = {
+  greeting: {
+    EN: "Hi! I'm Tripoly AI ✈️ What's your name?",
+    HI: "नमस्ते! मैं Tripoly AI हूँ ✈️ आपका नाम क्या है?",
+  } satisfies Bilingual,
+
+  afterName: (name: string): Bilingual => ({
+    EN: `Great ${name}! Where would you like to travel?`,
+    HI: `बहुत बढ़िया ${name}! आप कहाँ घूमने जाना चाहेंगे?`,
+  }),
+
+  afterDestination: {
+    EN: "How many days are you planning? (max 10 days)",
+    HI: "आप कितने दिनों की योजना बना रहे हैं? (अधिकतम 10 दिन)",
+  } satisfies Bilingual,
+
+  afterDuration: {
+    EN: "What is your total trip budget?",
+    HI: "आपका कुल ट्रिप बजट कितना है?",
+  } satisfies Bilingual,
+
+  afterBudget: {
+    EN: "Great! How many travelers?",
+    HI: "बढ़िया! कितने यात्री जाएंगे?",
+  } satisfies Bilingual,
+
+  afterTravelerCount: {
+    EN: "And what's your group type?",
+    HI: "और आपका ग्रुप टाइप क्या है?",
+  } satisfies Bilingual,
+
+  afterGroupType: {
+    EN: "Almost there! What kind of trip are you looking for?",
+    HI: "बस थोड़ा और! आप किस तरह की ट्रिप चाहते हैं?",
+  } satisfies Bilingual,
+
+  generatingItinerary: (destination: string): Bilingual => ({
+    EN: `Perfect! Generating your ${destination || "trip"} itinerary now... ✨`,
+    HI: `बढ़िया! आपकी ${destination || "ट्रिप"} की योजना तैयार हो रही है... ✨`,
+  }),
+
+  placeholder: {
+    EN: "Type or speak your answer...",
+    HI: "टाइप करें या बोलकर जवाब दें...",
+  } satisfies Bilingual,
+
+  quickChipCustom: {
+    EN: "Custom",
+    HI: "अपनी राशि",
+  } satisfies Bilingual,
+
+  errors: {
+    // validateName
+    nameInvalid: {
+      EN: "Please enter a valid name (letters only).",
+      HI: "कृपया एक सही नाम दर्ज करें (केवल अक्षर)।",
+    } satisfies Bilingual,
+    nameTooLong: {
+      EN: "Please enter just your name.",
+      HI: "कृपया सिर्फ़ अपना नाम बताएं।",
+    } satisfies Bilingual,
+    // ChatScreen's own post-extraction re-check (name.length < 2)
+    nameTooShortAfterExtraction: {
+      EN: "Please enter a valid name.",
+      HI: "कृपया एक सही नाम दर्ज करें।",
+    } satisfies Bilingual,
+
+    // validateDestination (also reused by ChatScreen's post-extraction re-check —
+    // both used the exact same English string already)
+    destinationTooShort: {
+      EN: "Please enter at least 3 characters.",
+      HI: "कृपया कम से कम 3 अक्षर दर्ज करें।",
+    } satisfies Bilingual,
+    destinationTooLong: {
+      EN: "Please enter just the destination.",
+      HI: "कृपया सिर्फ़ जगह का नाम बताएं।",
+    } satisfies Bilingual,
+
+    // validateDuration
+    durationMissing: {
+      EN: "Please tell me the number of days (max 10).",
+      HI: "कृपया दिनों की संख्या बताएं (अधिकतम 10)।",
+    } satisfies Bilingual,
+    durationRange: {
+      EN: "Please enter between 1 and 10 days.",
+      HI: "कृपया 1 से 10 दिनों के बीच बताएं।",
+    } satisfies Bilingual,
+
+    // validateTravelerCount
+    travelersMissing: {
+      EN: "Please tell me how many travelers.",
+      HI: "कृपया बताएं कितने यात्री होंगे।",
+    } satisfies Bilingual,
+    travelersRange: {
+      EN: "Please enter between 1 and 50 travelers.",
+      HI: "कृपया 1 से 50 यात्रियों के बीच बताएं।",
+    } satisfies Bilingual,
+
+    // matchGroupType (also ChatScreen's post-extraction re-check — same string)
+    groupTypeChoice: {
+      EN: "Please choose one: Family, Couple, Friends, or Solo.",
+      HI: "कृपया इनमें से एक चुनें: Family, Couple, Friends, या Solo।",
+    } satisfies Bilingual,
+
+    // parseBudget / finalizeBudget
+    budgetInvalid: {
+      EN: "Please enter a valid budget (e.g. ₹2 lakhs, 2L, or ₹2,00,000).",
+      HI: "कृपया एक सही बजट बताएं (जैसे ₹2 लाख, 2L, या ₹2,00,000)।",
+    } satisfies Bilingual,
+    budgetMin: (formattedAmount: string): Bilingual => ({
+      EN: `Minimum budget is ${formattedAmount}.`,
+      HI: `न्यूनतम बजट ${formattedAmount} है।`,
+    }),
+
+    // theme (ChatScreen local match + post-extraction re-check — same string both places)
+    themeChoice: {
+      EN: "Please pick one of the options below.",
+      HI: "कृपया नीचे दिए गए विकल्पों में से एक चुनें।",
+    } satisfies Bilingual,
+  },
+
+  mic: {
+    permissionDenied: {
+      EN: "Couldn't access your microphone. Please check permissions or type your answer.",
+      HI: "माइक्रोफ़ोन एक्सेस नहीं हो पाया। कृपया अनुमति जांचें या टाइप करके जवाब दें।",
+    } satisfies Bilingual,
+    silence: {
+      EN: "I didn't catch that — please try again.",
+      HI: "मैं समझ नहीं पाया — कृपया दोबारा कोशिश करें।",
+    } satisfies Bilingual,
+    unclear: {
+      EN: "Sorry, I couldn't hear that clearly. Please try again or type your answer.",
+      HI: "माफ़ कीजिए, साफ़ सुनाई नहीं दिया। कृपया दोबारा कोशिश करें या टाइप करें।",
+    } satisfies Bilingual,
+    failed: {
+      EN: "Voice transcription failed. Please try again or type your answer.",
+      HI: "वॉइस ट्रांसक्रिप्शन विफल रहा। कृपया दोबारा कोशिश करें या टाइप करें।",
+    } satisfies Bilingual,
+    unsupported: {
+      EN: "Voice input isn't supported in this browser — please type your answer",
+      HI: "इस ब्राउज़र में वॉइस इनपुट उपलब्ध नहीं है — कृपया टाइप करें",
+    } satisfies Bilingual,
+    tapToSpeak: {
+      EN: "Tap to speak",
+      HI: "बोलने के लिए टैप करें",
+    } satisfies Bilingual,
+    tapToStop: {
+      EN: "Tap to stop",
+      HI: "रोकने के लिए टैप करें",
+    } satisfies Bilingual,
+    cancel: {
+      EN: "Cancel",
+      HI: "रद्द करें",
+    } satisfies Bilingual,
+    send: {
+      EN: "Send",
+      HI: "भेजें",
+    } satisfies Bilingual,
+    clear: {
+      EN: "Clear",
+      HI: "मिटाएं",
+    } satisfies Bilingual,
+  },
+
+  hints: {
+    listening: {
+      EN: "🎙️ Listening... tap to stop",
+      HI: "🎙️ सुन रहा हूँ... रोकने के लिए टैप करें",
+    } satisfies Bilingual,
+    transcribing: {
+      EN: "Transcribing...",
+      HI: "ट्रांसक्राइब हो रहा है...",
+    } satisfies Bilingual,
+    thinking: {
+      EN: "Thinking...",
+      HI: "सोच रहा हूँ...",
+    } satisfies Bilingual,
+    reviewVoice: {
+      EN: "Edit if needed, then send",
+      HI: "ज़रूरत हो तो बदलें, फिर भेजें",
+    } satisfies Bilingual,
+    name: {
+      EN: "Letters only, min 2 characters",
+      HI: "केवल अक्षर, कम से कम 2 अक्षर",
+    } satisfies Bilingual,
+    destination: {
+      EN: "Any destination, min 3 characters",
+      HI: "कोई भी जगह, कम से कम 3 अक्षर",
+    } satisfies Bilingual,
+    duration: {
+      EN: "Numbers only, max 10 days",
+      HI: "केवल संख्या, अधिकतम 10 दिन",
+    } satisfies Bilingual,
+    budget: {
+      EN: "e.g. 2 lakhs, 2L, or ₹2,00,000",
+      HI: "जैसे 2 लाख, 2L, या ₹2,00,000",
+    } satisfies Bilingual,
+    travelerCount: {
+      EN: "Numbers only, 1–50 travelers",
+      HI: "केवल संख्या, 1–50 यात्री",
+    } satisfies Bilingual,
+    groupType: {
+      EN: "Family, Couple, Friends, or Solo",
+      HI: "Family, Couple, Friends, या Solo",
+    } satisfies Bilingual,
+    theme: {
+      EN: "Tap a vibe below, or type it",
+      HI: "नीचे से एक वाइब चुनें, या टाइप करें",
+    } satisfies Bilingual,
+  },
+};

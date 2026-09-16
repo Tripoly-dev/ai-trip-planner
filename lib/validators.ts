@@ -25,8 +25,16 @@
 // already reject non-matching input via their own format/whitelist checks with a more
 // specific, more useful message ("numbers only", "pick one of the options") than a generic
 // off-topic bounce would give.
+//
+// Bilingual errors: every error message below is now picked from lib/chatCopy.ts via the
+// `language` param each function takes, instead of a hardcoded English string — part of
+// the Option A redesign (bot text respects the language toggle, read live per call).
+// isLikelyOffTopic / OFF_TOPIC_MESSAGE / OFF_TOPIC_PATTERNS are UNCHANGED and stay
+// English-only: ItineraryScreen.tsx still depends on them for its amendment-box check,
+// which is out of scope for this redesign.
 
-import type { GroupType } from "@/store/useTripStore";
+import type { GroupType, Language } from "@/store/useTripStore";
+import { chatCopy, t } from "@/lib/chatCopy";
 
 export interface ValidationResult<T> {
   valid: boolean;
@@ -56,14 +64,14 @@ function extractInteger(input: string): number | null {
 
 const NAME_LEAD_INS = /^(my name is|i am|i'm|this is|call me|it'?s)\s+/i;
 
-export function validateName(input: string): ValidationResult<string> {
+export function validateName(input: string, language: Language): ValidationResult<string> {
   const stripped = input.trim().replace(NAME_LEAD_INS, "").replace(/[.!]+$/, "").trim();
   if (stripped.length < 2) {
-    return { valid: false, error: "Please enter a valid name (letters only)." };
+    return { valid: false, error: t(chatCopy.errors.nameInvalid, language) };
   }
   // Letters + spaces only — rejects digits and travel-jargon shorthand like "7N/8D".
   if (!/^[a-zA-Z\s]+$/.test(stripped)) {
-    return { valid: false, error: "Please enter a valid name (letters only)." };
+    return { valid: false, error: t(chatCopy.errors.nameInvalid, language) };
   }
   // Bug found in live testing: "This side Kaushik here" is ALL letters+spaces, so it
   // passed the check above as-is (NAME_LEAD_INS only strips a fixed list of known
@@ -75,7 +83,7 @@ export function validateName(input: string): ValidationResult<string> {
   // false "valid", so the caller (ChatScreen) falls through to Claude to extract the
   // actual name out of it.
   if (stripped.split(/\s+/).length > 3) {
-    return { valid: false, error: "Please enter just your name." };
+    return { valid: false, error: t(chatCopy.errors.nameTooLong, language) };
   }
   return { valid: true, value: stripped };
 }
@@ -83,10 +91,10 @@ export function validateName(input: string): ValidationResult<string> {
 const DESTINATION_LEAD_INS =
   /^(i want to (go|travel) to|i'?d like to (go|travel) to|let'?s go to|i('m| am) planning (a trip )?to|planning (a trip )?to|destination is|going to|we want to go to)\s+/i;
 
-export function validateDestination(input: string): ValidationResult<string> {
+export function validateDestination(input: string, language: Language): ValidationResult<string> {
   const stripped = input.trim().replace(DESTINATION_LEAD_INS, "").trim();
   if (stripped.length < 3) {
-    return { valid: false, error: "Please enter at least 3 characters." };
+    return { valid: false, error: t(chatCopy.errors.destinationTooShort, language) };
   }
   // Anything outside plain ASCII (Hindi/Devanagari script, or English mixed with it,
   // e.g. "Thailand जाना है") can't be confidently normalized by a static rule the way
@@ -95,7 +103,7 @@ export function validateDestination(input: string): ValidationResult<string> {
   // lib/fieldExtraction.ts, which normalizes it to a standard English place name
   // instead of this function storing it verbatim.
   if (!/^[\x20-\x7E]+$/.test(stripped)) {
-    return { valid: false, error: "Please enter at least 3 characters." };
+    return { valid: false, error: t(chatCopy.errors.destinationTooShort, language) };
   }
   // Same reasoning as validateName's word-count check: a real destination is rarely
   // more than 4 words, even multi-word ones ("Rio de Janeiro", "New York City") — an
@@ -104,42 +112,42 @@ export function validateDestination(input: string): ValidationResult<string> {
   // than an actual destination name, so treat it as unresolved and let the Claude
   // fallback extract it instead of storing the sentence verbatim.
   if (stripped.split(/\s+/).length > 4) {
-    return { valid: false, error: "Please enter just the destination." };
+    return { valid: false, error: t(chatCopy.errors.destinationTooLong, language) };
   }
   // Real-place verification (Claude API) lands in Step 7 — every destination that
   // passes the checks above is accepted for now.
   return { valid: true, value: stripped };
 }
 
-export function validateDuration(input: string): ValidationResult<number> {
+export function validateDuration(input: string, language: Language): ValidationResult<number> {
   const n = extractInteger(input);
   if (n === null) {
-    return { valid: false, error: "Please tell me the number of days (max 10)." };
+    return { valid: false, error: t(chatCopy.errors.durationMissing, language) };
   }
   if (n < 1 || n > 10) {
-    return { valid: false, error: "Please enter between 1 and 10 days." };
+    return { valid: false, error: t(chatCopy.errors.durationRange, language) };
   }
   return { valid: true, value: n };
 }
 
-export function validateTravelerCount(input: string): ValidationResult<number> {
+export function validateTravelerCount(input: string, language: Language): ValidationResult<number> {
   const n = extractInteger(input);
   if (n === null) {
-    return { valid: false, error: "Please tell me how many travelers." };
+    return { valid: false, error: t(chatCopy.errors.travelersMissing, language) };
   }
   if (n < 1 || n > 50) {
-    return { valid: false, error: "Please enter between 1 and 50 travelers." };
+    return { valid: false, error: t(chatCopy.errors.travelersRange, language) };
   }
   return { valid: true, value: n };
 }
 
 const GROUP_TYPES: GroupType[] = ["Family", "Couple", "Friends", "Solo"];
 
-export function matchGroupType(input: string): ValidationResult<GroupType> {
+export function matchGroupType(input: string, language: Language): ValidationResult<GroupType> {
   const trimmed = input.trim().toLowerCase();
   const match = GROUP_TYPES.find((g) => g.toLowerCase() === trimmed || trimmed.includes(g.toLowerCase()));
   if (!match) {
-    return { valid: false, error: "Please choose one: Family, Couple, Friends, or Solo." };
+    return { valid: false, error: t(chatCopy.errors.groupTypeChoice, language) };
   }
   return { valid: true, value: match };
 }
@@ -148,7 +156,7 @@ const LAKH = 100_000;
 const MIN_BUDGET = 1_000;
 
 /** Parses budget formats from section 8: "2 lakhs", "2L", "2,00,000", "200000", "two lakhs". */
-export function parseBudget(input: string): ValidationResult<number> {
+export function parseBudget(input: string, language: Language): ValidationResult<number> {
   // Spaces kept here (only ₹ and thousands-separator commas stripped) so word
   // boundaries stay meaningful for the sentence-embedded fallback below.
   const cleaned = input.trim().toLowerCase().replace(/[₹,]/g, "");
@@ -157,43 +165,43 @@ export function parseBudget(input: string): ValidationResult<number> {
   // Exact formats from section 8 — bare "2 lakhs" / "2L" / "2,00,000" / "two lakhs".
   const digitLakhMatch = stripped.match(/^(\d+(?:\.\d+)?)(l|lakh|lakhs)$/);
   if (digitLakhMatch) {
-    return finalizeBudget(Math.round(parseFloat(digitLakhMatch[1]) * LAKH));
+    return finalizeBudget(Math.round(parseFloat(digitLakhMatch[1]) * LAKH), language);
   }
   const wordLakhMatch = stripped.match(/^([a-z]+)(lakh|lakhs)$/);
   if (wordLakhMatch && wordLakhMatch[1] in WORD_NUMBERS) {
-    return finalizeBudget(WORD_NUMBERS[wordLakhMatch[1]] * LAKH);
+    return finalizeBudget(WORD_NUMBERS[wordLakhMatch[1]] * LAKH, language);
   }
   if (/^\d+$/.test(stripped)) {
-    return finalizeBudget(parseInt(stripped, 10));
+    return finalizeBudget(parseInt(stripped, 10), language);
   }
 
   // Fallback: the same shapes, but embedded in a full sentence ("my budget is
   // around 2 lakhs") rather than the bare number section 8's examples show.
   const embeddedDigitLakh = cleaned.match(/(\d+(?:\.\d+)?)\s*(lakhs?|l)\b/);
   if (embeddedDigitLakh) {
-    return finalizeBudget(Math.round(parseFloat(embeddedDigitLakh[1]) * LAKH));
+    return finalizeBudget(Math.round(parseFloat(embeddedDigitLakh[1]) * LAKH), language);
   }
   const embeddedWordLakh = cleaned.match(new RegExp(`\\b(${Object.keys(WORD_NUMBERS).sort((a, b) => b.length - a.length).join("|")})\\s*(lakhs?)\\b`));
   if (embeddedWordLakh) {
-    return finalizeBudget(WORD_NUMBERS[embeddedWordLakh[1]] * LAKH);
+    return finalizeBudget(WORD_NUMBERS[embeddedWordLakh[1]] * LAKH, language);
   }
   // A plain digit run of at least 3 digits inside a sentence — budgets are never
   // below the ₹1,000 minimum, so a duration or traveler count mentioned in the
   // same breath (single or double digits) won't be mistaken for one.
   const embeddedDigits = cleaned.match(/\d{3,}/);
   if (embeddedDigits) {
-    return finalizeBudget(parseInt(embeddedDigits[0], 10));
+    return finalizeBudget(parseInt(embeddedDigits[0], 10), language);
   }
 
-  return { valid: false, error: "Please enter a valid budget (e.g. ₹2 lakhs, 2L, or ₹2,00,000)." };
+  return { valid: false, error: t(chatCopy.errors.budgetInvalid, language) };
 }
 
-function finalizeBudget(amount: number): ValidationResult<number> {
+function finalizeBudget(amount: number, language: Language): ValidationResult<number> {
   if (!Number.isFinite(amount) || amount <= 0) {
-    return { valid: false, error: "Please enter a valid budget (e.g. ₹2 lakhs, 2L, or ₹2,00,000)." };
+    return { valid: false, error: t(chatCopy.errors.budgetInvalid, language) };
   }
   if (amount < MIN_BUDGET) {
-    return { valid: false, error: `Minimum budget is ₹${MIN_BUDGET.toLocaleString("en-IN")}.` };
+    return { valid: false, error: t(chatCopy.errors.budgetMin(formatINR(MIN_BUDGET)), language) };
   }
   return { valid: true, value: amount };
 }

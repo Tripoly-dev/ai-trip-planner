@@ -14,13 +14,31 @@
 // when the local parse in lib/validators.ts fails — the common/simple case never
 // pays the extra network round trip, and everything else gets real understanding
 // instead of a guess.
+//
+// Option A redesign: this used to just extract-or-reject, with the rejection
+// message always in English ("one short, friendly sentence... in English"). Two
+// changes, applied uniformly to every field via the one shared prompt below:
+//   1. The reply — success or failure — is now always in the app's active
+//      language (the `language` param), not hardcoded English, regardless of
+//      what script the user typed/spoke in.
+//   2. When no value can be extracted, instead of a flat "please provide X"
+//      template, Claude is instructed to actually engage: answer a genuine
+//      trip-planning question or suggestion request helpfully, then steer back
+//      to what's still needed — this is what replaces the old blunt
+//      isLikelyOffTopic() gate (removed from ChatScreen) for real questions,
+//      while still declining anything genuinely unrelated to travel.
+// This reuses the exact extractField()/resolveField() call sites already wired
+// into all 7 chat-flow fields — no new endpoint, no new architecture.
 
 import type { Language } from "@/store/useTripStore";
 import { stripMarkdownFences } from "@/lib/claude";
 
 const ANTHROPIC_MESSAGES_URL = "https://api.anthropic.com/v1/messages";
 const MODEL = "claude-sonnet-5";
-const MAX_TOKENS = 300; // one short field value — keep this fast and cheap
+// Bumped from 300: a genuinely helpful conversational reply (answering a real
+// question, then steering back) runs longer than a template rejection, and
+// Devanagari text costs more tokens per word than English.
+const MAX_TOKENS = 400;
 const ANTHROPIC_VERSION = "2023-06-01";
 
 export type FieldKey =
@@ -81,25 +99,59 @@ Reject (valid:false) only if the reply is genuinely ambiguous or doesn't
 answer yes/no at all.`,
 };
 
+// Plain-language description of what's currently being asked, for Claude to
+// naturally steer the conversation back to after handling a detour — not shown
+// to the user verbatim, just context for how to phrase the steer-back.
+const FIELD_ASK: Record<FieldKey, string> = {
+  name: "the traveler's own name",
+  destination: "which destination they want to travel to",
+  duration: "how many days their trip will be (1 to 10)",
+  budget: "their total trip budget, in Indian Rupees",
+  travelerCount: "how many people are traveling (1 to 50)",
+  groupType: "their group type — Family, Couple, Friends, or Solo",
+  theme: "what kind of trip they want — Relaxed, Adventure, Romantic, Family, or Foodie",
+  confirm: "whether their previous answer was correct",
+};
+
 function buildPrompt(field: FieldKey, rawInput: string, language: Language): string {
+  const languageName = language === "HI" ? "Hindi (Devanagari script)" : "English";
   return `
-You are a strict field-value extractor for Tripoly's trip-planning chat. The
-user is answering one specific question. Extract ONLY the value described
-below from their raw answer.
+You are Tripoly's trip-planning chat assistant, talking naturally with a
+traveler while collecting their trip details one question at a time. Right
+now you're asking them for: ${FIELD_ASK[field]}.
 
 Field: ${field}
-Field rules: ${FIELD_RULES[field]}
+Extraction rules: ${FIELD_RULES[field]}
 
-The app's language mode is currently ${language === "HI" ? "Hindi" : "English"},
-but the user may have typed or spoken in either language or a mix — judge by
-the actual content, not the mode.
+Respond ONLY in ${languageName} — that's the app's active language, chosen by
+the user, and every reply you write must be in it, no matter what script the
+user's own message used.
 
 User's raw answer: "${rawInput}"
+
+Two cases:
+1. A valid value can be extracted per the rules above -> return it.
+2. It can't — because the answer doesn't contain that value, or because the
+   user asked an unrelated question, asked for a suggestion, or said
+   something conversational instead of answering. In this case, do NOT return
+   a flat "please provide X" template. Actually engage, like a helpful human
+   travel assistant would:
+   - If they asked a genuine trip-planning question or wanted a suggestion
+     (e.g. "kaunsa desh accha rahega Middle East mein?", "what's good in
+     June?"), answer it helpfully and specifically in a sentence or two, then
+     naturally bring the conversation back to what you still need from them.
+   - If it's just unclear, empty, or doesn't make sense, ask for it again
+     warmly, in one short sentence — no stock phrasing.
+   - If they go further off-topic (jokes, coding, unrelated trivia, anything
+     with no connection to travel), politely decline in one sentence and
+     steer back to the question — Tripoly's assistant only helps with trip
+     planning.
+   Put this entire reply in the "error" field, fully in ${languageName}.
 
 Return ONLY this exact JSON, no markdown, no explanation:
 { "valid": true, "value": <the extracted value> }
 or
-{ "valid": false, "error": "<one short, friendly sentence, in English, telling the user what to provide>" }
+{ "valid": false, "error": "<your full reply to the user, entirely in ${languageName}>" }
 `.trim();
 }
 
