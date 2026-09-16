@@ -26,7 +26,7 @@ import { TripolyMark } from "@/components/ui/TripolyMark";
 import { useTripStore, type Itinerary, type Message } from "@/store/useTripStore";
 
 const MIN_DISPLAY_MS = 2600;
-const STATUS_LINES = ["Finding the best stays…", "Checking flights…", "Building your day-by-day plan…"];
+const STATUS_LINES = ["Finding the best stays…", "Mapping your route…", "Building your day-by-day plan…"];
 const STATUS_INTERVAL_MS = 1800;
 
 function newId() {
