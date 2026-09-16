@@ -15,7 +15,14 @@ import Link from "next/link";
 import { BottomNav, DESKTOP_SIDEBAR_WIDTH_CLASS } from "@/components/ui/BottomNav";
 import { DestinationCard } from "@/components/ui/DestinationCard";
 import { FunFactCard } from "@/components/ui/FunFactCard";
-import { BENTO_ROW_1, BENTO_ROW_2, DESTINATION_CAROUSEL, FUN_FACTS } from "@/lib/constants";
+import {
+  BENTO_ROW_1,
+  BENTO_ROW_2,
+  DESTINATION_CAROUSEL,
+  FUN_FACTS,
+  UNSPLASH_ATTRIBUTION_URL,
+  type BentoDestination,
+} from "@/lib/constants";
 import { useTripStore } from "@/store/useTripStore";
 
 function getGreeting() {
@@ -25,11 +32,30 @@ function getGreeting() {
   return "Good evening";
 }
 
-function BentoTile({ name, className }: { name: string; className: string }) {
+// Attribution kept to a photographer-only initial-cap tag (not the full "Photo by X on
+// Unsplash" wording DestinationCard uses) — these tiles run as small as 76px tall, no room
+// for two linked labels without it reading as visual noise. Still real credit + a real link
+// back to their Unsplash profile, satisfying the same guideline as DestinationCard.
+function BentoTile({ name, imageUrl, photographerName, photographerProfileUrl, className }: BentoDestination & { className: string }) {
   return (
     <div className={`relative flex-shrink-0 overflow-hidden rounded-lg ${className}`}>
-      <div className="absolute inset-0 bg-gradient-to-br from-tripoly-green/40 to-black/40" />
+      {imageUrl ? (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img src={imageUrl} alt={name} className="absolute inset-0 h-full w-full object-cover" />
+      ) : (
+        <div className="absolute inset-0 bg-gradient-to-br from-tripoly-green/40 to-black/40" />
+      )}
       <div className="absolute inset-0 bg-gradient-to-b from-black/0 from-50% to-black/60" />
+      {imageUrl && (
+        <a
+          href={photographerProfileUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="absolute right-1.5 top-1.5 font-sans text-[7px] leading-none text-white/55 hover:text-white/85"
+        >
+          {photographerName}
+        </a>
+      )}
       <div className="absolute bottom-1.5 left-2 font-sans text-[10px] font-semibold text-white">{name}</div>
     </div>
   );
@@ -132,19 +158,30 @@ export function HomeScreen() {
           <>
             <div className="mb-5 flex flex-col gap-1 overflow-hidden rounded-[20px]">
               <div className="flex h-[110px] gap-1">
-                <BentoTile name={BENTO_ROW_1[0].name} className="w-[42%]" />
-                <BentoTile name={BENTO_ROW_1[1].name} className="w-[29%]" />
-                <BentoTile name={BENTO_ROW_1[2].name} className="w-[29%]" />
+                <BentoTile {...BENTO_ROW_1[0]} className="w-[42%]" />
+                <BentoTile {...BENTO_ROW_1[1]} className="w-[29%]" />
+                <BentoTile {...BENTO_ROW_1[2]} className="w-[29%]" />
               </div>
               <div className="flex h-[76px] gap-1">
-                <BentoTile name={BENTO_ROW_2[0].name} className="flex-1" />
-                <BentoTile name={BENTO_ROW_2[1].name} className="flex-1" />
-                <BentoTile name={BENTO_ROW_2[2].name} className="flex-1" />
+                <BentoTile {...BENTO_ROW_2[0]} className="flex-1" />
+                <BentoTile {...BENTO_ROW_2[1]} className="flex-1" />
+                <BentoTile {...BENTO_ROW_2[2]} className="flex-1" />
               </div>
             </div>
-            <div className="mb-5 text-center font-sans text-[13px] text-tripoly-text-muted">
+            <div className="text-center font-sans text-[13px] text-tripoly-text-muted">
               Where will your story begin?
             </div>
+            {/* One shared Unsplash link for the whole mosaic — each tile above already credits
+                its own photographer; this covers the "link to Unsplash itself" half of the same
+                attribution guideline without repeating it six times. */}
+            <a
+              href={UNSPLASH_ATTRIBUTION_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mb-5 block text-center font-sans text-[10px] text-tripoly-text-muted/70 hover:text-tripoly-text-muted"
+            >
+              Photos via Unsplash
+            </a>
           </>
         )}
 
@@ -160,7 +197,13 @@ export function HomeScreen() {
         <div className="mb-3 font-sans text-[15px] font-bold text-tripoly-text">Where to next?</div>
         <div className="no-scrollbar -mr-5 flex gap-3 overflow-x-auto lg:mr-0 lg:grid lg:grid-cols-5 lg:gap-4 lg:overflow-visible">
           {DESTINATION_CAROUSEL.map((d) => (
-            <DestinationCard key={d.id} name={d.name} tagline={d.tagline} />
+            <DestinationCard
+              key={d.id}
+              name={d.name}
+              tagline={d.tagline}
+              imageUrl={d.imageUrl}
+              credit={{ photographerName: d.photographerName, photographerProfileUrl: d.photographerProfileUrl }}
+            />
           ))}
         </div>
       </div>

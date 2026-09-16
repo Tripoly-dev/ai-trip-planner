@@ -22,7 +22,24 @@ export const FUN_FACTS: FunFact[] = [
   { id: "maldives", text: "Maldives for couples — 4 nights in an overwater villa from ₹1.8 lakhs per person" },
 ];
 
-export interface DestinationInspiration {
+// Photo credit for a hardcoded Unsplash image — required by Unsplash's API
+// attribution guideline (help.unsplash.com/en/articles/2511315-guideline-attribution):
+// every displayed photo must credit the photographer, link to their Unsplash
+// profile, and link to Unsplash itself, each with ?utm_source=tripoly&utm_medium=referral.
+// These 6 URLs were fetched once via scripts/fetch-home-photos.mjs (international
+// destinations only, per your call — no domestic/India destinations here) and hardcoded
+// rather than queried live, since this is a fixed, unchanging set — visually verified
+// (Tanah Lot for Bali, Kiyomizu-dera for Kyoto, Sheikh Zayed Rd for Dubai, Ha Long Bay for
+// Vietnam, an overwater villa for Maldives, an alpine lake for Switzerland) before use.
+export interface UnsplashCredit {
+  imageUrl: string;
+  photographerName: string;
+  photographerProfileUrl: string;
+}
+
+export const UNSPLASH_ATTRIBUTION_URL = "https://unsplash.com/?utm_source=tripoly&utm_medium=referral";
+
+export interface DestinationInspiration extends UnsplashCredit {
   id: string;
   name: string;
   tagline: string;
@@ -30,31 +47,78 @@ export interface DestinationInspiration {
 
 // "Where to next?" carousel — 5 cards.
 export const DESTINATION_CAROUSEL: DestinationInspiration[] = [
-  { id: "bali", name: "Bali", tagline: "Sept is perfect — culture & beaches" },
-  { id: "kyoto", name: "Kyoto", tagline: "Autumn light & quiet temples" },
-  { id: "goa", name: "Goa", tagline: "Long weekends still open" },
-  { id: "himachal", name: "Himachal", tagline: "Mountains look beautiful this month" },
-  { id: "dubai", name: "Dubai", tagline: "Quick family getaway — 4 nights" },
+  {
+    id: "bali",
+    name: "Bali",
+    tagline: "Sept is perfect — culture & beaches",
+    imageUrl:
+      "https://images.unsplash.com/photo-1624935851312-845758a99160?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=800",
+    photographerName: "Eyestetix Studio",
+    photographerProfileUrl: "https://unsplash.com/@eyestetix_studio?utm_source=tripoly&utm_medium=referral",
+  },
+  {
+    id: "kyoto",
+    name: "Kyoto",
+    tagline: "Autumn light & quiet temples",
+    imageUrl:
+      "https://images.unsplash.com/photo-1578469645742-46cae010e5d4?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=800",
+    photographerName: "Cosmin Georgian",
+    photographerProfileUrl: "https://unsplash.com/@cosmingeorgian?utm_source=tripoly&utm_medium=referral",
+  },
+  {
+    id: "vietnam",
+    name: "Vietnam",
+    tagline: "Ha Long Bay is even better in person",
+    imageUrl:
+      "https://images.unsplash.com/photo-1643029891412-92f9a81a8c16?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=800",
+    photographerName: "Marina Lobato",
+    photographerProfileUrl: "https://unsplash.com/@mlobatopl?utm_source=tripoly&utm_medium=referral",
+  },
+  {
+    id: "maldives",
+    name: "Maldives",
+    tagline: "Overwater villas, couple goals",
+    imageUrl:
+      "https://images.unsplash.com/photo-1697898109604-e06e88b15271?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=800",
+    photographerName: "Matheen Faiz",
+    photographerProfileUrl: "https://unsplash.com/@matheenfaiz?utm_source=tripoly&utm_medium=referral",
+  },
+  {
+    id: "dubai",
+    name: "Dubai",
+    tagline: "Quick family getaway — 4 nights",
+    imageUrl:
+      "https://images.unsplash.com/photo-1546412414-8035e1776c9a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=800",
+    photographerName: "Darcey Beau",
+    photographerProfileUrl: "https://unsplash.com/@darceybeau?utm_source=tripoly&utm_medium=referral",
+  },
 ];
 
-export interface BentoDestination {
+export interface BentoDestination extends UnsplashCredit {
   id: string;
   name: string;
 }
 
 // Screen 02B bento mosaic — 6 tiles, asymmetric two-row layout.
-// Row 1 (110px): Bali (160px wide) | Kyoto (85px) | Goa (85px)
-// Row 2 (76px): Dubai (110px) | Switzerland (110px) | Himachal (110px)
+// Row 1 (110px): Bali (160px wide) | Kyoto (85px) | Vietnam (85px)
+// Row 2 (76px): Dubai (110px) | Switzerland (110px) | Maldives (110px)
 export const BENTO_ROW_1: BentoDestination[] = [
-  { id: "bali", name: "Bali" },
-  { id: "kyoto", name: "Kyoto" },
-  { id: "goa", name: "Goa" },
+  DESTINATION_CAROUSEL[0], // Bali
+  DESTINATION_CAROUSEL[1], // Kyoto
+  DESTINATION_CAROUSEL[2], // Vietnam
 ];
 
 export const BENTO_ROW_2: BentoDestination[] = [
-  { id: "dubai", name: "Dubai" },
-  { id: "switzerland", name: "Switzerland" },
-  { id: "himachal", name: "Himachal" },
+  DESTINATION_CAROUSEL[4], // Dubai
+  {
+    id: "switzerland",
+    name: "Switzerland",
+    imageUrl:
+      "https://images.unsplash.com/photo-1533326150585-8692556a5f04?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=800",
+    photographerName: "Timon Studler",
+    photographerProfileUrl: "https://unsplash.com/@derstudi?utm_source=tripoly&utm_medium=referral",
+  },
+  DESTINATION_CAROUSEL[3], // Maldives
 ];
 
 export const TRAVEL_THEMES: { theme: TravelTheme; emoji: string; claudeInstruction: string }[] = [
