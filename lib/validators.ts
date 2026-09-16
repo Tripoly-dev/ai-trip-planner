@@ -72,12 +72,29 @@ const NAME_LEAD_INS = /^(my name is|i am|i'm|this is|call me|it'?s)\s+/i;
 const NAME_TRAIL_OUTS = /\s+(here|speaking|only)[.!]*$/i;
 
 export function validateName(input: string, language: Language): ValidationResult<string> {
-  let stripped = input.trim().replace(NAME_LEAD_INS, "").replace(/[.!]+$/, "").trim();
+  // Strips a trailing "." / "!" (English) or "।" / "॥" (Devanagari danda / double danda —
+  // Hindi's equivalent of a sentence-ending period) the same way, before the character
+  // check below.
+  let stripped = input.trim().replace(NAME_LEAD_INS, "").replace(/[.!।॥]+$/, "").trim();
   if (stripped.length < 2) {
     return { valid: false, error: t(chatCopy.errors.nameInvalid, language) };
   }
-  // Letters + spaces only — rejects digits and travel-jargon shorthand like "7N/8D".
-  if (!/^[a-zA-Z\s]+$/.test(stripped)) {
+  // Letters + spaces only (English a-z/A-Z, or Devanagari — U+0900-0965 and U+0970-097F,
+  // deliberately excluding the Devanagari digit block U+0966-096F so a digit is rejected
+  // in either script) — rejects digits and travel-jargon shorthand like "7N/8D".
+  //
+  // Bug found in real testing (Hindi mode): this used to be /^[a-zA-Z\s]+$/ — ASCII-only.
+  // That was fine as originally written, when this function only ever ran BEFORE Claude,
+  // as the local fast-path check that intentionally rejects non-English input so it falls
+  // through to Claude's own extraction. But this function is now also called a second way
+  // — as the server-side safety net in app/api/chat-turn/route.ts, re-validating whatever
+  // Claude already extracted. lib/chatTurn.ts explicitly tells Claude to return a name "in
+  // the script it was given," so for a Hindi conversation that's correctly Devanagari
+  // (e.g. "कौशिक") — and the old ASCII-only check rejected that correct answer outright,
+  // every time, with no way to ever succeed. Destination doesn't have this problem: Claude
+  // is told to always normalize destination to English, so validateDestination's ASCII
+  // check below is still correctly matched to what it actually validates.
+  if (!/^[a-zA-Zऀ-॥॰-ॿ\s]+$/.test(stripped)) {
     return { valid: false, error: t(chatCopy.errors.nameInvalid, language) };
   }
   // Bug found in live testing: "This side Kaushik here" is ALL letters+spaces, so it
