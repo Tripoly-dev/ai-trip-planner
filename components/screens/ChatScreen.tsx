@@ -193,11 +193,19 @@ export function ChatScreen() {
   // phrasing, or a genuine question/detour) gets real understanding instead of a hard
   // fail — including a helpful, in-language conversational reply for detours, per the
   // redesigned prompt in lib/fieldExtraction.ts.
+  //
+  // `viaClaudeReply` on a failed result: true only when `error` is Claude's own
+  // crafted conversational text (a detour answer, a warm re-ask, a polite decline —
+  // lib/fieldExtraction.ts always produces one of these, never a flat template), as
+  // opposed to a plain mechanical message from lib/validators.ts (local rejection,
+  // or a fallback used because the Claude call itself failed). Callers use this to
+  // pick the right chat bubble — Claude's own reply reads as the assistant talking,
+  // not as an error, so it shouldn't render in the red/error bubble style.
   async function resolveField<T>(
     field: FieldKey,
     text: string,
     localResult: ValidationResult<T>,
-  ): Promise<ValidationResult<T>> {
+  ): Promise<ValidationResult<T> & { viaClaudeReply?: boolean }> {
     if (localResult.valid) return localResult;
     setField("isExtracting", true);
     try {
@@ -210,7 +218,10 @@ export function ChatScreen() {
       if (res.ok && data.valid) {
         return { valid: true, value: data.value as T };
       }
-      return { valid: false, error: (typeof data.error === "string" && data.error) || localResult.error };
+      if (res.ok && typeof data.error === "string" && data.error) {
+        return { valid: false, error: data.error, viaClaudeReply: true };
+      }
+      return { valid: false, error: localResult.error };
     } catch {
       // Network/API failure — fall back to the original local error rather than
       // blocking silently.
@@ -270,7 +281,7 @@ export function ChatScreen() {
       case 1: {
         const local = validateName(text, language);
         const extracted = await resolveField("name", text, local);
-        if (!extracted.valid) return respond("error", extracted.error!);
+        if (!extracted.valid) return respond(extracted.viaClaudeReply ? "bot" : "error", extracted.error!);
         const name = String(extracted.value).trim();
         if (name.length < 2) {
           return respond("error", t(chatCopy.errors.nameTooShortAfterExtraction, language));
@@ -283,7 +294,7 @@ export function ChatScreen() {
       case 2: {
         const local = validateDestination(text, language);
         const extracted = await resolveField("destination", text, local);
-        if (!extracted.valid) return respond("error", extracted.error!);
+        if (!extracted.valid) return respond(extracted.viaClaudeReply ? "bot" : "error", extracted.error!);
         const destinationValue = String(extracted.value).trim();
         if (destinationValue.length < 3) {
           return respond("error", t(chatCopy.errors.destinationTooShort, language));
@@ -296,7 +307,7 @@ export function ChatScreen() {
       case 3: {
         const local = validateDuration(text, language);
         const extracted = await resolveField("duration", text, local);
-        if (!extracted.valid) return respond("error", extracted.error!);
+        if (!extracted.valid) return respond(extracted.viaClaudeReply ? "bot" : "error", extracted.error!);
         // Re-run the extracted value through the same bounds check regardless of
         // source (a no-op when it already came from the local path; a real safety
         // net against an out-of-range value from the Claude fallback).
@@ -310,7 +321,7 @@ export function ChatScreen() {
       case 4: {
         const local = parseBudget(text, language);
         const extracted = await resolveField("budget", text, local);
-        if (!extracted.valid) return respond("error", extracted.error!);
+        if (!extracted.valid) return respond(extracted.viaClaudeReply ? "bot" : "error", extracted.error!);
         const r = parseBudget(String(extracted.value), language);
         if (!r.valid) return respond("error", r.error!);
         setField("totalBudget", r.value!);
@@ -323,7 +334,7 @@ export function ChatScreen() {
         if (travelerSubStep === "count") {
           const local = validateTravelerCount(text, language);
           const extracted = await resolveField("travelerCount", text, local);
-          if (!extracted.valid) return respond("error", extracted.error!);
+          if (!extracted.valid) return respond(extracted.viaClaudeReply ? "bot" : "error", extracted.error!);
           const r = validateTravelerCount(String(extracted.value), language);
           if (!r.valid) return respond("error", r.error!);
           setField("travelerCount", r.value!);
@@ -334,7 +345,7 @@ export function ChatScreen() {
         }
         const local = matchGroupType(text, language);
         const extracted = await resolveField<GroupType>("groupType", text, local);
-        if (!extracted.valid) return respond("error", extracted.error!);
+        if (!extracted.valid) return respond(extracted.viaClaudeReply ? "bot" : "error", extracted.error!);
         // Claude is instructed to return exactly one of the four canonical labels —
         // re-run it through the existing exact-match check as a safety net rather
         // than trusting the API response verbatim.
@@ -351,7 +362,7 @@ export function ChatScreen() {
           ? { valid: true, value: localMatch.theme }
           : { valid: false, error: t(chatCopy.errors.themeChoice, language) };
         const extracted = await resolveField<TravelTheme>("theme", text, local);
-        if (!extracted.valid) return respond("error", extracted.error!);
+        if (!extracted.valid) return respond(extracted.viaClaudeReply ? "bot" : "error", extracted.error!);
         // Same re-verification pattern as Group Type — confirm Claude's answer maps
         // to one of the five real theme values rather than trusting it verbatim.
         const match = TRAVEL_THEMES.find((opt) => opt.theme.toLowerCase() === String(extracted.value).toLowerCase());

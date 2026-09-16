@@ -63,9 +63,15 @@ function extractInteger(input: string): number | null {
 }
 
 const NAME_LEAD_INS = /^(my name is|i am|i'm|this is|call me|it'?s)\s+/i;
+// Bug found in live testing: "This is Kaushik here." only had its leading "This is "
+// stripped by NAME_LEAD_INS (which only ever strips known PREFIXES), leaving
+// "Kaushik here" stored verbatim as the name. NAME_LEAD_INS has no concept of
+// trailing filler at all, so this bounded list mirrors it for the common "X here" /
+// "X speaking" shape — see the ordering note below for why it's applied where it is.
+const NAME_TRAIL_OUTS = /\s+(here|speaking|only)[.!]*$/i;
 
 export function validateName(input: string, language: Language): ValidationResult<string> {
-  const stripped = input.trim().replace(NAME_LEAD_INS, "").replace(/[.!]+$/, "").trim();
+  let stripped = input.trim().replace(NAME_LEAD_INS, "").replace(/[.!]+$/, "").trim();
   if (stripped.length < 2) {
     return { valid: false, error: t(chatCopy.errors.nameInvalid, language) };
   }
@@ -84,6 +90,17 @@ export function validateName(input: string, language: Language): ValidationResul
   // actual name out of it.
   if (stripped.split(/\s+/).length > 3) {
     return { valid: false, error: t(chatCopy.errors.nameTooLong, language) };
+  }
+  // NAME_TRAIL_OUTS is deliberately applied AFTER the word-count check above, not
+  // before: stripping trailing filler first would shrink the word count of an input
+  // that still has an unrecognized, un-stripped LEADING phrase (like "this side",
+  // which isn't in NAME_LEAD_INS) just enough to sneak it under the cap — e.g.
+  // "This side Kaushik here" would shrink to "This side Kaushik" (3 words) and pass
+  // as a false "valid" again, the exact bug the cap exists to catch. Running it after
+  // means it only ever cleans up an input that was already short enough to trust.
+  stripped = stripped.replace(NAME_TRAIL_OUTS, "").trim();
+  if (stripped.length < 2) {
+    return { valid: false, error: t(chatCopy.errors.nameInvalid, language) };
   }
   return { valid: true, value: stripped };
 }
