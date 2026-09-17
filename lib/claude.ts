@@ -22,7 +22,13 @@ import { findBestCuratedPackage, pickHotelTier, type CuratedPackage, type HotelT
 
 const ANTHROPIC_MESSAGES_URL = "https://api.anthropic.com/v1/messages";
 const MODEL = "claude-sonnet-5";
-const MAX_TOKENS = 8000;
+// Was 8000 — raised after a real Thailand-10-night hybrid generation hit stop_reason:
+// "max_tokens" at ~15,266 output characters (confirmed via the diagnostic logging below,
+// not guessed): reproducing Tripoly's real, fuller curated-day content runs longer than
+// pure-AI generation's terser prose did, so 11-day itineraries need more headroom than
+// before this feature. claude-sonnet-5 supports up to 128K output tokens, so this still
+// has plenty of room below the model's actual ceiling.
+const MAX_TOKENS = 16500;
 const ANTHROPIC_VERSION = "2023-06-01";
 
 const SYSTEM_PROMPT = `You are Tripoly's AI travel planner. Generate a detailed day-by-day travel itinerary.
