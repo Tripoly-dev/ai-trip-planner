@@ -261,3 +261,26 @@ body {
 .summary-row-enter {
   animation: fadeInUp 300ms ease-out backwards;
 }
+
+/* Design-audit fix: reduced-motion support (previously missing entirely). Stops the
+   continuous/looping animations for visitors with prefers-reduced-motion enabled —
+   the destination wall's auto-scroll, the CTA shimmer, the itinerary pin's pulse ring,
+   and the processing screen's plane loop/trail. Per Emil Kowalski's accessibility
+   guidance, "reduced motion means fewer and gentler animations, not zero" — so this
+   deliberately leaves two things untouched: .processing-dot (the three-dot loading
+   indicator — stopping it would remove the only signal that generation is still in
+   progress, and a subtle in-place opacity/scale pulse isn't the kind of motion
+   prefers-reduced-motion exists to prevent) and the brief, one-shot entrance
+   animations (.itinerary-pin-icon, .itinerary-flight-path, .itinerary-flight-plane,
+   .summary-row-enter) — these play once and settle, they don't loop, so they aren't
+   the "ongoing decoration" problem this fix targets. */
+@media (prefers-reduced-motion: reduce) {
+  .home-wall-col-down,
+  .home-wall-col-up,
+  .home-cta-shimmer::after,
+  .itinerary-pin-ring,
+  .processing-plane-icon,
+  .processing-plane-trail {
+    animation: none;
+  }
+}
