@@ -139,6 +139,17 @@ export async function fetchEmbeddablePhoto(
  * never throws; the itinerary Claude generated is always returned, photos or not, and
  * every call site (PdfScreen, PdfDayCard, HomeScreen's Upcoming Journey card) already has
  * a gradient-placeholder fallback for the no-photo case.
+ *
+ * Confirmed root cause of a real gap (one day's photo silently missing while others had
+ * theirs): a day's own `location` string can legitimately return zero Unsplash search
+ * results (not an error — searchDestinationPhoto returns null for that, nothing thrown, so
+ * it never even hit the catch/log below) while a differently-worded location for the same
+ * city elsewhere in the trip succeeds. Rather than leaving that one card blank, a day whose
+ * own lookup comes up empty now falls back to the destination's own photo — destination
+ * names are broad, reliably-covered search terms (the destination lookup already succeeds
+ * far more consistently than a specific day's location), so this meaningfully cuts down on
+ * "one random day has no photo" without adding a second network round trip: the destination
+ * photo is already being fetched in this same loop regardless.
  */
 export async function enrichItineraryWithPhotos(itinerary: Itinerary): Promise<Itinerary> {
   const destination = itinerary.trip_summary.destination;
@@ -157,14 +168,16 @@ export async function enrichItineraryWithPhotos(itinerary: Itinerary): Promise<I
     }
   }
 
+  const destinationPhoto = photosByLocation.get(destination);
+
   return {
     trip_summary: {
       ...itinerary.trip_summary,
-      photo: photosByLocation.get(destination),
+      photo: destinationPhoto,
     },
     days: itinerary.days.map((day) => ({
       ...day,
-      photo: photosByLocation.get(day.location),
+      photo: photosByLocation.get(day.location) ?? destinationPhoto,
     })),
   };
 }

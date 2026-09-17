@@ -10,7 +10,9 @@ import { StarRating } from "@/components/ui/StarRating";
 
 export function PdfDayCard({ day }: { day: DayPlan }) {
   return (
-    <div className="mx-4 mb-4 overflow-hidden rounded-2xl bg-white shadow-tripoly-card">
+    // data-pdf-section marks this as one of lib/pdf.ts's safe page-break units — a page break
+    // now always lands at a card boundary (or the hero/strip/footer's), never mid-card.
+    <div className="mx-4 mb-4 overflow-hidden rounded-2xl bg-white shadow-tripoly-card" data-pdf-section>
       {/* bg-white is a required opaque base (not decoration) — this card sits in front of the
           world-map watermark, and the gradient alone (all translucent stops) would let it bleed
           through as mottled blobs instead of a clean placeholder. day.photo is set server-side

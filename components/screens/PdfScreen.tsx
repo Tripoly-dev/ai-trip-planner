@@ -73,8 +73,9 @@ export function PdfScreen() {
         <WorldMapWatermark />
 
         <div className="relative">
-          {/* Hero */}
-          <div className="relative h-[260px] flex-shrink-0">
+          {/* Hero. data-pdf-section marks this as one of lib/pdf.ts's safe page-break units — see
+              that file's header comment for why. */}
+          <div className="relative h-[260px] flex-shrink-0" data-pdf-section>
             {/* bg-white here is a required opaque base, not decoration — this sits in front of the
                 world-map watermark, and the gradient alone (all translucent stops) would let it
                 bleed through as mottled blobs instead of a clean placeholder. summary.photo is set
@@ -121,8 +122,13 @@ export function PdfScreen() {
             </div>
           </div>
 
-          {/* Trip overview strip */}
-          <div className="flex justify-between border-b border-tripoly-border px-5 py-4">
+          {/* Trip overview strip. Was `flex justify-between` with four unconstrained children —
+              broke (values overlapping, e.g. "₹1,00,000₹20,000" running together with no gap)
+              whenever `dates_suggested` was long enough to wrap to 2-3 lines, since the other
+              three columns had no defined width and got squeezed into whatever space Dates left.
+              A 2x2 grid gives each field its own fixed cell so a long Dates string only grows its
+              own cell taller, never compresses its neighbors. */}
+          <div className="grid grid-cols-2 gap-x-4 gap-y-3 border-b border-tripoly-border px-5 py-4" data-pdf-section>
             <div>
               <div className="font-sans text-[10px] font-medium text-tripoly-text-muted">Dates</div>
               <div className="mt-[3px] font-sans text-sm font-semibold text-black">
@@ -157,7 +163,7 @@ export function PdfScreen() {
           </div>
 
           {/* Footer credit line — captured. The button below it is not. */}
-          <div className="px-5 pb-6 pt-2 text-center">
+          <div className="px-5 pb-6 pt-2 text-center" data-pdf-section>
             <div className="font-sans text-[13px] text-tripoly-text-muted">
               Planned with ❤️ by Tripoly | tripoly.in
             </div>
