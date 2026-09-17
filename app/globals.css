@@ -205,11 +205,16 @@ body {
 /* Home — "Plan a Trip" CTA. First tried a shadow-only pulse; per your follow-up
    feedback ("CTA effect is not showing as highlight factor") that was too subtle to
    read as a highlight against an already-green button, so replaced with a shimmer
-   sweep — a soft light streak crossing the button every few seconds, a much more
-   noticeable "look here" pattern. Needs `relative overflow-hidden` on the button
-   itself (applied inline in HomeScreen.tsx) so the sweep is clipped to its rounded
-   shape; the button's own static shadow (also inline) stays untouched by this.
-   Tactile press-scale (active:scale-[0.97], inline) is unrelated and unaffected. */
+   sweep — a soft light streak crossing the button, a much more noticeable "look
+   here" pattern. Needs `relative overflow-hidden` on the button itself (applied
+   inline in HomeScreen.tsx) so the sweep is clipped to its rounded shape; the
+   button's own static shadow (also inline) stays untouched by this. Tactile
+   press-scale (active:scale-[0.97], inline) is unrelated and unaffected.
+   Design-audit fix: this used to loop forever, which on Home — the screen opened
+   most often — read as ongoing decoration rather than a highlight. Now plays twice
+   and stops (`2`, not `infinite`); HomeScreen.tsx only attaches this class at all
+   once per browser session (sessionStorage-gated), so it still nudges a fresh visit
+   without turning into background noise on every navigation back to Home. */
 .home-cta-shimmer::after {
   content: "";
   position: absolute;
@@ -222,7 +227,7 @@ body {
     transparent 70%
   );
   transform: translateX(-120%);
-  animation: ctaShimmerSweep 3s ease-in-out infinite;
+  animation: ctaShimmerSweep 3s ease-in-out 2;
 }
 
 @keyframes ctaShimmerSweep {

@@ -15,7 +15,7 @@
 // is just a shortcut back to whichever one you were most recently looking at.
 
 import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { BottomNav, DESKTOP_SIDEBAR_WIDTH_CLASS } from "@/components/ui/BottomNav";
 import { DestinationCard } from "@/components/ui/DestinationCard";
 import { DestinationWall } from "@/components/ui/DestinationWall";
@@ -71,6 +71,29 @@ function ContinueTripPrompt() {
 // Gap between cards in the mobile scroll row — must match the scroller's own `gap-2.5`
 // class below (2.5 = 10px). Kept as one named constant so the two can't drift apart.
 const FUN_FACT_GAP_PX = 10;
+
+// Design-audit fix (item 1): the CTA shimmer (globals.css's .home-cta-shimmer, now a
+// fixed 2-sweep animation rather than infinite) used to attach unconditionally, so it
+// replayed on every mount — every time you navigated back to /home within a session,
+// not just a fresh visit. Gated here to once per browser session via sessionStorage:
+// still nudges a genuinely new visit (the reason it was added — see globals.css's
+// comment), but stops firing on internal navigation within the same visit, which is
+// what the "too frequent for a highlight" finding was actually about.
+const CTA_SHIMMER_SESSION_KEY = "tripoly-home-cta-shimmer-shown";
+
+function ctaShimmerSnapshot() {
+  try {
+    return sessionStorage.getItem(CTA_SHIMMER_SESSION_KEY) === null;
+  } catch {
+    return false;
+  }
+}
+function ctaShimmerServerSnapshot() {
+  return false;
+}
+function subscribeNoop() {
+  return () => {};
+}
 
 function FunFactCarousel() {
   const scrollerRef = useRef<HTMLDivElement>(null);
@@ -146,6 +169,25 @@ export function HomeScreen() {
   const displayName = name || "Traveler";
   const avatarLetter = displayName.charAt(0).toUpperCase();
 
+  // Whether this session hasn't shown the CTA shimmer yet — read the same way
+  // ChatScreen.tsx's micSupported reads a browser-only capability: useSyncExternalStore
+  // renders the SSR-safe server snapshot (false) on first paint, then reconciles to the
+  // real client value right after hydration, with no "setState in an effect" and no
+  // hydration mismatch warning. ctaShimmerSnapshot is a pure read (just checks the key);
+  // the separate effect below is what actually marks the session as shown, and writing
+  // to sessionStorage there isn't a React state update, so it doesn't trip the
+  // set-state-in-effect rule the way calling a useState setter from an effect would.
+  const showCtaShimmer = useSyncExternalStore(subscribeNoop, ctaShimmerSnapshot, ctaShimmerServerSnapshot);
+  useEffect(() => {
+    if (!showCtaShimmer) return;
+    try {
+      sessionStorage.setItem(CTA_SHIMMER_SESSION_KEY, "1");
+    } catch {
+      // sessionStorage unavailable (private browsing, etc.) — worst case the shimmer
+      // replays next visit; the button still works fine either way.
+    }
+  }, [showCtaShimmer]);
+
   return (
     <main className={`relative min-h-dvh bg-white pb-24 lg:pb-10 ${DESKTOP_SIDEBAR_WIDTH_CLASS}`}>
       <div className="px-5 pt-6 lg:mx-auto lg:max-w-[1200px] lg:px-10 lg:pt-10">
@@ -166,7 +208,9 @@ export function HomeScreen() {
 
         <Link
           href="/chat"
-          className="home-cta-shimmer relative mb-5 flex h-14 items-center justify-center overflow-hidden rounded-2xl bg-tripoly-green font-sans text-base font-semibold text-white shadow-[0_4px_20px_rgba(22,207,118,0.25)] transition-transform active:scale-[0.97]"
+          className={`relative mb-5 flex h-14 items-center justify-center overflow-hidden rounded-2xl bg-tripoly-green font-sans text-base font-semibold text-white shadow-[0_4px_20px_rgba(22,207,118,0.25)] transition-transform active:scale-[0.97] ${
+            showCtaShimmer ? "home-cta-shimmer" : ""
+          }`}
         >
           Plan a Trip ✈️
         </Link>
