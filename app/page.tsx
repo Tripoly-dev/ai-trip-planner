@@ -1,29 +1,27 @@
 "use client";
 
 // Screen 1 — Welcome. Per TRIPOLY_HANDOFF.md section 7.
-// Hero photo is a gradient placeholder for now (per your call on image handling) — swap
-// via the `heroImageUrl` value below once real destination photography is available.
+// Hero background is now the same two-column scrolling wall effect as Home (per your
+// call), using the 9 candidate photos sourced earlier — see HERO_WALL_PHOTOS in
+// lib/constants.ts and components/ui/HeroWall.tsx for the "why" on both.
 
 import { useState } from "react";
 import Link from "next/link";
+import { HeroWall } from "@/components/ui/HeroWall";
 import { LanguageToggle } from "@/components/ui/LanguageToggle";
 import { TripolyMark } from "@/components/ui/TripolyMark";
+import { HERO_WALL_PHOTOS } from "@/lib/constants";
 import type { Language } from "@/store/useTripStore";
-
-const heroImageUrl: string | undefined = undefined;
 
 export default function WelcomeScreen() {
   const [language, setLanguage] = useState<Language>("EN");
 
   return (
     <main className="relative min-h-dvh overflow-hidden bg-black">
-      {heroImageUrl ? (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img src={heroImageUrl} alt="" className="absolute inset-0 h-full w-full object-cover" />
-      ) : (
-        <div className="absolute inset-0 bg-gradient-to-br from-tripoly-green/50 via-black/60 to-black" />
-      )}
-      <div className="absolute inset-0 bg-gradient-to-b from-black/5 from-0% via-black/10 via-40% to-black/75" />
+      <HeroWall photos={HERO_WALL_PHOTOS} />
+      {/* pointer-events-none so this purely-decorative tint doesn't block clicks on the
+          photographer-credit links inside HeroWall, which sits beneath it. */}
+      <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-black/5 from-0% via-black/10 via-40% to-black/75" />
 
       <div className="absolute inset-x-0 top-6 z-10 flex items-center justify-between px-6">
         <TripolyMark variant="white" size={30} />

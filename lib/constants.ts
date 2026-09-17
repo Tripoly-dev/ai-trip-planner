@@ -133,6 +133,94 @@ export const BENTO_ROW_2: BentoDestination[] = [
 // next?" carousel below it. Swap this array once that set lands.
 export const WALL_DESTINATIONS: BentoDestination[] = [...DESTINATION_CAROUSEL, SWITZERLAND];
 
+// Welcome screen's full-bleed scrolling background (app/page.tsx) — the 9 hero
+// candidates already sourced via scripts/fetch-hero-candidates.mjs and reviewed as a
+// contact sheet earlier (3 each: airplane-window, Santorini/scenic, global-skyline
+// moods). Distinct set from WALL_DESTINATIONS (Home) so the two screens don't repeat
+// photos. Image URLs built from the real photo IDs from that run, using the same
+// crop/format params already used everywhere else in this file.
+//
+// TEMP — photographerProfileUrl below points at the generic Unsplash attribution URL,
+// not each photographer's own profile: the exact fetch-hero-candidates.mjs JSON (with
+// their real @handles) didn't survive a context reset earlier in this session, only the
+// photo IDs and display names did. Still a real, working link (not broken), just less
+// specific than the per-photographer credit every other photo in this app gets — swap
+// these for the real profile URLs once that JSON is pasted back.
+export const HERO_WALL_PHOTOS: BentoDestination[] = [
+  {
+    id: "hero-airplane-1",
+    name: "Airplane window at sunset",
+    imageUrl:
+      "https://images.unsplash.com/photo-1527605158555-853f200063e9?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=800",
+    photographerName: "William Bayreuther",
+    photographerProfileUrl: UNSPLASH_ATTRIBUTION_URL,
+  },
+  {
+    id: "hero-airplane-2",
+    name: "Wing above the clouds",
+    imageUrl:
+      "https://images.unsplash.com/photo-1594937113195-27f8b9046013?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=800",
+    photographerName: "Jim Flores",
+    photographerProfileUrl: UNSPLASH_ATTRIBUTION_URL,
+  },
+  {
+    id: "hero-airplane-3",
+    name: "Sunset through the window",
+    imageUrl:
+      "https://images.unsplash.com/photo-1545132147-d037e6c54cfd?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=800",
+    photographerName: "Sasha Freemind",
+    photographerProfileUrl: UNSPLASH_ATTRIBUTION_URL,
+  },
+  {
+    id: "hero-scenic-1",
+    name: "Santorini, fiery sunset",
+    imageUrl:
+      "https://images.unsplash.com/photo-1669203408570-4140ee21f211?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=800",
+    photographerName: "Damien Schneider",
+    photographerProfileUrl: UNSPLASH_ATTRIBUTION_URL,
+  },
+  {
+    id: "hero-scenic-2",
+    name: "Santorini, soft pastel",
+    imageUrl:
+      "https://images.unsplash.com/photo-1571406252262-61dbac780447?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=800",
+    photographerName: "Alex Azabache",
+    photographerProfileUrl: UNSPLASH_ATTRIBUTION_URL,
+  },
+  {
+    id: "hero-scenic-3",
+    name: "Santorini, blue hour",
+    imageUrl:
+      "https://images.unsplash.com/photo-1592468662684-0376320a0842?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=800",
+    photographerName: "Gontran Isnard",
+    photographerProfileUrl: UNSPLASH_ATTRIBUTION_URL,
+  },
+  {
+    id: "hero-global-1",
+    name: "City skyline at sunset",
+    imageUrl:
+      "https://images.unsplash.com/photo-1562351768-f68650f3ec54?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=800",
+    photographerName: "Andre Benz",
+    photographerProfileUrl: UNSPLASH_ATTRIBUTION_URL,
+  },
+  {
+    id: "hero-global-2",
+    name: "City skyline, dusk",
+    imageUrl:
+      "https://images.unsplash.com/photo-1630461830075-e2f455f3c561?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=800",
+    photographerName: "Ryutaro Uozumi",
+    photographerProfileUrl: UNSPLASH_ATTRIBUTION_URL,
+  },
+  {
+    id: "hero-global-3",
+    name: "Golden-hour aerial skyline",
+    imageUrl:
+      "https://images.unsplash.com/photo-1776964665446-3abdc50cf6ec?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=800",
+    photographerName: "Val Vesa",
+    photographerProfileUrl: UNSPLASH_ATTRIBUTION_URL,
+  },
+];
+
 export const TRAVEL_THEMES: { theme: TravelTheme; emoji: string; claudeInstruction: string }[] = [
   { theme: "Relaxed", emoji: "🌅", claudeInstruction: "Slow pace, leisure activities, no packed schedule, spa, beach time, long lunches" },
   { theme: "Adventure", emoji: "🌊", claudeInstruction: "Hiking, water sports, outdoor activities, thrilling experiences" },
