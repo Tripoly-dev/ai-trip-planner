@@ -288,8 +288,21 @@ async function callClaude(userPrompt: string): Promise<ClaudeItineraryResult> {
   let parsed: unknown;
   try {
     parsed = JSON.parse(jsonText);
-  } catch {
-    throw new Error(`Claude response was not valid JSON: ${jsonText.slice(0, 500)}`);
+  } catch (parseError) {
+    // Diagnostic-only (no behavior change): the old version of this error only kept the
+    // first 500 chars of jsonText, which looks like a truncation point but isn't
+    // necessarily one — it's just where that slice happens to end. To actually tell a
+    // max_tokens cutoff apart from a malformed-JSON-in-the-middle bug, this now includes
+    // Anthropic's own stop_reason (definitive: "max_tokens" means the response really was
+    // cut off; "end_turn" means Claude finished normally and the JSON is malformed
+    // somewhere), the real SyntaxError message (V8 reports a character position), the
+    // full response length, and both the head AND the tail of the text — truncation shows
+    // up at the tail (cut off mid-value with no closing braces), a malformed-syntax bug
+    // can be anywhere in between.
+    const reason = parseError instanceof Error ? parseError.message : String(parseError);
+    throw new Error(
+      `Claude response was not valid JSON. stop_reason=${data.stop_reason} length=${jsonText.length} parseError=${reason}\n--- head ---\n${jsonText.slice(0, 500)}\n--- tail ---\n${jsonText.slice(-500)}`,
+    );
   }
 
   return sanitizeItineraryCoordinates(parsed as ClaudeItineraryResult);
