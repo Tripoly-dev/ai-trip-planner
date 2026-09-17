@@ -165,7 +165,7 @@ export function PdfScreen() {
           {/* Footer credit line — captured. The button below it is not. */}
           <div className="px-5 pb-6 pt-2 text-center" data-pdf-section>
             <div className="font-sans text-[13px] text-tripoly-text-muted">
-              Planned with ❤️ by Tripoly | tripoly.in
+              Planned with ❤️ by Tripoly | tripoly.co.in
             </div>
           </div>
         </div>
