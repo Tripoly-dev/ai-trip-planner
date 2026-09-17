@@ -41,6 +41,7 @@ Rules:
 12. Name real-sounding, destination-appropriate specifics wherever the schema below asks for one — an actual neighborhood, dish, viewpoint, or landmark, not a category label. If you're not confident a specific name is accurate, describe the specific experience concretely instead of inventing a name that could be wrong.
 13. If Destination is a country or broad region rather than a single city (e.g. "Thailand", "Japan", "Rajasthan"), do not keep the traveler in one city for the whole trip — plan across its most famous cities/areas, the way a well-traveled local friend would route a first-time visitor. Exceptions: a short trip (3 nights or fewer) where one well-chosen base is more realistic than city-hopping, or a Relaxed theme, which should favor staying put — at most one change of base (e.g. a calm home base plus a single day trip), never a packed multi-city hop. When you do move the traveler between cities/areas, give each stop enough nights to be worth the move (2+ nights per stop as a rule of thumb) and reflect the change in that day's "location" field and in drive_time/estimated_daily_cost.
 14. Prioritize what the destination is actually famous for — its best-known landmarks, neighborhoods, dishes, and experiences — over obscure alternatives, while still following rule 12: name them specifically and describe them vividly, never as a generic checklist item.
+15. Include approximate "lat"/"lng" (decimal degrees) for trip_summary (the overall destination) and for each day (that day's "location"). City/neighborhood-level accuracy is enough — this powers a map pin, not turn-by-turn navigation — but give your best real estimate; never place-holder/zero values. If a day's location repeats an earlier day's (a multi-night stay), repeat that same location's coordinates.
 
 Return this exact JSON structure:
 {
@@ -54,13 +55,17 @@ Return this exact JSON structure:
     "traveler_count": 0,
     "group_type": "",
     "theme": "",
-    "dates_suggested": ""
+    "dates_suggested": "",
+    "lat": 0,
+    "lng": 0
   },
   "days": [
     {
       "day": 1,
       "title": "Day 1 — Arrival & Slow Start",
       "location": "the specific city/area this day is based in — change this across days for a multi-stop trip (rule 13), don't leave it the same for all 7 days by default",
+      "lat": 0,
+      "lng": 0,
       "hotel": {
         "name": "",
         "stars": 4,
@@ -143,6 +148,44 @@ export function stripMarkdownFences(text: string): string {
   return fenced ? fenced[1].trim() : trimmed;
 }
 
+/**
+ * Validates a lat/lng pair Claude returned (rule 15 above), or drops it. `parsed` above is
+ * only cast to ClaudeItineraryResult, never actually checked against that shape at runtime
+ * — same as every other field in this response — so these two numbers get the same
+ * "trust nothing, degrade gracefully" treatment as lib/unsplash.ts's photo lookups: a bad
+ * value (wrong type, out of range, or (0,0) — "null island", almost always a placeholder
+ * rather than a real spot) just means no pin for that point, never a broken map or a
+ * failed itinerary.
+ */
+function cleanCoordinates(lat: unknown, lng: unknown): { lat: number; lng: number } | undefined {
+  if (typeof lat !== "number" || typeof lng !== "number" || !Number.isFinite(lat) || !Number.isFinite(lng)) {
+    return undefined;
+  }
+  if (lat < -90 || lat > 90 || lng < -180 || lng > 180) return undefined;
+  if (lat === 0 && lng === 0) return undefined;
+  return { lat, lng };
+}
+
+/**
+ * Applies cleanCoordinates to every lat/lng Claude returned, before the result reaches any
+ * caller. Explicitly overwrites `lat`/`lng` with the cleaned value (or undefined) rather
+ * than spreading cleanCoordinates' result on top — spreading `undefined` into an object is
+ * a no-op in JS, which would silently leave an invalid raw value in place instead of
+ * actually dropping it.
+ */
+function sanitizeItineraryCoordinates(result: ClaudeItineraryResult): ClaudeItineraryResult {
+  if (!result.valid) return result;
+  const summaryCoord = cleanCoordinates(result.trip_summary.lat, result.trip_summary.lng);
+  return {
+    ...result,
+    trip_summary: { ...result.trip_summary, lat: summaryCoord?.lat, lng: summaryCoord?.lng },
+    days: result.days.map((day) => {
+      const coord = cleanCoordinates(day.lat, day.lng);
+      return { ...day, lat: coord?.lat, lng: coord?.lng };
+    }),
+  };
+}
+
 async function callClaude(userPrompt: string): Promise<ClaudeItineraryResult> {
   const key = process.env.ANTHROPIC_API_KEY;
   if (!key) {
@@ -184,7 +227,7 @@ async function callClaude(userPrompt: string): Promise<ClaudeItineraryResult> {
     throw new Error(`Claude response was not valid JSON: ${jsonText.slice(0, 500)}`);
   }
 
-  return parsed as ClaudeItineraryResult;
+  return sanitizeItineraryCoordinates(parsed as ClaudeItineraryResult);
 }
 
 /** Generates a fresh itinerary from the collected trip fields. */

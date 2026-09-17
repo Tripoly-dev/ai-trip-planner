@@ -21,11 +21,20 @@
 //    elements, not photography.
 
 import { useEffect, useRef, useState } from "react";
+import dynamic from "next/dynamic";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import { BottomNav, DESKTOP_SIDEBAR_WIDTH_CLASS } from "@/components/ui/BottomNav";
+import type { ItineraryMapPoint } from "@/components/ui/ItineraryMap";
 import { ItineraryDayCard } from "@/components/ui/ItineraryDayCard";
 import { isLikelyOffTopic, OFF_TOPIC_MESSAGE } from "@/lib/validators";
 import { useTripStore, type Itinerary, type ItineraryView } from "@/store/useTripStore";
+
+// Leaflet touches `window` at import time in places, which breaks Next's server-side
+// prerender pass even inside a "use client" file — ssr:false is the standard, necessary
+// fix (see components/ui/ItineraryMap.tsx's header comment for the rest of the "why").
+const ItineraryMap = dynamic(() => import("@/components/ui/ItineraryMap").then((m) => m.ItineraryMap), {
+  ssr: false,
+});
 
 const MIN_AMENDMENT_LENGTH = 10;
 
@@ -61,6 +70,10 @@ export function ItineraryScreen() {
 
   const [amendmentValue, setAmendmentValue] = useState("");
   const [status, setStatus] = useState<{ kind: "error" | "info"; text: string } | null>(null);
+  // Which map pin is panned-to/highlighted — set by tapping a day card below. Defaults to
+  // the first point once `mapPoints` is known (see its computation further down), so the
+  // map opens already centered on day 1 rather than on nothing.
+  const [activeDayId, setActiveDayId] = useState<string | null>(null);
 
   const lastInputSource = useRef<"typed" | "voice">("typed");
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
@@ -245,6 +258,29 @@ export function ItineraryScreen() {
 
   const cinematic = itineraryView === "05B";
 
+  // Per-day pins, in trip order — only days that actually have valid coordinates (see
+  // lib/claude.ts's sanitizeItineraryCoordinates; a missing/invalid day is just skipped,
+  // never shown wrong). Falls back to a single overview pin at the destination when NO
+  // day has coordinates — the case for every trip saved before this feature existed (see
+  // useTripStore's persisted savedTrips), so old trips degrade gracefully instead of
+  // showing an empty map. If neither exists, `mapPoints` is empty and the JSX below falls
+  // back further, to the original fixed placeholder illustration.
+  const dayPoints: ItineraryMapPoint[] = itinerary.days
+    .filter((day) => typeof day.lat === "number" && typeof day.lng === "number")
+    .map((day) => ({
+      id: `day-${day.day}`,
+      label: `Day ${day.day} — ${day.location}`,
+      lat: day.lat as number,
+      lng: day.lng as number,
+    }));
+  const { lat: summaryLat, lng: summaryLng, destination: summaryDestination } = itinerary.trip_summary;
+  const mapPoints: ItineraryMapPoint[] =
+    dayPoints.length > 0
+      ? dayPoints
+      : typeof summaryLat === "number" && typeof summaryLng === "number"
+        ? [{ id: "destination", label: summaryDestination, lat: summaryLat, lng: summaryLng }]
+        : [];
+
   return (
     <main
       className={`flex h-dvh flex-col overflow-hidden bg-white pb-[76px] lg:flex-row lg:pb-0 ${DESKTOP_SIDEBAR_WIDTH_CLASS}`}
@@ -254,7 +290,12 @@ export function ItineraryScreen() {
       <div
         className={`relative h-[325px] flex-shrink-0 lg:h-dvh lg:w-1/2 ${cinematic ? "overflow-hidden bg-[#0d1b14]" : "bg-[#e9efe9]"}`}
       >
-        {cinematic ? (
+        {mapPoints.length > 0 ? (
+          <ItineraryMap points={mapPoints} activeId={activeDayId ?? mapPoints[0]?.id ?? null} dark={cinematic} />
+        ) : cinematic ? (
+          // Fallback for a trip with no coordinates at all (saved before this feature
+          // existed — see useTripStore's persisted savedTrips) — the original fixed
+          // illustration, unchanged, so an old trip never shows a broken/empty map.
           <>
             <div
               className="absolute inset-0"
@@ -326,7 +367,12 @@ export function ItineraryScreen() {
 
         <div className="flex flex-1 flex-col gap-3.5 overflow-y-auto pb-4">
           {itinerary.days.map((day) => (
-            <ItineraryDayCard key={day.day} day={day} />
+            // Tapping a day pans the map above to that day's pin (only meaningful once
+            // there's a real map — mapPoints.length > 0 — but harmless as a no-op click
+            // otherwise, since ItineraryMap just isn't rendered in that case).
+            <div key={day.day} onClick={() => setActiveDayId(`day-${day.day}`)} className="cursor-pointer">
+              <ItineraryDayCard day={day} />
+            </div>
           ))}
         </div>
 
