@@ -21,6 +21,7 @@ import {
   validateDestination,
   validateDuration,
   validateName,
+  validateTravelDate,
   validateTravelerCount,
   type ValidationResult,
 } from "@/lib/validators";
@@ -35,6 +36,8 @@ function validateField(field: FieldKey, rawValue: string | number, language: Lan
       return validateDestination(raw, language);
     case "duration":
       return validateDuration(raw, language);
+    case "travelDate":
+      return validateTravelDate(raw, language);
     case "budget":
       return parseBudget(raw, language);
     case "travelerCount":
@@ -61,7 +64,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "no_input" }, { status: 400 });
   }
 
-  // Only pass through keys that are actually one of the 7 known fields, with a
+  // Only pass through keys that are actually one of the 8 known fields, with a
   // string/number value — anything else in the client's payload is ignored rather
   // than forwarded into the prompt verbatim.
   const collectedRaw = (body.collected && typeof body.collected === "object" ? body.collected : {}) as Record<string, unknown>;

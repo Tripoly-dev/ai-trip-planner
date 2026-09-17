@@ -33,13 +33,14 @@ export function TripSummaryCard({ onConfirm }: TripSummaryCardProps = {}) {
   const name = useTripStore((s) => s.name);
   const destination = useTripStore((s) => s.destination);
   const duration = useTripStore((s) => s.duration);
+  const travelDate = useTripStore((s) => s.travelDate);
   const totalBudget = useTripStore((s) => s.totalBudget);
   const perPersonBudget = useTripStore((s) => s.perPersonBudget);
   const travelerCount = useTripStore((s) => s.travelerCount);
   const groupType = useTripStore((s) => s.groupType);
   const travelTheme = useTripStore((s) => s.travelTheme);
 
-  const snapshot = { name, destination, duration, totalBudget, perPersonBudget, travelerCount, groupType, travelTheme };
+  const snapshot = { name, destination, duration, travelDate, totalBudget, perPersonBudget, travelerCount, groupType, travelTheme };
   const rows = buildSummaryRows(snapshot);
   const complete = isTripComplete(snapshot);
 

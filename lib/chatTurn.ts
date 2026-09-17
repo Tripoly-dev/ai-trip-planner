@@ -58,10 +58,16 @@ of the app displays destinations in English.`,
   duration: `The trip length in days, as an integer from 1 to 10 inclusive.
 Understand digits (Arabic or Devanagari) and number words in English or Hindi,
 anywhere in the sentence (e.g. "around 8 days", "8 din", "आठ दिन").`,
+  travelDate: `When they plan to travel — either an exact date ("15 March
+2026", "March 15") or a flexible month/window ("sometime in December",
+"mid-June", "next month"), in English or Hindi. Return it as a short, cleanly
+written phrase in the traveler's own words (light cleanup only, e.g. fix
+casing/spacing) — never force it into a strict date format, and never invent
+a date they didn't give.`,
   budget: `The total trip budget in Indian Rupees, as an integer, minimum 1000.
 Understand "lakh"/"lakhs" (or Hindi "लाख"), "thousand"/"हज़ार", plain digits
 (Arabic or Devanagari), and shorthand like "2L", in English, Hindi, or mixed.`,
-  travelerCount: `The number of travelers, as an integer from 1 to 50 inclusive.
+  travelerCount: `The number of travelers, as an integer from 1 to 8 inclusive.
 Understand digits and number words in English or Hindi, anywhere in the
 sentence (e.g. "we are 4 people", "hum 4 log hain").`,
   groupType: `Match to exactly one of these four values: "Family", "Couple",
@@ -80,8 +86,9 @@ const FIELD_LABELS: Record<FieldKey, string> = {
   name: "the traveler's own name",
   destination: "which destination they want to travel to",
   duration: "how many days their trip will be (1 to 10)",
+  travelDate: "when they plan to travel — an exact date or a rough month/window",
   budget: "their total trip budget, in Indian Rupees",
-  travelerCount: "how many people are traveling (1 to 50)",
+  travelerCount: "how many people are traveling (1 to 8)",
   groupType: "their group type — Family, Couple, Friends, or Solo",
   theme: "what kind of trip they want — Relaxed, Adventure, Romantic, Family, or Foodie",
 };

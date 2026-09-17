@@ -32,6 +32,7 @@ interface RequestBody {
   name?: unknown;
   destination?: unknown;
   duration?: unknown;
+  travelDate?: unknown;
   totalBudget?: unknown;
   perPersonBudget?: unknown;
   travelerCount?: unknown;
@@ -47,6 +48,7 @@ function parseTripFields(body: RequestBody): TripFields | null {
     name,
     destination,
     duration,
+    travelDate,
     totalBudget,
     perPersonBudget,
     travelerCount,
@@ -59,6 +61,7 @@ function parseTripFields(body: RequestBody): TripFields | null {
     typeof name !== "string" ||
     typeof destination !== "string" ||
     typeof duration !== "number" ||
+    typeof travelDate !== "string" ||
     typeof totalBudget !== "number" ||
     typeof perPersonBudget !== "number" ||
     typeof travelerCount !== "number" ||
@@ -66,6 +69,7 @@ function parseTripFields(body: RequestBody): TripFields | null {
     typeof travelTheme !== "string" ||
     !name ||
     !destination ||
+    !travelDate ||
     !groupType ||
     !travelTheme
   ) {
@@ -78,6 +82,7 @@ function parseTripFields(body: RequestBody): TripFields | null {
     name,
     destination,
     duration,
+    travelDate,
     totalBudget,
     perPersonBudget,
     travelerCount,

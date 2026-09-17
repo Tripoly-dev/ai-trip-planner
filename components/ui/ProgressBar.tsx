@@ -1,6 +1,7 @@
 "use client";
 
-// Screen 3 header — 6-bucket chat progress bar. Per TRIPOLY_HANDOFF.md section 7:
+// Screen 3 header — 7-bucket chat progress bar (added "Dates" alongside the original
+// 6 buckets when travel-date collection was introduced). Per TRIPOLY_HANDOFF.md section 7:
 // Active step = filled dot, Completed = green tick, Pending = grey dot.
 //
 // Pure-conversational rebuild: no more `currentStep` prop. The store dropped
@@ -25,6 +26,7 @@ const BUCKETS: Bucket[] = [
   { label: "Name", fields: ["name"] },
   { label: "Destination", fields: ["destination"] },
   { label: "Duration", fields: ["duration"] },
+  { label: "Dates", fields: ["travelDate"] },
   { label: "Budget", fields: ["budget"] },
   { label: "Travelers", fields: ["travelerCount", "groupType"] },
   { label: "Vibe", fields: ["theme"] },
@@ -34,12 +36,13 @@ export function ProgressBar() {
   const name = useTripStore((s) => s.name);
   const destination = useTripStore((s) => s.destination);
   const duration = useTripStore((s) => s.duration);
+  const travelDate = useTripStore((s) => s.travelDate);
   const totalBudget = useTripStore((s) => s.totalBudget);
   const travelerCount = useTripStore((s) => s.travelerCount);
   const groupType = useTripStore((s) => s.groupType);
   const travelTheme = useTripStore((s) => s.travelTheme);
 
-  const snapshot = { name, destination, duration, totalBudget, travelerCount, groupType, travelTheme };
+  const snapshot = { name, destination, duration, travelDate, totalBudget, travelerCount, groupType, travelTheme };
   const missing = nextMissingField(snapshot);
 
   const isFieldDone = (field: FieldKey): boolean => {
@@ -50,6 +53,8 @@ export function ProgressBar() {
         return destination.trim().length > 0;
       case "duration":
         return duration > 0;
+      case "travelDate":
+        return travelDate.trim().length > 0;
       case "budget":
         return totalBudget > 0;
       case "travelerCount":

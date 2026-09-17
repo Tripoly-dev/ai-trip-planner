@@ -55,6 +55,7 @@ export function ItineraryScreen() {
   const name = useTripStore((s) => s.name);
   const destination = useTripStore((s) => s.destination);
   const duration = useTripStore((s) => s.duration);
+  const travelDate = useTripStore((s) => s.travelDate);
   const totalBudget = useTripStore((s) => s.totalBudget);
   const perPersonBudget = useTripStore((s) => s.perPersonBudget);
   const travelerCount = useTripStore((s) => s.travelerCount);
@@ -156,6 +157,7 @@ export function ItineraryScreen() {
           name,
           destination,
           duration,
+          travelDate,
           totalBudget,
           perPersonBudget,
           travelerCount,

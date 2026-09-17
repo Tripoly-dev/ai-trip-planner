@@ -171,10 +171,32 @@ export function validateTravelerCount(input: string, language: Language): Valida
   if (n === null) {
     return { valid: false, error: t(chatCopy.errors.travelersMissing, language) };
   }
-  if (n < 1 || n > 50) {
+  if (n < 1 || n > 8) {
     return { valid: false, error: t(chatCopy.errors.travelersRange, language) };
   }
   return { valid: true, value: n };
+}
+
+// Free-text like validateName/validateDestination, not a strict date parser: the
+// confirmed design (your call) is to accept either an exact date or a flexible
+// month/window ("15 March 2026", "mid-June", "sometime in December") in the
+// traveler's own words — lib/chatTurn.ts does the actual language-aware extraction/
+// light cleanup, this is just the server-side safety-net presence + sanity check,
+// same shape as every other field re-validated in app/api/chat-turn/route.ts.
+export function validateTravelDate(input: string, language: Language): ValidationResult<string> {
+  const stripped = input.trim();
+  if (stripped.length < 2) {
+    return { valid: false, error: t(chatCopy.errors.travelDateMissing, language) };
+  }
+  // A real answer here is a date or a short window phrase ("mid-June", "first week
+  // of December 2026") — never more than a short sentence. Same reasoning as
+  // validateName/validateDestination's word-count caps: anything longer is far more
+  // likely to be unstripped phrasing than an actual answer, so treat it as
+  // unresolved and let the Claude-based extraction (lib/chatTurn.ts) handle it.
+  if (stripped.split(/\s+/).length > 8) {
+    return { valid: false, error: t(chatCopy.errors.travelDateTooLong, language) };
+  }
+  return { valid: true, value: stripped };
 }
 
 const GROUP_TYPES: GroupType[] = ["Family", "Couple", "Friends", "Solo"];

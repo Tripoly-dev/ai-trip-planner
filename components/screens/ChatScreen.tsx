@@ -120,6 +120,7 @@ export function ChatScreen() {
   const name = useTripStore((s) => s.name);
   const destination = useTripStore((s) => s.destination);
   const duration = useTripStore((s) => s.duration);
+  const travelDate = useTripStore((s) => s.travelDate);
   const totalBudget = useTripStore((s) => s.totalBudget);
   const travelerCount = useTripStore((s) => s.travelerCount);
   const groupType = useTripStore((s) => s.groupType);
@@ -159,6 +160,7 @@ export function ChatScreen() {
     name,
     destination,
     duration,
+    travelDate,
     totalBudget,
     travelerCount,
     groupType,
@@ -199,6 +201,7 @@ export function ChatScreen() {
     if (name) collected.name = name;
     if (destination) collected.destination = destination;
     if (duration > 0) collected.duration = duration;
+    if (travelDate) collected.travelDate = travelDate;
     if (totalBudget > 0) collected.budget = totalBudget;
     if (travelerCount > 0) collected.travelerCount = travelerCount;
     if (groupType) collected.groupType = groupType;
@@ -214,6 +217,7 @@ export function ChatScreen() {
     if (updates.name !== undefined) patch.name = String(updates.name);
     if (updates.destination !== undefined) patch.destination = String(updates.destination);
     if (updates.duration !== undefined) patch.duration = Number(updates.duration);
+    if (updates.travelDate !== undefined) patch.travelDate = String(updates.travelDate);
     if (updates.budget !== undefined) patch.totalBudget = Number(updates.budget);
     if (updates.travelerCount !== undefined) patch.travelerCount = Number(updates.travelerCount);
     if (updates.groupType !== undefined) patch.groupType = updates.groupType as GroupType;
@@ -231,6 +235,7 @@ export function ChatScreen() {
       name: s.name,
       destination: s.destination,
       duration: s.duration,
+      travelDate: s.travelDate,
       totalBudget: s.totalBudget,
       travelerCount: s.travelerCount,
       groupType: s.groupType,

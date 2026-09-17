@@ -19,6 +19,7 @@ export type FieldKey =
   | "name"
   | "destination"
   | "duration"
+  | "travelDate"
   | "budget"
   | "travelerCount"
   | "groupType"
@@ -33,6 +34,7 @@ export const FIELD_PRIORITY: FieldKey[] = [
   "name",
   "destination",
   "duration",
+  "travelDate",
   "budget",
   "travelerCount",
   "groupType",
@@ -44,17 +46,19 @@ export const FIELD_TO_STORE_KEY: Record<FieldKey, string> = {
   name: "name",
   destination: "destination",
   duration: "duration",
+  travelDate: "travelDate",
   budget: "totalBudget",
   travelerCount: "travelerCount",
   groupType: "groupType",
   theme: "travelTheme",
 };
 
-/** The 7 collected fields, in store shape — used for the completion gate and chip visibility. */
+/** The 8 collected fields, in store shape — used for the completion gate and chip visibility. */
 export interface FieldPresenceSnapshot {
   name: string;
   destination: string;
   duration: number;
+  travelDate: string;
   totalBudget: number;
   travelerCount: number;
   groupType: GroupType | null;
@@ -74,6 +78,8 @@ function isFieldPresent(snapshot: FieldPresenceSnapshot, field: FieldKey): boole
       return snapshot.destination.trim().length > 0;
     case "duration":
       return snapshot.duration > 0;
+    case "travelDate":
+      return snapshot.travelDate.trim().length > 0;
     case "budget":
       return snapshot.totalBudget > 0;
     case "travelerCount":
@@ -127,6 +133,7 @@ export function buildSummaryRows(snapshot: TripFieldsSnapshot): SummaryRow[] {
   if (snapshot.duration > 0) {
     rows.push({ label: "Duration", value: `${snapshot.duration} Night${snapshot.duration === 1 ? "" : "s"}` });
   }
+  if (snapshot.travelDate) rows.push({ label: "Travel Date", value: snapshot.travelDate });
   if (snapshot.totalBudget > 0) {
     rows.push({ label: "Total Budget", value: `₹${snapshot.totalBudget.toLocaleString("en-IN")}` });
   }

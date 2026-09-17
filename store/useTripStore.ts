@@ -118,6 +118,7 @@ export interface TripStore {
   name: string;
   destination: string;
   duration: number; // in nights, max 10
+  travelDate: string; // free text — an exact date or a flexible month/window, in the user's own words
   totalBudget: number; // in INR
   perPersonBudget: number; // auto-calculated
   travelerCount: number;
@@ -168,6 +169,7 @@ const initialState = {
   name: "",
   destination: "",
   duration: 0,
+  travelDate: "",
   totalBudget: 0,
   perPersonBudget: 0,
   travelerCount: 0,

@@ -138,8 +138,8 @@ export const chatCopy = {
       HI: "कृपया बताएं कितने यात्री होंगे।",
     } satisfies Bilingual,
     travelersRange: {
-      EN: "Please enter between 1 and 50 travelers.",
-      HI: "कृपया 1 से 50 यात्रियों के बीच बताएं।",
+      EN: "Please enter between 1 and 8 travelers.",
+      HI: "कृपया 1 से 8 यात्रियों के बीच बताएं।",
     } satisfies Bilingual,
 
     // matchGroupType (also ChatScreen's post-extraction re-check — same string)
@@ -157,6 +157,16 @@ export const chatCopy = {
       EN: `Minimum budget is ${formattedAmount}.`,
       HI: `न्यूनतम बजट ${formattedAmount} है।`,
     }),
+
+    // validateTravelDate
+    travelDateMissing: {
+      EN: "Please tell me when you're planning to travel — a date or a rough month works.",
+      HI: "कृपया बताएं आप कब यात्रा करना चाहते हैं — तारीख या महीना बता सकते हैं।",
+    } satisfies Bilingual,
+    travelDateTooLong: {
+      EN: "Please keep it short — a date or a month/window (e.g. 'mid-June' or '15 March 2026').",
+      HI: "कृपया छोटा बताएं — तारीख या महीना (जैसे 'जून के मध्य में' या '15 मार्च 2026')।",
+    } satisfies Bilingual,
 
     // theme (ChatScreen local match + matchTheme in lib/validators.ts — same string both places)
     themeChoice: {
@@ -245,13 +255,17 @@ export const chatCopy = {
       EN: "Numbers only, max 10 days",
       HI: "केवल संख्या, अधिकतम 10 दिन",
     } satisfies Bilingual,
+    travelDate: {
+      EN: "An exact date, or a rough month/window",
+      HI: "सही तारीख, या महीना/समय बताएं",
+    } satisfies Bilingual,
     budget: {
       EN: "e.g. 2 lakhs, 2L, or ₹2,00,000",
       HI: "जैसे 2 लाख, 2L, या ₹2,00,000",
     } satisfies Bilingual,
     travelerCount: {
-      EN: "Numbers only, 1–50 travelers",
-      HI: "केवल संख्या, 1–50 यात्री",
+      EN: "Numbers only, 1–8 travelers",
+      HI: "केवल संख्या, 1–8 यात्री",
     } satisfies Bilingual,
     groupType: {
       EN: "Family, Couple, Friends, or Solo",

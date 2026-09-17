@@ -49,6 +49,7 @@ Rules:
 13. If Destination is a country or broad region rather than a single city (e.g. "Thailand", "Japan", "Rajasthan"), do not keep the traveler in one city for the whole trip — plan across its most famous cities/areas, the way a well-traveled local friend would route a first-time visitor. Exceptions: a short trip (3 nights or fewer) where one well-chosen base is more realistic than city-hopping, or a Relaxed theme, which should favor staying put — at most one change of base (e.g. a calm home base plus a single day trip), never a packed multi-city hop. When you do move the traveler between cities/areas, give each stop enough nights to be worth the move (2+ nights per stop as a rule of thumb) and reflect the change in that day's "location" field and in drive_time/estimated_daily_cost.
 14. Prioritize what the destination is actually famous for — its best-known landmarks, neighborhoods, dishes, and experiences — over obscure alternatives, while still following rule 12: name them specifically and describe them vividly, never as a generic checklist item.
 15. Include approximate "lat"/"lng" (decimal degrees) for trip_summary (the overall destination) and for each day (that day's "location"). City/neighborhood-level accuracy is enough — this powers a map pin, not turn-by-turn navigation — but give your best real estimate; never place-holder/zero values. If a day's location repeats an earlier day's (a multi-night stay), repeat that same location's coordinates.
+16. A real "Travel Date" is given below (an exact date, or a flexible month/window) — use it for seasonal accuracy: weather, festivals/events, crowd levels, and off-season notes, wherever relevant in the day-by-day content and hotel/activity choices. Never invent your own travel dates or season when a real one is given.
 
 Return this exact JSON structure:
 {
@@ -103,6 +104,7 @@ export interface TripFields {
   name: string;
   destination: string;
   duration: number;
+  travelDate: string;
   totalBudget: number;
   perPersonBudget: number;
   travelerCount: number;
@@ -120,6 +122,7 @@ function buildUserPrompt(fields: TripFields): string {
 Name: ${fields.name}
 Destination: ${fields.destination}
 Duration: ${fields.duration} nights
+Travel Date: ${fields.travelDate}
 Total Budget: ₹${fields.totalBudget}
 Per Person Budget: ₹${fields.perPersonBudget}
 Travelers: ${fields.travelerCount} (${fields.groupType})
@@ -257,7 +260,27 @@ function sanitizeItineraryCoordinates(result: ClaudeItineraryResult): ClaudeItin
   };
 }
 
-async function callClaude(userPrompt: string): Promise<ClaudeItineraryResult> {
+/**
+ * Overwrites trip_summary.dates_suggested with the traveler's own given travel date,
+ * rather than trusting Claude's echo of rule 16 above. Your call, confirmed: a real
+ * date/window is what the traveler explicitly gave (lib/chatTurn.ts already only
+ * accepts it in their own words, lightly cleaned up), so this deterministically
+ * replaces whatever Claude wrote there instead of leaving it to prompt-following —
+ * same "trust nothing from the model, guarantee it in code" pattern as
+ * sanitizeItineraryCoordinates just above. No-op (Claude's own dates_suggested is
+ * left as-is) when fields.travelDate is empty — e.g. old/malformed callers, or a
+ * gap that shouldn't happen now that the field is required before generation, but
+ * this never crashes over it either way.
+ */
+function applyTravelDateOverride(result: ClaudeItineraryResult, travelDate: string): ClaudeItineraryResult {
+  if (!result.valid || !travelDate.trim()) return result;
+  return {
+    ...result,
+    trip_summary: { ...result.trip_summary, dates_suggested: travelDate.trim() },
+  };
+}
+
+async function callClaude(userPrompt: string, travelDate: string): Promise<ClaudeItineraryResult> {
   const key = process.env.ANTHROPIC_API_KEY;
   if (!key) {
     throw new Error("ANTHROPIC_API_KEY is not configured");
@@ -311,7 +334,7 @@ async function callClaude(userPrompt: string): Promise<ClaudeItineraryResult> {
     );
   }
 
-  return sanitizeItineraryCoordinates(parsed as ClaudeItineraryResult);
+  return applyTravelDateOverride(sanitizeItineraryCoordinates(parsed as ClaudeItineraryResult), travelDate);
 }
 
 /**
@@ -324,12 +347,12 @@ async function callClaude(userPrompt: string): Promise<ClaudeItineraryResult> {
 export function generateItinerary(fields: TripFields): Promise<ClaudeItineraryResult> {
   const pkg = findBestCuratedPackage(fields.destination, fields.duration);
   if (!pkg) {
-    return callClaude(buildUserPrompt(fields));
+    return callClaude(buildUserPrompt(fields), fields.travelDate);
   }
 
   const newDaysCount = fields.duration - pkg.durationNights;
   const tier = pickHotelTier(pkg, fields.perPersonBudget);
-  return callClaude(buildCuratedExtensionPrompt(fields, pkg, tier, newDaysCount));
+  return callClaude(buildCuratedExtensionPrompt(fields, pkg, tier, newDaysCount), fields.travelDate);
 }
 
 /** Applies a natural-language amendment to an existing itinerary. */
@@ -338,5 +361,5 @@ export function amendItinerary(
   currentItinerary: Itinerary,
   amendmentRequest: string,
 ): Promise<ClaudeItineraryResult> {
-  return callClaude(buildAmendmentPrompt(fields, currentItinerary, amendmentRequest));
+  return callClaude(buildAmendmentPrompt(fields, currentItinerary, amendmentRequest), fields.travelDate);
 }
