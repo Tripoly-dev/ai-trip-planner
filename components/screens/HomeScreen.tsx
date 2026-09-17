@@ -15,7 +15,7 @@
 // is just a shortcut back to whichever one you were most recently looking at.
 
 import Link from "next/link";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { BottomNav, DESKTOP_SIDEBAR_WIDTH_CLASS } from "@/components/ui/BottomNav";
 import { DestinationCard } from "@/components/ui/DestinationCard";
 import { DestinationWall } from "@/components/ui/DestinationWall";
@@ -68,9 +68,9 @@ function FunFactCarousel() {
   const scrollerRef = useRef<HTMLDivElement>(null);
   const [activeIndex, setActiveIndex] = useState(0);
 
-  // Card width (295px, per FunFactCard) + gap (10px) — used to derive which card is
-  // nearest the left edge as the user scrolls, to drive the dot indicator.
-  const STEP = 305;
+  // Card width (320px, per FunFactCard) + gap (10px) — used both to derive which card is
+  // nearest the left edge as the user scrolls (dot indicator) and to auto-advance below.
+  const STEP = 330;
 
   function handleScroll() {
     const el = scrollerRef.current;
@@ -78,6 +78,23 @@ function FunFactCarousel() {
     const index = Math.round(el.scrollLeft / STEP);
     setActiveIndex(Math.min(Math.max(index, 0), FUN_FACTS.length - 1));
   }
+
+  // Auto-advance, per your live-portal feedback ("there is not auto scrolling feature").
+  // Reads/writes activeIndex through the functional setState updater so it always
+  // continues from wherever the user last manually scrolled to (handleScroll above keeps
+  // activeIndex in sync with that), rather than a stale value captured at mount. Desktop
+  // renders these as a static wrapping grid (no scroller to advance), so this is a no-op
+  // there beyond the harmless state updates.
+  useEffect(() => {
+    const id = setInterval(() => {
+      setActiveIndex((prev) => {
+        const next = (prev + 1) % FUN_FACTS.length;
+        scrollerRef.current?.scrollTo({ left: next * STEP, behavior: "smooth" });
+        return next;
+      });
+    }, 4000);
+    return () => clearInterval(id);
+  }, [STEP]);
 
   return (
     <div className="mb-5">
@@ -132,7 +149,7 @@ export function HomeScreen() {
 
         <Link
           href="/chat"
-          className="mb-5 flex h-14 items-center justify-center rounded-2xl bg-tripoly-green font-sans text-base font-semibold text-white shadow-[0_4px_20px_rgba(22,207,118,0.25)]"
+          className="home-cta-pulse mb-5 flex h-14 items-center justify-center rounded-2xl bg-tripoly-green font-sans text-base font-semibold text-white transition-transform active:scale-[0.97]"
         >
           Plan a Trip ✈️
         </Link>

@@ -2,8 +2,15 @@ import Link from "next/link";
 import { TripolyMark } from "@/components/ui/TripolyMark";
 
 // Navigation. Per TRIPOLY_HANDOFF.md section 12: shown on Home (02A/02B) and Itinerary
-// (05A/05B) only — not Welcome, Chat, Processing, PDF. 5 tabs; the center "Ask" tab is an
+// (05A/05B) only — not Welcome, Chat, Processing, PDF. The center "Ask" tab is an
 // elevated FAB, always green regardless of active screen.
+//
+// Per your request: the standalone "Itinerary" tab and the "Profile" tab (which has
+// never pointed at a real page — app/profile has never existed) are gone. What was the
+// "Trips" tab is now labeled "Itinerary" (href unchanged, still /trips — that's the
+// list of every saved trip). Viewing a specific trip's detail page (app/itinerary,
+// reached by tapping a card there) now highlights that same tab as active, since it's
+// the closest thing to it in this 3-tab nav.
 //
 // Per section 13: "Bottom nav becomes left sidebar on desktop." Both variants render from
 // this one component — the mobile bar (`lg:hidden`) and a desktop sidebar (`hidden lg:flex`)
@@ -34,25 +41,6 @@ function TripsIcon({ color }: { color: string }) {
     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.8" aria-hidden="true">
       <rect x="3" y="7" width="18" height="13" rx="2" />
       <path d="M9 7V5a2 2 0 012-2h2a2 2 0 012 2v2" />
-    </svg>
-  );
-}
-
-function ItineraryIcon({ color }: { color: string }) {
-  return (
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.8" aria-hidden="true">
-      <circle cx="6" cy="19" r="2" />
-      <circle cx="18" cy="5" r="2" />
-      <path d="M6 17 18 7" />
-    </svg>
-  );
-}
-
-function ProfileIcon({ color }: { color: string }) {
-  return (
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.8" aria-hidden="true">
-      <circle cx="12" cy="8" r="4" />
-      <path d="M4 21c0-4 4-6 8-6s8 2 8 6" />
     </svg>
   );
 }
@@ -96,7 +84,6 @@ function NavItems({ active, askMarginClass }: { active: BottomNavTab; askMarginC
   return (
     <>
       <NavItem href="/home" label="Home" isActive={active === "home"} icon={(c) => <HomeIcon color={c} />} />
-      <NavItem href="/trips" label="Trips" isActive={active === "trips"} icon={(c) => <TripsIcon color={c} />} />
 
       <Link href="/chat" className={`flex flex-col items-center gap-1 ${askMarginClass}`}>
         <span className="flex h-12 w-12 items-center justify-center rounded-full bg-tripoly-green shadow-[0_4px_12px_rgba(22,207,118,0.35)]">
@@ -105,17 +92,13 @@ function NavItems({ active, askMarginClass }: { active: BottomNavTab; askMarginC
         <span className="font-sans text-[10px] font-medium text-tripoly-text-muted">Ask</span>
       </Link>
 
+      {/* href unchanged (/trips) — label renamed. Also lights up for active === "itinerary"
+          (ItineraryScreen, a specific trip's detail page), since that's reached from here. */}
       <NavItem
-        href="/itinerary"
+        href="/trips"
         label="Itinerary"
-        isActive={active === "itinerary"}
-        icon={(c) => <ItineraryIcon color={c} />}
-      />
-      <NavItem
-        href="/profile"
-        label="Profile"
-        isActive={active === "profile"}
-        icon={(c) => <ProfileIcon color={c} />}
+        isActive={active === "trips" || active === "itinerary"}
+        icon={(c) => <TripsIcon color={c} />}
       />
     </>
   );

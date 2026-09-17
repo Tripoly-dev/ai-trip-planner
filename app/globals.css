@@ -201,3 +201,23 @@ body {
 .home-wall-col-up:hover {
   animation-play-state: paused;
 }
+
+/* Home — "Plan a Trip" CTA. Per your live-portal feedback ("very plain and vanila and
+   no motion or effects") — an ambient pulsing glow so the button reads as alive/tappable
+   even before a finger touches it, plus a tactile press-scale (applied inline via
+   active:scale-[0.97] in HomeScreen.tsx, not here — that's a one-off utility, not
+   reusable). ease-in-out + alternating box-shadow strength, not a transform, so it never
+   fights the press-scale transform above. */
+@keyframes ctaPulseGlow {
+  0%,
+  100% {
+    box-shadow: 0 4px 20px rgba(22, 207, 118, 0.25);
+  }
+  50% {
+    box-shadow: 0 4px 28px rgba(22, 207, 118, 0.55);
+  }
+}
+
+.home-cta-pulse {
+  animation: ctaPulseGlow 2.4s ease-in-out infinite;
+}
