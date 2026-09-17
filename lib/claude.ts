@@ -18,6 +18,7 @@
 // schema — one call does both "figure out what changed" and "regenerate."
 
 import type { Itinerary, Language } from "@/store/useTripStore";
+import { findBestCuratedPackage, pickHotelTier, type CuratedPackage, type HotelTier } from "./curatedPackages";
 
 const ANTHROPIC_MESSAGES_URL = "https://api.anthropic.com/v1/messages";
 const MODEL = "claude-sonnet-5";
@@ -119,6 +120,70 @@ Travelers: ${fields.travelerCount} (${fields.groupType})
 Travel Theme: ${fields.travelTheme}
 Language: ${fields.language === "HI" ? "Hindi" : "English"}
 Generate a complete itinerary.
+`.trim();
+}
+
+/**
+ * Formats a curated package's real days (everything except the final departure day,
+ * which buildCuratedExtensionPrompt handles separately so it can renumber it) as plain
+ * text for the prompt — not JSON, since the instruction is "reproduce this content,"
+ * and prose is what Claude is being asked to (lightly) rewrite into the schema anyway.
+ */
+function formatCuratedDaysForPrompt(pkg: CuratedPackage): string {
+  const contentDays = pkg.days.slice(0, -1);
+  return contentDays
+    .map((d) => {
+      const optional = d.optionalActivities
+        ? `\nOptional activities Tripoly offers this day (mention only if relevant, never invent pricing for these): ${d.optionalActivities}`
+        : "";
+      return `Day ${d.day} — "${d.title}"\nMeals included: ${d.meals}\nWhat actually happens: ${d.description}${optional}`;
+    })
+    .join("\n\n");
+}
+
+/**
+ * The hybrid prompt (section 9's system prompt / JSON contract stay unchanged — this is
+ * only a different user-turn). Your call, confirmed: when a real Tripoly package
+ * (lib/curatedPackages.ts) covers the destination for up to `pkg.durationNights` of the
+ * requested `fields.duration` nights, treat its real days as ground truth Claude must
+ * reproduce essentially unchanged, filling in only the schema fields the curated data
+ * doesn't carry (hotel name/stars/description, per-meal breakdown, drive_time,
+ * estimated_daily_cost, lat/lng, tip) — then generate exactly `newDaysCount` brand-new
+ * days (computed here, never left for Claude to count) continuing in the same cities,
+ * inserted before the package's final departure day, which is preserved and renumbered
+ * to stay last. Falls back entirely to buildUserPrompt when there's no matching package
+ * — see generateItinerary below.
+ */
+function buildCuratedExtensionPrompt(
+  fields: TripFields,
+  pkg: CuratedPackage,
+  tier: HotelTier,
+  newDaysCount: number,
+): string {
+  const departureDay = pkg.days[pkg.days.length - 1];
+  const finalDayNumber = pkg.durationDays + newDaysCount;
+  const tierCost = pkg.costByTier[tier];
+  const citiesLine = pkg.cities.map((c) => `${c.city} (${c.nights} nights)`).join(", ");
+
+  const newDaysSection =
+    newDaysCount > 0
+      ? `
+NEW DAYS TO GENERATE: write exactly ${newDaysCount} brand-new day(s), numbered Day ${pkg.durationDays} through Day ${finalDayNumber - 1}, inserted right after the real days above and right before the departure day. Keep the traveler in the same cities the real package already covers (${citiesLine}) for deeper exploration — do not add a new city. These new days must cover DIFFERENT attractions/activities/restaurants than every real day above — never repeat something already named there.
+`
+      : "";
+
+  return `
+${buildUserPrompt(fields)}
+
+IMPORTANT — this is not a fully AI-generated itinerary. Tripoly already sells a real curated package for this trip, "${pkg.name}" (${pkg.durationNights} nights / ${pkg.durationDays} days), cities: ${citiesLine}. Hotel tier for this budget: ${tier}${tierCost ? ` (₹${tierCost.adult} per adult for this package)` : ""}.
+
+REAL DAYS — reproduce these ${pkg.days.length - 1} days essentially unchanged (same activities, same order, same specifics; only lightly smooth the wording to fit the schema fields below). For each of them, invent only the schema fields this source data doesn't include: hotel name/stars/description appropriate for a ${tier} property in that city, a breakfast/lunch/dinner breakdown consistent with "Meals included", a realistic drive_time, estimated_daily_cost, lat/lng, and a specific local tip.
+
+${formatCuratedDaysForPrompt(pkg)}
+${newDaysSection}
+DEPARTURE DAY — the real package's final day is departure: "${departureDay.title}": ${departureDay.description}. Reproduce it essentially unchanged as the LAST day of the itinerary, renumbered to Day ${finalDayNumber}.
+
+Return the complete ${finalDayNumber}-day itinerary (real days, then any new days, then the renumbered departure day) in the exact JSON structure already specified.
 `.trim();
 }
 
@@ -230,9 +295,22 @@ async function callClaude(userPrompt: string): Promise<ClaudeItineraryResult> {
   return sanitizeItineraryCoordinates(parsed as ClaudeItineraryResult);
 }
 
-/** Generates a fresh itinerary from the collected trip fields. */
+/**
+ * Generates a fresh itinerary from the collected trip fields. Checks for a real Tripoly
+ * curated package (lib/curatedPackages.ts) covering this destination first — if one
+ * fits within the requested duration, the hybrid prompt reproduces its real days and
+ * only AI-generates whatever extra days are needed. Otherwise, falls back to today's
+ * full-AI generation, completely unchanged.
+ */
 export function generateItinerary(fields: TripFields): Promise<ClaudeItineraryResult> {
-  return callClaude(buildUserPrompt(fields));
+  const pkg = findBestCuratedPackage(fields.destination, fields.duration);
+  if (!pkg) {
+    return callClaude(buildUserPrompt(fields));
+  }
+
+  const newDaysCount = fields.duration - pkg.durationNights;
+  const tier = pickHotelTier(pkg, fields.perPersonBudget);
+  return callClaude(buildCuratedExtensionPrompt(fields, pkg, tier, newDaysCount));
 }
 
 /** Applies a natural-language amendment to an existing itinerary. */

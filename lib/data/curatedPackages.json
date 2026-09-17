@@ -1,0 +1,2117 @@
+[
+  {
+    "id": "thailand-thai-duo",
+    "destination": "Thailand",
+    "name": "Thai Duo",
+    "durationNights": 4,
+    "durationDays": 5,
+    "cities": [
+      {
+        "city": "Pattaya",
+        "nights": 2
+      },
+      {
+        "city": "Bangkok",
+        "nights": 2
+      }
+    ],
+    "days": [
+      {
+        "day": 1,
+        "title": "Arrive Bangkok \u2013 Pattaya",
+        "meals": "Nil",
+        "description": "Arrive Bangkok, Transfer to Pattaya, Check in to your hotel, relax and freshen up. The rest of the day is free to explore on own. Overnight stay in Pattaya Hotel.",
+        "optionalActivities": "Alcazar Show @ INR 1800"
+      },
+      {
+        "day": 2,
+        "title": "Pattaya Coral Island Tour with Lunch",
+        "meals": "Breakfast, Lunch",
+        "description": "Morning After breakfast proceed for Coral Island, Coral Island (Koh Lan) is the largest of the \"near islands\", off south Pattaya. It is at the southeast end of the Bay of Bangkok, on the east side o f the Gulf of Siam. Administratively, Ko Lan belongs to the Amphoe Bang Lamung, Chonburi. Most of Ko Lan's beaches are on its west side. Most visited is Tawaen Beach, where there is a small harbour. You enjoy the sea, the sun sand and the length of the bea ch is lined with small tourist shops. Buffet lunch is included in the tour, Evening Back to Hotel, Over Night in Hotel. 3",
+        "optionalActivities": null
+      },
+      {
+        "day": 3,
+        "title": "Pattaya \u2013 Bangkok \u2013 City Tour",
+        "meals": "Breakfast",
+        "description": "After breakfast, transfer to Bangkok, enrooted by city tour, A Bangkok city tour is a popular way for visitors to explore and discover the many attractions and sights of Bangkok, Thailand. The city is known for its rich history, culture, and vibrant street life. Check in at Hotel, Overnight in Hotel.",
+        "optionalActivities": "Dinner Cruise - Chao Phraya Princess @ INR 3200 Per Person Candlelight Dinner Cruise - Grand Pearl @ INR 4000 Per Person"
+      },
+      {
+        "day": 4,
+        "title": "Day at Leisure",
+        "meals": "Breakfast",
+        "description": "Morning Breakfast, Day is free for Leisure a nd Shopping in the most amazing city of world, one can explore the most famous Pratunam Mall Bangkok for shopping, or explore the city in your own way, Overnight in Hotel.",
+        "optionalActivities": "Safari World and Marine Park with Buffet Lunch @ I NR 3600 Per Person Bangkok Sealife and Madame Tussauds @ INR 5000 Per Person"
+      },
+      {
+        "day": 5,
+        "title": "Bangkok Departure",
+        "meals": "Breakfast",
+        "description": "After breakfast, it\u2019s time to say good bye to this beautiful and amazing country. Transfer to the airport for your return flight back home.",
+        "optionalActivities": null
+      }
+    ],
+    "hotelCities": [
+      "Pattaya",
+      "Bangkok"
+    ],
+    "costByTier": {
+      "STANDARD": {
+        "adult": 14499,
+        "child": 8999
+      },
+      "DELUXE": {
+        "adult": 16899,
+        "child": 9899
+      },
+      "LUXURY": {
+        "adult": 22899,
+        "child": 11999
+      }
+    },
+    "inclusions": [
+      "02 Nights Accommodation in Pattaya with Breakfast at above mentioned hotel or similar",
+      "02 Nights Accommodation in Bangkok with Breakfast at above mentioned hotel or similar",
+      "Meals as per above mentioned itinerary",
+      "Coral Island Day tour with Lunch",
+      "Half day Bangkok city and temple tour",
+      "Return Airport Transfers, inter Hotel Trans fers & All Sightseeing's on SIC",
+      "Complimentary Forex Card",
+      "5"
+    ],
+    "exclusions": [
+      "Airfare",
+      "Visa Cost",
+      "Travel Insurance",
+      "Early check in & late check -out",
+      "Any hike in currency exchange rate can alter the package cost at the time of confirmation",
+      "Meals & Drinks not mentioned in the itinerary",
+      "Entrance or Exit PCR Tests (if Applicable)",
+      "Camera & video permit",
+      "Any expenses of a personal nature",
+      "Any other expenses not mentioned above",
+      "Tips and Porterage",
+      "6",
+      "Super Thai Loaded"
+    ],
+    "sourceFile": "Tripoly Thailand.pdf"
+  },
+  {
+    "id": "thailand-super-thai-loaded",
+    "destination": "Thailand",
+    "name": "Super Thai Loaded",
+    "durationNights": 4,
+    "durationDays": 5,
+    "cities": [
+      {
+        "city": "Pattaya",
+        "nights": 2
+      },
+      {
+        "city": "Bangkok",
+        "nights": 2
+      }
+    ],
+    "days": [
+      {
+        "day": 1,
+        "title": "Bangkok \u2013 Pattaya \u2013 Alcazar Show",
+        "meals": "Nil",
+        "description": "Arrive at Bangkok Airport, Proceed to Pattaya . Evening you can proceed to mesmerizing Alcazar Show a world -famous cabaret, which can give the Lido and Moulin Rouge of Paris a run for their money. Featuring a grand theatre -with 1200 seats and thousands of watts of pulsating sound, the Alcazar Show is a unique blend of acting, stage design, costumes and glamorous actors performing together in an unforgettable melange of light, sound and colour. Truly, a visit to the Alcazar Show could well become the highlight of your far -eastern journey. Overnight in P attaya.",
+        "optionalActivities": null
+      },
+      {
+        "day": 2,
+        "title": "Pattaya Coral Island Tour",
+        "meals": "Breakfast, Lunch",
+        "description": "Morning After breakfast proceed for Coral Island, Coral Island (Koh Lan) is the largest of the \"near islands\", off south Pattaya . It is at the southeast end of the Bay of Bangkok, on the east side of the Gulf of Siam. Administratively, Ko Lan belongs to the Amphoe Bang Lamung, Chonburi. Most of Ko Lan's beaches are on its west side. Most visited is Tawaen Beach, where there is a sm all harbour. You enjoy the sea, the sun sand and the length of the beach is lined with small tourist shops. Buffet Lunch is included in tour, Evening Back to the hotel, Overnight in Hotel. 7",
+        "optionalActivities": null
+      },
+      {
+        "day": 3,
+        "title": "Pattaya \u2013 Bangkok \u2013 City Tour",
+        "meals": "Breakf ast",
+        "description": "After breakfast, transfer to Bangkok, enrooted by city tour, A Bangkok city tour is a popular way for visitors to explore and discover the many attractions and sights of Bangkok, Thailand. The city is known for its rich history, culture, and vibrant st reet life. Check in at Hotel, Over Night in Hotel.",
+        "optionalActivities": "Dinner Cruise - Chao Phraya Princess @ INR 3200 Per Person Candlelight Dinner Cruise - Grand Pearl @ INR 4000 Per Person"
+      },
+      {
+        "day": 4,
+        "title": "Safari World and Marine Park",
+        "meals": "Breakfast, Lunch",
+        "description": "In the morning After Breakfast, Proceed to Safari World with Marine Park, which is Thailand\u2019s popular open zoo and leisure Park. It is divided into four sections, i.e. the Safari Park, Bird Park, Games Corner and Macaw Island. Witness the picturesque Afric an settings, experience intimate encounters with dolphins, orang -utans, seals and a myriad of other exotic animals and birds. Enjoy your Indian lunch in the serene settings of the Safari World, Evening Back to Hotel, and overnight in Bangkok Hotel.",
+        "optionalActivities": null
+      },
+      {
+        "day": 5,
+        "title": "Bangkok Departure",
+        "meals": "Breakfast",
+        "description": "After breakfast, it\u2019s time to say good bye to this beautiful and amazing country. Transfer to the airport for your return flight back home.",
+        "optionalActivities": null
+      }
+    ],
+    "hotelCities": [
+      "Pattaya",
+      "Bangkok"
+    ],
+    "costByTier": {
+      "STANDARD": {
+        "adult": 21999,
+        "child": 16299
+      },
+      "DELUXE": {
+        "adult": 24499,
+        "child": 16999
+      },
+      "LUXURY": {
+        "adult": 30499,
+        "child": 19199
+      }
+    },
+    "inclusions": [
+      "02 Nights Accommodation in Pattaya with Breakfast at above mentioned Hotel or similar",
+      "02 Nights Accommodation in Bangkok with Breakfast at above mentioned Hotel or similar",
+      "Meals as per above mentioned itinerary",
+      "Alcazer Show with Transfers",
+      "Coral Island Day tour with Lunch",
+      "Half day Bangkok City and Temple Tour + Gems gallery",
+      "Entrance to Safari world & Marine Park with lunch",
+      "Return Airport Transfers, inter Hotel Transfers & All Sightseeing's on SIC",
+      "Complimentary Forex Card"
+    ],
+    "exclusions": [
+      "Airfare",
+      "Visa Cost",
+      "Travel Insurance",
+      "Early check in & late check -out",
+      "Any hike in currency exchange rate can alter the package cost at the time of confirmation",
+      "Meals & Drinks not mentioned in the itinerary",
+      "Entrance or Exit PCR Tests (if Applicable)",
+      "Camera & video permit",
+      "Any expenses of a personal nature",
+      "Any other expenses not mentioned above",
+      "Tips and Porterage",
+      "9",
+      "Thailand"
+    ],
+    "sourceFile": "Tripoly Thailand.pdf"
+  },
+  {
+    "id": "thailand-thailand-explorer",
+    "destination": "Thailand",
+    "name": "Thailand Explorer",
+    "durationNights": 5,
+    "durationDays": 6,
+    "cities": [
+      {
+        "city": "Phuket",
+        "nights": 3
+      },
+      {
+        "city": "Krabi",
+        "nights": 2
+      }
+    ],
+    "days": [
+      {
+        "day": 1,
+        "title": "Phuket Arrival",
+        "meals": "Nil",
+        "description": "Upon arrival at Phuket Airport, meet & greet, and you will be transferred to Hotel on SIC Basis. Overnight in Phuket.",
+        "optionalActivities": "Evening Siam Niramit Phuket Show @ INR 3000 Per Person Evening Phuket Fantasia Show @ INR 4500 Per Person"
+      },
+      {
+        "day": 2,
+        "title": "Phuket City Tour",
+        "meals": "Breakfast",
+        "description": "Morning After Breakfast, proceed for Phuket City tour, Snap pictures at locations like the Karon view point and the charming streets of Phuket's Old Town. Discover Sino -Portuguese style architecture, such as the former Charter Standar d Bank building and vibrant street art along Thalang Road, Chalong Temple, where you can see the glistering pagoda and wax model of \"Cham Abbot, Continue on the top of the Nakkerd Hills where the Big Buddha statue was built as a symbol of peace and unity. Back to Hotel, Over Night in Hotel.",
+        "optionalActivities": "Afternoon Phuket Tiger Kingdom @ INR 4000 Per Person Sunset Romantic Cruise by Luxury Big boat with Int & Indian BBQ @ INR 5,000 Per Person 10"
+      },
+      {
+        "day": 3,
+        "title": "Full Day Phi Phi Island w ith lunch",
+        "meals": "Breakfast, Lunch",
+        "description": "After Breakfast, Explore the renowned Phi -Phi islands in Had Noppharat Thara National Park, 48km east of Phuket on a Speed boat tour. Transfer to Fishery Authority Port of Phuket, take boat to isles. See Maya Bay, Loh Samah Bay, Pi -Le Cove, Viking Cave, nesting swifts, no entrance to cave by law. Disembark at Phi Phi Don, take long -tailed boat to Laem Tong Beach (Long Beach) for leisure activities, swimming, snorkelling, and hiking for views. Buffet lunch at local resta urant on Long Beach. Evening Back to Hotel, Overnight in Hotel.",
+        "optionalActivities": null
+      },
+      {
+        "day": 4,
+        "title": "Phuket \u2013 Krabi",
+        "meals": "Breakfast",
+        "description": "Morning Have your breakfast Check out from Hotel, Proceed to Krabi by road. Arrive Krabi check in to your hotel Afternoon is free for Leisure. Overnight in Krabi.",
+        "optionalActivities": "Half -day Kayaking Ao Thalane sunset with BBQ Dinner @ INR 3800"
+      },
+      {
+        "day": 5,
+        "title": "Krabi Four Island tour with Lunch",
+        "meals": "Breakfast, Lunch",
+        "description": "After Morning Breakfast, proceed for Krabi 4 Island Tour which is a popular excursion in the Krabi province of Thailand. It typically includes a visit to the islands of Koh Poda, Koh Gai (Chicken Island), Koh Tub, and Koh Mor. The tour often includes activ ities such as snorkelling, swimming, and sunbathing on the beach. The tour typically starts in the morning and ends in the late afternoon. The tour can be booked through local tour operators or through hotel travel desks. Evening Back to Hotel, Over Night in Hotel.",
+        "optionalActivities": null
+      },
+      {
+        "day": 6,
+        "title": "Krabi Departure",
+        "meals": "Breakfast",
+        "description": "After breakfast it\u2019s time to say good bye to this beautiful and amazing country. Transfer to the airport for your return flight back home.",
+        "optionalActivities": null
+      }
+    ],
+    "hotelCities": [
+      "Phuket",
+      "Krabi"
+    ],
+    "costByTier": {
+      "STANDARD": {
+        "adult": 26999,
+        "child": 16899
+      },
+      "DELUXE": {
+        "adult": 31599,
+        "child": 18499
+      },
+      "LUXURY": {
+        "adult": 38499,
+        "child": 20899
+      }
+    },
+    "inclusions": [
+      "03 Nights' Accommodation in Phuket with Breakfast at above mentioned Hotel or similar",
+      "02 Nights' Accommodation in Krabi with Breakfast at above mentioned Hotel or similar",
+      "Meals as per above mentioned itinerary",
+      "Phi Phi island tour by Speed Boat with lunch",
+      "Phuket city tour half day",
+      "1 Full day - 4 Island Krabi tour on speed boat with lunch",
+      "Return Airport Transfers on SIC Basis",
+      "All tours and transfers on SIC Basis",
+      "Complimentary Forex Card",
+      "12"
+    ],
+    "exclusions": [
+      "Airfare",
+      "Visa Cost",
+      "Travel Insurance",
+      "Early check in & late check -out",
+      "Any hike in currency exchange rate can alter the package cost at the time of confirmation",
+      "Meals & Drinks not mentioned in the itinerary",
+      "Entrance or Exit PCR T ests (if Applicable)",
+      "Camera & video permit",
+      "Any expenses of a personal nature",
+      "Any other expenses not mentioned above",
+      "Tips and Porterage",
+      "13",
+      "Beauty Of Thailand"
+    ],
+    "sourceFile": "Tripoly Thailand.pdf"
+  },
+  {
+    "id": "thailand-serene-samui-escape",
+    "destination": "Thailand",
+    "name": "Serene Samui  Escape",
+    "durationNights": 5,
+    "durationDays": 6,
+    "cities": [
+      {
+        "city": "Koh Samui",
+        "nights": 3
+      },
+      {
+        "city": "Bangkok",
+        "nights": 2
+      }
+    ],
+    "days": [
+      {
+        "day": 1,
+        "title": "Arrive Koh Samui",
+        "meals": "Nil",
+        "description": "Upon arrival at Koh Samui Airport, meet & greet, and you will be transferred to Hotel on SIC Basis. Overnight in Koh Samui.",
+        "optionalActivities": null
+      },
+      {
+        "day": 2,
+        "title": "Angthong Marine Park by Speedboat - Snorkeling , Kayaking & Lunch",
+        "meals": "Breakfast, Lunch",
+        "description": "After Morning Breakfast,Join the Angthong Marine Park Full -Day SpeedBoat Tour! This full -day boat tour is one of the most beautiful and popular sea destinations. Discover the Angthong Marine Park (Golden Basin) archipelago with its 42 islands. On this trip you get the opportunity to explore the rock and cave landscapes with a kayak. You will also visit the green emerald lagoon and the island of Wua Talap (sleeping cow's eye) with its incredible viewpoint over the whole Angthong national park and a remarkable stalactite cave. As well you have enough time for sunbathing, swimming and snorkeling at the most beautiful beaches you have ever seen. Back to Hotel Overnight in Koh Samui. 18",
+        "optionalActivities": null
+      },
+      {
+        "day": 3,
+        "title": "Samui City Tour with Big Buddha & Na Muang Waterfall",
+        "meals": "Breakfast",
+        "description": "After Morning Breakfast, Join the city tour Visiting Big buddha temple and Wat Plai Laem follow by Grand Father & Miother Rocks, Wat Kunaram or Mummified Monk Temple and Namuang waterfall to cool you down before descending up on the mountain which is the b est opportunity to view the fantastic sights of the island. Afternoon Back to Hotel, Over Night in hotel",
+        "optionalActivities": null
+      },
+      {
+        "day": 4,
+        "title": "Koh Samui - Bangkok",
+        "meals": "Breakfast",
+        "description": "Morning Have your breakfast Check out from Hotel, Proceed to airport catch a flight for Ba ngkok. Arrive Bangkok enrooted by city tour, A Bangkok city tour is a popular way for visitors to explore and discover the many attractions and sights of Bangkok, Thailand. The city is known for its rich history, culture, and vibrant street life, Check in at Hotel, Over Night in Hotel.",
+        "optionalActivities": "Dinner Cruise - Chao Phraya Princess @ INR 3200 Per Person Candlelight Dinner Cruise - Grand Pearl @ INR 4000 Per Person"
+      },
+      {
+        "day": 5,
+        "title": "Safari World with Marine Park",
+        "meals": "Breakfast",
+        "description": "Morning After Breakfast, Proceed to Safari World with Marine Park, which is Thailand\u2019s popular open zoo and leisure Park. It is divided into four sections, i.e. the Safari Park, Bird Park, Games Corner and Macaw Island. Witness the picturesque African sett ings, experience intimate encounters with dolphins, orangutans, seals and a myriad of other exotic animals and birds. Enjoy your Indian lunch in the serene settings of the Safari World, Evening Back to Hotel, and Overnight in Bangkok Hotel.",
+        "optionalActivities": null
+      },
+      {
+        "day": 6,
+        "title": "Bangkok Departure",
+        "meals": "Breakfast",
+        "description": "After breakfast it\u2019s time to say good bye to this beautiful and amazing country. Transfer to the airport for your return flight back home.",
+        "optionalActivities": null
+      }
+    ],
+    "hotelCities": [
+      "Koh Samui",
+      "Bangkok"
+    ],
+    "costByTier": {
+      "STANDARD": {
+        "adult": 31899,
+        "child": 22699
+      },
+      "DELUXE": {
+        "adult": 38499,
+        "child": 24999
+      },
+      "LUXURY": {
+        "adult": 46899,
+        "child": 27899
+      }
+    },
+    "inclusions": [
+      "03 Nights' Accommodation in Koh Samui with Breakfast at above mentioned Hotel or similar",
+      "02 Nights' Accommodation in Bangkok with Breakfast at above mentioned Hotel or similar",
+      "Meals as per above mentioned itinerary",
+      "Angthong Marine Park by Speedboat - Snork eling , Kayaking & Lunch",
+      "Samui City Tour with Big Buddha & Na Muang Waterfall",
+      "Bangkok City tour",
+      "Safari World with Marine Park with Lunch",
+      "Return Airport Transfers on SIC Basis",
+      "All tours and transfers on SIC Basis",
+      "Complimentary Forex Card"
+    ],
+    "exclusions": [
+      "Airfare , Visa Cost , Travel Insurance",
+      "Early check in & late check -out",
+      "Any hike in currency exchange rate can alter the package cost at the time of confirmation",
+      "Meals & Drinks not mentioned in the itinerary",
+      "Entrance or Exit PCR Tests (if Applicable)",
+      "Camera & video permit",
+      "Any expenses of a personal nature",
+      "Any other expenses not mentioned above",
+      "Tips and Porterage",
+      "20",
+      "Phuket Romantic Retreat"
+    ],
+    "sourceFile": "Tripoly Thailand.pdf"
+  },
+  {
+    "id": "thailand-phuket-romantic-retreat",
+    "destination": "Thailand",
+    "name": "Phuket Romantic Retreat",
+    "durationNights": 6,
+    "durationDays": 7,
+    "cities": [],
+    "days": [
+      {
+        "day": 1,
+        "title": "Phuket Arrival",
+        "meals": "Nil",
+        "description": "Upon arrival at Phuket Airport, meet & greet, and you will be transferred to Hotel on SIC Basis. Evening take a walk to Patong Beach with your special one with stuning sunset views. Overnight in Phuket.",
+        "optionalActivities": "Evening Siam Niramit Phuket Show @ INR 3000 Per Person Evening Phuket Fantasia Show @ INR 4500 Per Person"
+      },
+      {
+        "day": 2,
+        "title": "Phuket City Tour with Tiger Park + Big Buddha + Elephant Trekking (30 Mins)",
+        "meals": "Breakfast",
+        "description": "Morning After Breakfast, proceed for Phuket City tour, Snap pictures at locations like the Karon view point and the charming streets of Phuket's Old Town. Get on the adventure while doing Elephant Trekking. Discover Sino -Portuguese style architecture, such as the former Charter Standard Bank building and vibrant street art along Thalang Road, Chalong Temple, where you can see the glistering pagoda and wax model of \"Cham Abbot, Continue on the top of the Nakke rd Hills where the Big Buddha statue was built as a symbol of peace and unity. Visit Tiger Park Each species has its own aviary. Take advantage of the unique opportunity to enter the cage accompanied by a tiger trainer, get a closer look at these striped c reatures, pet them, and take photos with them. Back to Hotel, Over Night in Hotel. 21",
+        "optionalActivities": null
+      },
+      {
+        "day": 3,
+        "title": "Full Day Phi Phi Island+ Maya Bay + Khai Island by join SpeedBoat with lunch (Incl. NP Fee)",
+        "meals": "Breakfast, Lunch",
+        "description": "Morning Breakfast, Explore the re nowned Phi -Phi islands in Had Noppharat Thara National Park, 48km east of Phuket on a Speed boat tour. Transfer to Fishery Authority Port of Phuket, take boat to isles. See Maya Bay, Loh Samah Bay, Pi -Le Cove, Viking Cave, nesting swifts, no entrance to ca ve by law. Disembark at Phi Phi Don, take long -tailed boat to Laem Tong Beach (Long Beach) for leisure activities (Extra Cost) or do swimming, snorkelling, and hiking for views. Buffet lunch at local restaurant on Long Beach. Evening Back to Hotel, Overnig ht in Hotel.",
+        "optionalActivities": null
+      },
+      {
+        "day": 4,
+        "title": "Sunset Romantic Cruise by Big boat with Indian Set Menu",
+        "meals": "Breakfast, Dinner",
+        "description": "After Breakfast, Morning Enjoy your Leisure time or Step out for some Window Shopping on Patong Street, Afternoon post Lunch explore The \"Sunset Romantic Cruise\" which offers an enchanting experience aboard a spacious big boat, designed to enhance the beauty of your honeymoon in Phuket. Enjoy Scenic Cruise with Romantic Atmosphere Witness nature's m esmerizing display as the sky transforms into a canvas of vibrant hues during the sunset.Enjoy Indian Dinner with Unforgettable Memories",
+        "optionalActivities": null
+      },
+      {
+        "day": 5,
+        "title": "Phuket \u2013 Coconut Island",
+        "meals": "Breakfast",
+        "description": "Morning Have your breakfast Check out from Hotel, Proceed to Coconut Island. Arrive Coconut Island check in to your hotel. Afternoon is free for Leisure. Experience a world of sports and activities at Barcelo Coconut Island. From water sports like kayaking and snorkeling to tennis, yoga, and beach volleyball, our island offers endless ways to stay active and have fun in a tropical paradise.\" Overnight in Coconut Island.",
+        "optionalActivities": null
+      },
+      {
+        "day": 6,
+        "title": "Day at Leisure at Coconut Island",
+        "meals": "Breakfast",
+        "description": "After Breakfas t, Day is free for Leisure Indulge in your. Discover the allure of Phuket's tropical beachfront, Enjoy Cycling on the beach, Enjoy kayaking, Paddle Boating on beach.",
+        "optionalActivities": null
+      },
+      {
+        "day": 7,
+        "title": "Phuket Departure",
+        "meals": "Breakfast",
+        "description": "After breakfast it\u2019s time to say good bye to this beautiful and amazing country. Transfer to the airport for your return flight back home.",
+        "optionalActivities": null
+      }
+    ],
+    "hotelCities": [
+      "Phuket",
+      "Coconut Island"
+    ],
+    "costByTier": {
+      "STANDARD": {
+        "adult": 4349,
+        "child": 9
+      },
+      "DELUXE": {
+        "adult": 4699,
+        "child": 9
+      },
+      "LUXURY": {
+        "adult": 4999,
+        "child": 9
+      }
+    },
+    "inclusions": [
+      "04 Nights' Accommodation in Phuket with Breakfast at above mentioned Hotel or similar",
+      "02 Nights' Accommodation in Coconut Island with Breakfast at above mentioned Hotel or similar",
+      "Meals as per above mentioned itinerary",
+      "Phuket City Tour with Tiger Park + Big Buddha + Elephant Trekking (30 Mins)",
+      "Full Day Phi Phi Island+ Maya Bay + Khai Island by join SpeedBoat with lunch (Incl. NP Fee)",
+      "Sunset Romantic Cruise by Big boat with I ndian Set Menu",
+      "Return Airport Transfers on PVT Basis",
+      "Internal Hotel Transfers from Phuket to Coconut Island",
+      "All tours and transfers on SIC Basis",
+      "Complimentary Forex Card",
+      "23"
+    ],
+    "exclusions": [
+      "Airfare",
+      "Visa Cost",
+      "Travel Insurance",
+      "Early check in & late check -out",
+      "Any hike in currency exchange rate can alter the package cost at the time of confirmation",
+      "Meals & Drinks not mentioned in the itinerary",
+      "Entrance or Exit PCR Tests (if Applicable)",
+      "Camera & video permit",
+      "Any expenses of a personal nature",
+      "Any other expenses n ot mentioned above",
+      "Tips and Porterage",
+      "24",
+      "Exotic Thailand"
+    ],
+    "sourceFile": "Tripoly Thailand.pdf"
+  },
+  {
+    "id": "thailand-exotic-thailand",
+    "destination": "Thailand",
+    "name": "Exotic Thailand",
+    "durationNights": 8,
+    "durationDays": 9,
+    "cities": [
+      {
+        "city": "Koh Samui",
+        "nights": 3
+      },
+      {
+        "city": "Krabi",
+        "nights": 2
+      },
+      {
+        "city": "Phuket",
+        "nights": 3
+      }
+    ],
+    "days": [
+      {
+        "day": 1,
+        "title": "Arrive Koh Samui",
+        "meals": "Nil",
+        "description": "Upon arrival at Koh Samui Airport, meet & greet, and you will be transferred to Hotel on SIC Basis. Overnight in Koh Samui.",
+        "optionalActivities": null
+      },
+      {
+        "day": 2,
+        "title": "Angthong Marine Park by Speedboat - Snorkeling , Kayaking & Lunch",
+        "meals": "Breakfast, Lunch",
+        "description": "After Morning Breakfast,Join the Angthong Marine Park Full -Day SpeedBoat Tour! This full -day boat tour is one of the most beautiful and popular sea destinations. Discover the Angthong Marine Park (Golden Basin) archipelago with its 42 islands. On this trip you get the opportunity to explo re the rock and cave landscapes with a kayak. You will also visit the green emerald lagoon and the island of Wua Talap (sleeping cow's eye) with its incredible viewpoint over the whole Angthong national park and a remarkable stalactite cave. As well you ha ve enough time for sunbathing, swimming and snorkeling at the most beautiful beaches you have ever seen. Back to Hotel Overnight in Koh Samui.",
+        "optionalActivities": null
+      },
+      {
+        "day": 3,
+        "title": "Samui City Tour with Big Buddha & Na Muang Waterfall",
+        "meals": "Breakfast",
+        "description": "25 After Morning Break fast, Join the city tour Visiting Big buddha temple and Wat Plai Laem follow by Grand Father & Miother Rocks, Wat Kunaram or Mummified Monk Temple and Namuang waterfall to cool you down before descending up on the mountain which is the best opportunity to view the fantastic sights of the island. Afternoon Back to Hotel, Over Night in hotel",
+        "optionalActivities": null
+      },
+      {
+        "day": 4,
+        "title": "Koh Samui to Krabi Ferry",
+        "meals": "Breakfast",
+        "description": "After Morning Breakfast, Check out from Hotel, Proceed for Ferry Terminal to Catch a Ferry for Krabi . Arrive Krabi Ferry Terminal, Transfer from Terminal to Hotel. Check in hotel, Overnight in Krabi.",
+        "optionalActivities": null
+      },
+      {
+        "day": 5,
+        "title": "Krabi Four Island tour",
+        "meals": "Breakfast, Lunch",
+        "description": "After Morning Breakfast, proceed for Krabi 4 Island Tour which is a popular excursion in the Krabi province of Thailand. It typically includes a visit to the islands of Koh Poda, Koh Gai (Chicken Island), Koh Tub, and Koh Mor. The tour often includes activities such as snorkelling, swimming, and sunbathing on the beach. The tour typically starts in the morning and ends in the late afternoon. The tour can be booked through local tour operators or through hotel travel desks. Evening Back to Hotel, Over Night in Hotel.",
+        "optionalActivities": null
+      },
+      {
+        "day": 6,
+        "title": "Krabi - Phuket",
+        "meals": "Breakfast",
+        "description": "Morning Have your breakfast Check out from Hotel, Proceed to Phuket by road. Arrive phuket check in to your hotel Afternoon is free for Leisure. Overnight in Phuket.",
+        "optionalActivities": "Evening Siam Niramit Phuket Show @ INR 3000 Per Person Evening Phuket Fantasia Show @ INR 4500 Per Person"
+      },
+      {
+        "day": 7,
+        "title": "Phuket City Tour",
+        "meals": "Breakfast",
+        "description": "Morning After Breakfast, proceed for Phuket City tour, Snap pictures at locations like the Karon view point and the charming streets of Phuket's Ol d Town. Discover Sino -Portuguese style architecture, such as the former Charter Standard Bank building and vibrant street art along Thalang Road, Chalong Temple, where you can see the glistering pagoda and wax model of \"Cham Abbot, Continue on the top of t he Nakkerd Hills where the Big Buddha statue was built as a symbol of peace and unity. Back to Hotel, Over Night in Hotel.",
+        "optionalActivities": "Afternoon Phuket Tiger Kingdom @ INR 4000 Per Person Sunset Romantic Cruise by Luxury Big boat with Int & Indian BBQ @ INR 5,000 Per Person"
+      },
+      {
+        "day": 8,
+        "title": "Full Day Phi Phi Island tour With Lunch",
+        "meals": "Breakfast, Lunch",
+        "description": "After Breakfast, Explore the renowned Phi -Phi islands in Had Noppharat Thara Nat ional Park, 48km east of Phuket on a Speed boat tour. Transfer to Fishery Authority Port of Phuket, take boat to isles. See Maya Bay, Loh Samah Bay, Pi -Le Cove, Viking Cave, nesting swifts, no entrance to cave by law. Disembark at Phi Phi 26 Don, take long -tailed boat to Laem Tong Beach (Long Beach) for leisure activities, swimming, snorkelling, and hiking for views. Buffet lunch at local restaurant on Long Beach. Evening Back to Hotel, Overnight in Hotel.",
+        "optionalActivities": null
+      },
+      {
+        "day": 9,
+        "title": "Phuket Departure",
+        "meals": "Breakfa st",
+        "description": "After breakfast it\u2019s time to say good bye to this beautiful and amazing country. Transfer to the airport for your return flight back home.",
+        "optionalActivities": null
+      }
+    ],
+    "hotelCities": [
+      "Phuket",
+      "Krabi",
+      "Koh Samui"
+    ],
+    "costByTier": {
+      "STANDARD": {
+        "adult": 45999,
+        "child": 29999
+      },
+      "DELUXE": {
+        "adult": 55499,
+        "child": 33299
+      },
+      "LUXURY": {
+        "adult": 67299,
+        "child": 37399
+      }
+    },
+    "inclusions": [
+      "03 Nights' Accommodation in Koh Samui with Breakfast at above mentioned Hotel or similar",
+      "02 Nights' Accommodation in Krabi with Breakfast at above mentioned Hotel or similar",
+      "03 Nights' Accommodation in Phuket with Breakfast at above mentioned Hotel or similar",
+      "Meals as per above mentioned itinerary",
+      "Angthong Marine Park by Speedboat - Snorkeling , Kayaking & Lunch",
+      "Samui City To ur with Big Buddha & Na Muang Waterfall",
+      "Koh Samui to krabi Ferry and Port Transfers",
+      "1 Full day - 4 Island Krabi tour on speed boat with lunch",
+      "Phi Phi island tour by Speed Boat with lunch",
+      "Phuket city tour half day",
+      "Return Airport Transfers on SIC Basis",
+      "All tours and transfers on SIC Basis",
+      "Complimentary Forex Card"
+    ],
+    "exclusions": [
+      "Airfare",
+      "Visa Cost",
+      "Travel Insurance",
+      "Early check in & late check -out",
+      "Any hike in currency exchange rate can alter the package cost at the time of confirmation",
+      "Meals & Drinks not mentione d in the itinerary",
+      "Entrance or Exit PCR Tests (if Applicable)",
+      "Camera & video permit",
+      "Any expenses of a personal nature",
+      "Any other expenses not mentioned above",
+      "Tips and Porterage",
+      "28",
+      "All of Thailand"
+    ],
+    "sourceFile": "Tripoly Thailand.pdf"
+  },
+  {
+    "id": "thailand-all-of-thailand",
+    "destination": "Thailand",
+    "name": "All of Thailand",
+    "durationNights": 9,
+    "durationDays": 10,
+    "cities": [
+      {
+        "city": "Phuket",
+        "nights": 3
+      },
+      {
+        "city": "Krabi",
+        "nights": 2
+      },
+      {
+        "city": "Pattaya",
+        "nights": 2
+      },
+      {
+        "city": "Bangkok",
+        "nights": 2
+      }
+    ],
+    "days": [
+      {
+        "day": 1,
+        "title": "Phuket Arrival",
+        "meals": "Nil",
+        "description": "Upon arrival at Phuket Airport, meet & greet, and you will be transferred to Hotel on SIC Basis. Overnight in Phuket.",
+        "optionalActivities": "Evening Siam Niramit Phuket Show @ INR 3000 Per Person Evening Phuket Fantasia Show @ INR 4500 Per Person"
+      },
+      {
+        "day": 2,
+        "title": "Phuket City Tour",
+        "meals": "Breakfast",
+        "description": "Morning After Breakfast, proceed for Phuket City tour, Snap pictures at locations like the Karon view point and the charming streets of Phuket's Ol d Town. Discover Sino -Portuguese style architecture, such as the former Charter Standard Bank building and vibrant street art along Thalang Road,Chalong Temple, where you can see the glistering pagoda and wax model of \"Cham Abbot, Continue on the top of th e Nakkerd Hills where the Big Buddha statue was built as a symbol of peace and unity. Back to Hotel, Over Night in Hotel.",
+        "optionalActivities": "Afternoon Phuket Tiger Kingdom @ INR 4000 Per Person Sunset Romantic Cruise by Luxury Big boat with Int & Indian BBQ @ INR 5,000 Per Person 29"
+      },
+      {
+        "day": 3,
+        "title": "Full Day Phi Phi Island with Lunch",
+        "meals": "Breakfast, Lunch",
+        "description": "After breakfast, Explore the renowned Phi -Phi islands in Had Noppharat Thara National Park, 48km east of Phuket on a speed boat tour . Transfer to Fishery Authority Port of Phuket, take boat to isles. See Maya Bay, Loh Samah Bay, Pi -Le Cove, Viking Cave, nesting swifts, no entrance to cave by law. Disembark at Phi Phi Don, take a long -tailed boat to Laem Tong Beach (Long Beach) for leis ure activities, swimming, snorkelling, and hiking for views. Buffet lunch at a local restaurant on Long Beach. In the evening, back to Hotel, Overnight in Hotel.",
+        "optionalActivities": null
+      },
+      {
+        "day": 4,
+        "title": "Phuket \u2013 Krabi",
+        "meals": "Breakfast",
+        "description": "Morning Have your breakfast Check out from Hotel, and proceed to Krabi by road. Arrive Krabi, check in to your hotel Afternoon is free for Leisure. Overnight in Krabi.",
+        "optionalActivities": "Half -day Kayaking Ao Thalane sunset with BBQ Dinner @ INR 3800 Per Person"
+      },
+      {
+        "day": 5,
+        "title": "Krabi Four Island Tour With Lunch",
+        "meals": "Breakfast, Lunch",
+        "description": "After breakfast, proceed for Krabi 4 Island Tour which is a popular excursion in the Krabi province of Thailand. It typically includes a visit to the is lands of Koh Poda, Koh Gai (Chicken Island), Koh Tub, and Koh Mor. The tour often includes activities such as snorkelling, swimming, and sunbathing on the beach. The tour typically starts in the morning and ends in the late afternoon. The tour can be booke d through local tour operators or through hotel travel desks. Evening Back to Hotel, Over Night in Hotel.",
+        "optionalActivities": null
+      },
+      {
+        "day": 6,
+        "title": "Krabi \u2013 Pattaya \u2013 Alcazar Show",
+        "meals": "Breakfast",
+        "description": "Morning Have your breakfast Check out from Hotel, Proceed to airport catch a flight for Bangkok. Arrive Bangkok Transfer to Pattaya Check in to your hotel. Evening you can proceed to mesmerizing Alcazar Show a world -famous cabaret, which can give the Lido and Moulin Rouge of Paris a run for their money. the Alcazar Show is a unique blend of acting, stage design, costumes and glamorous actors performing together in an unforgettable melange of light, sound and colour. Truly, a visit to the Alcazar Show could well become the highlight of your far eastern journey. Overnight in Pattaya.",
+        "optionalActivities": null
+      },
+      {
+        "day": 7,
+        "title": "Pattaya Coral Island Tour with Lunch",
+        "meals": "Breakfast, Lunch",
+        "description": "Morning After breakfast proceed for Coral Island, Coral Island (Koh Lan ) is the largest of the \"near islands\", off south Pattaya. It is at the southeast end of the Bay of Bangkok, on the east side of the Gulf of Siam. Administratively Ko Lan belongs to the Amphoe Bang Lamung, Chonburi. Most of Ko Lan's beaches are on its west side. Most visited is Tawaen Beach, where there is a small harbour. You will enjoy the sea, sun sand and the length of the beach is lined with small tourist shops. Buffet Lunch is included in tour, Evening Back to Hotel, Over Night in Hotel. 30",
+        "optionalActivities": null
+      },
+      {
+        "day": 8,
+        "title": "Pattaya \u2013 Bangkok \u2013 City Tour",
+        "meals": "Breakfast",
+        "description": "After breakfast Transfer to Bangkok, enrooted by city tour, A Bangkok city tour is a popular way for visitors to explore and discover the many attractions and sights of Bangkok, Thailand. The city is known for its rich history, culture, and vibrant street life, Check in at Hotel, Over Night in Hotel.",
+        "optionalActivities": "Dinner Cruise - Chao Phraya Princess @ INR 3200 Per Person Candlelight Dinner Cruise - Grand Pearl @ INR 4000 Per Person"
+      },
+      {
+        "day": 9,
+        "title": "Safari World with Marine Park with Lunch",
+        "meals": "Breakfast, Lunch",
+        "description": "Morning After Breakfast, Proceed to Safari World with Marine Park, which is Thailand\u2019s popular open zoo and leisure Park. It is divided into four sections, i.e. the Safari Park, Bird Park, Games Corner and Macaw Island. Witness the picturesque African settings, experience intimate encounters with dolphins, orangutans, seals and a myriad of other exotic animals and birds. Enjoy your Indian lunch in the serene sett ings of the Safari World, Evening Back to Hotel, and Overnight in Bangkok Hotel.",
+        "optionalActivities": null
+      },
+      {
+        "day": 10,
+        "title": "Bangkok Departure",
+        "meals": "Breakfast",
+        "description": "After breakfast it\u2019s time to say good bye to this beautiful and amazing country. Transfer to the airport for your re turn flight back home.",
+        "optionalActivities": null
+      }
+    ],
+    "hotelCities": [
+      "Phuket",
+      "Krabi",
+      "Pattaya",
+      "Bangkok"
+    ],
+    "costByTier": {
+      "STANDARD": {
+        "adult": 46599,
+        "child": 31499
+      },
+      "DELUXE": {
+        "adult": 54999,
+        "child": 33799
+      },
+      "LUXURY": {
+        "adult": 65599,
+        "child": 37999
+      }
+    },
+    "inclusions": [
+      "03 Nights in Phuket with Breakfast at above mentioned or similar",
+      "02 Nights in Krabi with Breakfast at above mentioned or similar",
+      "02 Nights in Pattaya with Breakfast at above mentioned or similar",
+      "02 Nights in Bangkok with Breakfast at above mentioned or similar",
+      "Phuket Half Day City Tour",
+      "Phi Phi Island Tour by Speed Boat with Lunch.",
+      "Phuket Hotel to Krabi Hotel Transfers",
+      "Krabi Four Island Tour with Lunch",
+      "Alcazer Show",
+      "32",
+      "Coral island tour by speed boat with Lunch",
+      "Half day Bangkok city and temple tour (Golden and Marble Temple)+ gem gallery",
+      "Safari World with Marine Park with Lunch",
+      "Return Airport Transfers & Inter Hotel Transfers ON SIC basis",
+      "All tours and transfers on SIC Basis",
+      "Complimentary Forex Card"
+    ],
+    "exclusions": [
+      "Airfare",
+      "Visa Cost",
+      "Travel Insurance",
+      "Early check in & late check -out",
+      "Any hike in currency exchange rate can alter the package cost at the time of confirmation",
+      "Meals & Drinks not mentioned in the itinerary",
+      "Entrance or Exit PCR Tests (if Applicabl e)",
+      "Camera & video permit",
+      "Any expenses of a personal nature",
+      "Any other expenses not mentioned above",
+      "Tips and Porterage",
+      "33",
+      "Notes",
+      "All the above Packages are Valid Till \u2013 30 Sept 2026",
+      "Tripoly reserves the right to modify the itinerary in the event of emergency situations or unforeseen",
+      "circumstances",
+      "Above rates are tentative and can be changed at the time of final quotation",
+      "Package Price is based on minimum 2 passengers travelling together",
+      "Pack age Price is Subject to availability",
+      "Foreign Exchange rate is volatile / dynamic and the same may fluctuate at the time of final Payment.",
+      "International Check In Time - 1400 Hrs. & Check Out Time - 1100 Hrs.",
+      "Any special request are subject to availability & confirmation",
+      "Passport Validity Requirements - 06 Month from the Arrival Date",
+      "Documents Required for B"
+    ],
+    "sourceFile": "Tripoly Thailand.pdf"
+  },
+  {
+    "id": "bali-balinese-serenity-with-flights",
+    "destination": "Bali",
+    "name": "Balinese Serenity With Flights",
+    "durationNights": 7,
+    "durationDays": 8,
+    "cities": [],
+    "days": [
+      {
+        "day": 1,
+        "title": "Bali Arrival",
+        "meals": "Nil",
+        "description": "On arrival at Bali Ai rport, meet our representative at the arrival hall and proceed to your Hotel. Check into Hotel as per the standard check in policy of the Hotel. Overnight in Hotel.",
+        "optionalActivities": null
+      },
+      {
+        "day": 2,
+        "title": "Full Day Kintamani Volcano Tour with Ubud Village + Tegenungan Waterfal l + Bali swing",
+        "meals": "Breakfast",
+        "description": "After Breakfast, Proceed to visit Kintamani Volcano which is a rare opportunity to experience one of Bali\u2019s last remaining active volcanos up close. This is one of the most popular and best day trip in Bali. The tour continues to the Mount & Lake Batur in Kintamani village for some stunning views of the beautiful locales in this region. Proceed to enjoy Balinese Swing which is made of ropes and bamboo, which is suspended high above the ground in a scenic location, click some amazing pictures with bali swing, latter proceed to Tegenungan Waterfall which stands high above, at 40 meters. It's connected to the Tukad Petanu River and There's so much to do here. Swimming is a great option. Evening back to hotel, Overnight in Ho tel. 3",
+        "optionalActivities": null
+      },
+      {
+        "day": 3,
+        "title": "Watersports at Benoa Beach \u2013 Padang -Padang Beach \u2013 Uluwatu Temple with Kecak Dance",
+        "meals": "Breakfast",
+        "description": "After breakfast, embark to Banoa Beach for Watersports Enjoy Jet Ski, Banana Boat Ride and a thrilling Parasailing on the wat ers. In the afternoon, head to the southern part of the island to visit Padang -Padang Beach a stunning 100 meter -long stretch of sand that's accessible down a flight of stairs and through a unique hollow rock entrance and latter proceed to Uluwatu Temple, a stunning cliff -top temple known for its breathtaking ocean sunset views. This temple is one of Bali's six spiritual pillars and offers a glimpse into traditional Balinese architecture. Don't miss out on this southern Bali trip and overnight in Hotel.",
+        "optionalActivities": null
+      },
+      {
+        "day": 4,
+        "title": "West Nusa Penida Day Trip (Angel Billabong, Broken Beach, Kelingking Beach, Crystal Bay) with indian Lunch",
+        "meals": "Breakfast, Lunch",
+        "description": "After breakfast, embark on a memorable tour of West Nusa Penida Island, where you'll visit captivating attractions like Broken Beach, Angel Billabong, Klingking Clif, and Crystal Bay Dive into the crystal -clear waters for snorkelling adventures, followed by a satisfying indian lunch. Get ready to explore stunning landscapes and vibrant marine life on this unforgettable island excursion! Overnight in Hotel.",
+        "optionalActivities": null
+      },
+      {
+        "day": 5,
+        "title": "Balinese Massage 120 mins at Kalpika Spa - Half Day Tanah lot temple tour",
+        "meals": "Breakfast",
+        "description": "After Breakfast Evening Proceed to Enjoy a Balinese Massage 120 mins at the most luxuriou s kalpika Spa. In the evening, proceed to visit Tanah lot temple tour one of Bali's most important landmarks, which is famed for its unique offshore setting and sunset backdrops. An ancient Hindu shrine perched on top of an outcrop amidst constantly crash ing waves. Tanah Lot Temple is simply among Bali's not -to-be-missed icons. Overnight in Hotel",
+        "optionalActivities": null
+      },
+      {
+        "day": 6,
+        "title": "Bali - White River Rafting + 1 Hour ATV Ride to Ubud Private Pool Villa",
+        "meals": "Breakfast",
+        "description": "After breakfast, check out from hotel proceed to ayung river for White River Rafting, The longest Bali rafting track with crystal clear water, Easy access on start and finish point. latter proceed for 1 Hour ATV ride which offers you a four -wheeled motorcycle ride with unforgettable experience and challe nging adventure. Latter proceed for Ubud towards the paradise of your own private pool villa in Ubud. Check in into villa, Spend a day with your loved one in Private pool villa. Overnight in Villa.",
+        "optionalActivities": null
+      },
+      {
+        "day": 7,
+        "title": "Day at ubud Private pool villa",
+        "meals": "Breakfast",
+        "description": "Today at Breakfast have an option al of Floating Breakfast in your private pool villa, spend a day with your loved one exploring the Luxury villa. Overnight at Villa",
+        "optionalActivities": "Full Day Bali Safari Park (Jungle Hopper P ass) @ INR 5000 Per Person 4"
+      },
+      {
+        "day": 8,
+        "title": "Departure",
+        "meals": "Breakfast",
+        "description": "After breakfast, it\u2019s time to say good bye to this beautiful and amazing country. Transfer to the airport for your return flight back home.",
+        "optionalActivities": null
+      }
+    ],
+    "hotelCities": [
+      "Bali Ubud"
+    ],
+    "costByTier": {
+      "STANDARD": {
+        "adult": 9199,
+        "child": 9
+      },
+      "DELUXE": {
+        "adult": 9699,
+        "child": 9
+      },
+      "LUXURY": {
+        "adult": 10699,
+        "child": 9
+      }
+    },
+    "inclusions": [
+      "Airfare Ex Mumbai / Ahmeda bad",
+      "05 Nights\u2019 Accommodation with breakfast in Bali at above mentioned or similar category hotel",
+      "02 Nights\u2019 Accommodation with breakfast in ubud at above mentioned or similar category hotel",
+      "Full Day Kintamani Volcano Tour with Ubud Village + Tegenungan Waterfall + Bali swing",
+      "Watersports at Benoa Beach \u2013 Padang -Padang Beach \u2013 Uluwatu Temple with Kecak Dance",
+      "5",
+      "White River Rafting at Ayung river + 1 Hour ATV Ride",
+      "Balinese Massage 120 mins at Kalpika Spa",
+      "Half Day Tanh Lot Temple Tour",
+      "West Nusa Penida Day Trip (Angel Billabong, Broken Beach, Kelingking Beach, Crystal Bay) with Indian",
+      "Lunch",
+      "All Transfers and Sightseeing on PVT basis",
+      "Complimentary Forex Card"
+    ],
+    "exclusions": [
+      "Visa Cost",
+      "Travel Insurance",
+      "Early check in & late check -out",
+      "Any hike in currency exchange r ate can alter the package cost at the time of confirmation",
+      "Meals & Drinks not mentioned in the itinerary",
+      "Entrance or Exit RT PCR Tests (if Applicable)",
+      "Camera & video permit. , Any expenses of a personal nature",
+      "Any other expenses not mentioned above & Tips & Portages",
+      "6"
+    ],
+    "sourceFile": "Tripoly Bali.pdf"
+  },
+  {
+    "id": "bali-explore-bali",
+    "destination": "Bali",
+    "name": "Explore Bali",
+    "durationNights": 4,
+    "durationDays": 5,
+    "cities": [
+      {
+        "city": "Bali",
+        "nights": 4
+      }
+    ],
+    "days": [
+      {
+        "day": 1,
+        "title": "Bali Arrival",
+        "meals": "Nil",
+        "description": "On arrival at Bali Airport, meet our representative at the arrival hall and proceed to your Hotel. Check into Hotel as per the standard check in policy of the Hotel. Overnight in Hotel.",
+        "optionalActivities": null
+      },
+      {
+        "day": 2,
+        "title": "Full Day Kintamani Volcano Tour with Ubud Village + Tegenungan watererfall + Bali Swing",
+        "meals": "Breakfast",
+        "description": "After Breakfast, Proceed to visit Kintamani Volcano which is a rare opportunity to experience one of Bali\u2019s last remaining active volcanos up close. This is one of the most popular and best day trip in Bali . The tour continues to the Mount & Lake Batur in Kintamani village for some stunning views of the beautiful locales in this region. Proceed to enj oy Balinese Swing which is made of ropes and bamboo, which is suspended high above the ground in a scenic location, click some amazing pictures with bali swing, latter proceed to Tegenungan Waterfall which stands high above, at 40 meters. It's connected to the Tukad Petanu River and There's so much to do here. Swimming is a great option. Evening back to hotel, Overnight in Hotel. 7",
+        "optionalActivities": null
+      },
+      {
+        "day": 3,
+        "title": "Watersports at Benoa Beach \u2013 Padang -Padang Beach \u2013 Uluwatu Temple with Kecak Dance",
+        "meals": "Breakfast",
+        "description": "After breakfast, embark to Banoa Beach for Watersports Enjoy Jet Ski, Banana Boat Ride and a thrilling Parasailing on the waters. In the afternoon, head to the southern part of the island to visit Padang -Padang Beach a stunning 100 meter -long stretch of san d that's accessible down a flight of stairs and through a unique hollow rock entrance and latter proceed to Uluwatu Temple, a stunning cliff -top temple known for its breathtaking ocean sunset views. This temple is one of Bali's six spiritual pillars and of fers a glimpse into traditional Balinese architecture. Don't miss out on this southern Bali trip and overnight in Hotel.",
+        "optionalActivities": null
+      },
+      {
+        "day": 4,
+        "title": "White River Rafting + 1 Hour ATV Ride + Balinese Massage 120 mins at Kalpika Spa",
+        "meals": "Breakfast",
+        "description": "After Breakfa st proceed to ayung river for White River Rafting, The longest Bali rafting track with crystal clear water, Easy access on start and finish point. latter proceed for 1 Hour ATV ride which offers you a four - wheeled motorcycle ride with unforgettable experie nce and challenging adventure. Evening Proceed to Enjoy a Balinese Massage 120 mins at the most luxurious Kalpika Spa. back to hotel, Overnight in Hotel",
+        "optionalActivities": null
+      },
+      {
+        "day": 5,
+        "title": "Departure",
+        "meals": "Breakfast",
+        "description": "After breakfast, it\u2019s time to say good bye to this b eautiful and amazing country. Transfer to the airport for your return flight back home.",
+        "optionalActivities": null
+      }
+    ],
+    "hotelCities": [
+      "Bali"
+    ],
+    "costByTier": {
+      "STANDARD": {
+        "adult": 2999,
+        "child": 9
+      },
+      "DELUXE": {
+        "adult": 3199,
+        "child": 9
+      },
+      "LUXURY": {
+        "adult": 3899,
+        "child": 9
+      }
+    },
+    "inclusions": [
+      "04 Nights\u2019 Accommodation with breakfast in Bali at above mentioned o r similar category hotel",
+      "Full Day Kintamani Volcano Tour with Ubud Village + Tegenungan Waterfall + Bali swing",
+      "Watersports at Benoa Beach \u2013 Padang -Padang Beach \u2013 Uluwatu Temple with Kecak Dance",
+      "White River Rafting at Ayung river + 1 Hour ATV Ride",
+      "Baline se Massage 120 mins at Kalpika Spa",
+      "All Transfers and Sightseeing on PVT basis",
+      "Complimentary Forex Card"
+    ],
+    "exclusions": [
+      "Return Airfare",
+      "Visa Cost",
+      "Travel Insurance",
+      "Early check in & late check -out",
+      "Any hike in currency exchange rate can alter the package cos t at the time of confirmation",
+      "Meals & Drinks not mentioned in the itinerary",
+      "Entrance or Exit RT PCR Tests (if Applicable)",
+      "Camera & video permit. , Any expenses of a personal nature",
+      "Any other expenses not mentioned above",
+      "Tips & Portages",
+      "9"
+    ],
+    "sourceFile": "Tripoly Bali.pdf"
+  },
+  {
+    "id": "bali-balinese-jew-el",
+    "destination": "Bali",
+    "name": "Balinese Jew el",
+    "durationNights": 5,
+    "durationDays": 6,
+    "cities": [
+      {
+        "city": "Bali",
+        "nights": 5
+      }
+    ],
+    "days": [
+      {
+        "day": 1,
+        "title": "Bali Arrival",
+        "meals": "Nil",
+        "description": "On arrival at Bali Airport, meet our representative at the arrival hall and proceed to your Hotel. Check into Hotel as per the standard check in policy of the Hotel. Overnight in Hotel.",
+        "optionalActivities": null
+      },
+      {
+        "day": 2,
+        "title": "F ull Day Kintamani Volcano Tour with Ubud Village + Tegenungan Waterfall + Bali swing",
+        "meals": "Breakfast",
+        "description": "After Breakfast, Proceed to visit Kintamani Volcano which is a rare opportunity to experience one of Bali\u2019s last remaining active volcanos up close. This is one of the most popular and best day trip in Bali . The tour continues to the Mount & Lake Batur in Kintamani village for some stunning views of the beautiful locales in this region. Proceed to enjoy Balinese Swing which is made of ropes and bamboo, which is suspended high above the ground in a scenic location, click some amazing pictures with bali swing, latter proceed to Tegenungan Waterfall which stands high above, at 40 meters. It's connected to the Tukad Petanu River and There's so much to do he re. Swimming is a great option. Evening back to hotel, Overnight in Hotel. 10",
+        "optionalActivities": null
+      },
+      {
+        "day": 3,
+        "title": "Watersports at Benoa Beach \u2013 Padang -Padang Beach \u2013 Uluwatu Temple with Kecak Dance",
+        "meals": "Breakfast",
+        "description": "After breakfast, embark to Banoa Beach for Watersports Enjoy Jet Ski, Banana Boat Ride and a thrilling Parasailing on the waters. In the afternoon, head to the southern part of the island to visit Padang -Padang Beach a stunning 100 meter -long stretch of sand that's accessible down a flight of stairs and throu gh a unique hollow rock entrance and latter proceed to Uluwatu Temple, a stunning cliff -top temple known for its breathtaking ocean sunset views. This temple is one of Bali's six spiritual pillars and offers a glimpse into traditional Balinese architecture . Don't miss out on this southern Bali trip and overnight in Hotel.",
+        "optionalActivities": null
+      },
+      {
+        "day": 4,
+        "title": "West Nusa Penida Day Trip (Angel Billabong, Broken Beach, Kelingking Beach, Crystal Bay) with Indonesian Lunch",
+        "meals": "Breakfast, Lunch",
+        "description": "After breakfast, embark on a memorable tour of West Nusa Penida Island, where you'll visit captivating attractions like Broken Beach, Angel Billabong, Klingking Clif, and Crystal Bay Dive into the crystal -clear waters for snorkelling adventures, followed by a satisfying Indian lunch . Get ready to explore stunning landscapes and vibrant marine life on this unforgettable island excursion! Overnight in Hotel.",
+        "optionalActivities": null
+      },
+      {
+        "day": 5,
+        "title": "White River Rafting + 1 Hour ATV Ride + Balinese Massage 120 mins at Kalpika Spa",
+        "meals": "Breakfast",
+        "description": "After B reakfast proceed to ayung river for White River Rafting, The longest Bali rafting track with crystal clear water, Easy access on start and finish point. latter proceed for 1 Hour ATV ride which offers you a four - wheeled motorcycle ride with unforgettable e xperience and challenging adventure. Evening Proceed to Enjoy a Balinese Massage 120 mins at the most luxurious Kalpika Spa. back to hotel, Overnight in Hotel",
+        "optionalActivities": null
+      },
+      {
+        "day": 6,
+        "title": "Departure",
+        "meals": "Breakfast",
+        "description": "After breakfast, it\u2019s time to say good bye to this beautiful and amazing country. Transfer to the airport for your return flight back home.",
+        "optionalActivities": null
+      }
+    ],
+    "hotelCities": [
+      "Bali"
+    ],
+    "costByTier": {
+      "STANDARD": {
+        "adult": 3899,
+        "child": 9
+      },
+      "DELUXE": {
+        "adult": 4199,
+        "child": 9
+      },
+      "LUXURY": {
+        "adult": 4999,
+        "child": 9
+      }
+    },
+    "inclusions": [
+      "05 Nights\u2019 Accommodation with breakfast in Bali at above mentioned or similar category hotel",
+      "Full Day Kintamani Volcano Tour with Ubud Village + Tegenungan Waterfall + Bali swing",
+      "Watersports at Benoa Beach \u2013 Padang -Padang Beach \u2013 Uluwatu Temple with Kecak Dance",
+      "White River Raft ing at Ayung river + 1 Hour ATV Ride",
+      "Balinese Massage 120 mins at Kalpika Spa",
+      "West Nusa Penida Day Trip (Angel Billabong, Broken Beach, Kelingking Beach, Crystal Bay) with Indian",
+      "Lunch",
+      "All Transfers and Sightseeing on PVT basis",
+      "Complimentary Forex Card"
+    ],
+    "exclusions": [
+      "Return Airfare",
+      "Visa Cost",
+      "Travel Insurance",
+      "Early check in & late check -out",
+      "Any hike in currency exchange rate can alter the package cost at the time of confirmation",
+      "Meals & Drinks not mentioned in the itinerary",
+      "Entrance or Exit RT PCR Test s (if Applicable)",
+      "Camera & video permit. , Any expenses of a personal nature",
+      "Any other expenses not mentioned above",
+      "Tips & Portages",
+      "12"
+    ],
+    "sourceFile": "Tripoly Bali.pdf"
+  },
+  {
+    "id": "bali-discover-bali",
+    "destination": "Bali",
+    "name": "Discover Bali",
+    "durationNights": 6,
+    "durationDays": 7,
+    "cities": [
+      {
+        "city": "Bali",
+        "nights": 6
+      }
+    ],
+    "days": [
+      {
+        "day": 1,
+        "title": "Bali Arrival",
+        "meals": "Nil",
+        "description": "On arrival at Bali Airport, meet our representative at the arrival h all and proceed to your Hotel. Check into Hotel as per the standard check in policy of the Hotel. Overnight in Hotel.",
+        "optionalActivities": null
+      },
+      {
+        "day": 2,
+        "title": "Full Day Kintamani Volcano Tour with Ubud Village + Tegenungan Waterfall + Bali swing",
+        "meals": "Breakfast",
+        "description": "After Break fast, Proceed to visit Kintamani Volcano which is a rare opportunity to experience one of Bali\u2019s last remaining active volcanos up close. This is one of the most popular and best day trips in Bali. The tour continues to the Mount & Lake Batur in Kintamani village for some stunning views of the beautiful locales in this region. Proceed to enjoy Balinese Swing which is made of ropes and bamboo, which is suspended high above the ground in a scenic location, click some amazing pictures with bali swing, latter proceed to Tegenungan Waterfall which stands high above, at 40 meters. It's connected to the Tukad Petanu River and There's so much to do here. Swimming is a great option. Evening back to hotel, Overnight in Hotel. 13",
+        "optionalActivities": null
+      },
+      {
+        "day": 3,
+        "title": "Watersports at Ben oa Beach \u2013 Padang -Padang Beach \u2013 Uluwatu Temple with Kecak Dance",
+        "meals": "Breakfast",
+        "description": "After breakfast, embark to Banoa Beach for Watersports Enjoy Jet Ski, Banana Boat Ride and a thrilling Parasailing on the waters. In the afternoon, head to the southern p art of the island to visit Padang -Padang Beach a stunning 100 meter -long stretch of sand that's accessible down a flight of stairs and through a unique hollow rock entrance and latter proceed to Uluwatu Temple, a stunning cliff -top temple known for its breathtaking ocean sunset views. This temple is one of Bali's six spiritual pillars and offers a glimpse into traditional Balinese architecture. Don't miss out on this southern Bali trip and overnight in Hotel.",
+        "optionalActivities": null
+      },
+      {
+        "day": 4,
+        "title": "West Nusa Penida Day Trip ( Angel Billabong, Broken Beach, Kelingking Beach, Crystal Bay) with Indian Lunch",
+        "meals": "Breakfast, Lunch",
+        "description": "After breakfast, embark on a memorable tour of West Nusa Penida Island, where you'll visit captivating attractions like Broken Beach, Angel Billabo ng, Klingking Clif, and Crystal Bay Dive into the crystal -clear waters for snorkelling adventures, followed by a satisfying indian lunch. Get ready to explore stunning landscapes and vibrant marine life on this unforgettable island excursion! Overnight in Hotel.",
+        "optionalActivities": null
+      },
+      {
+        "day": 5,
+        "title": "Gates of Heaven Lempuyang Temple & Tirth Ganga Temple",
+        "meals": "Breakfast",
+        "description": "After breakfast, Visit to Bali Gates of Heaven {Lempuyang Temple} this famous Balinese temple is definitely worth visiting explore stunning location overl ooking sacred Mount Agung, Take some amazing Instagram pictures at Gates of Heaven & in afternoon proceed to Tirtha Ganga Temple, This palace is very beautiful, the gardens and ponds are fun to walk around in and take photos Evening back to hotel, Over nig ht in Hotel.",
+        "optionalActivities": null
+      },
+      {
+        "day": 6,
+        "title": "White River Rafting + 1 Hour ATV Ride + Balinese Massage 120 mins at Kalpika Spa",
+        "meals": "Breakfast",
+        "description": "After Breakfast proceed to ayung river for White River Rafting, The longest Bali rafting track with crystal clear water, Easy access on start and finish point. latter proceed for 1 Hour ATV ride which offers you a four - wheeled motorcycle ride with unforgettable experience and challenging adventure. Evening Proceed to Enjoy a Balinese Massage 120 mins at the most luxurious k alpika Spa. back to hotel, Overnight in Hotel",
+        "optionalActivities": null
+      },
+      {
+        "day": 7,
+        "title": "Departure",
+        "meals": "Breakfast",
+        "description": "After breakfast, it\u2019s time to say good bye to this beautiful and amazing country. Transfer to the airport for your return flight back home.",
+        "optionalActivities": null
+      }
+    ],
+    "hotelCities": [
+      "Bali"
+    ],
+    "costByTier": {
+      "STANDARD": {
+        "adult": 4399,
+        "child": 9
+      },
+      "DELUXE": {
+        "adult": 4799,
+        "child": 9
+      },
+      "LUXURY": {
+        "adult": 57,
+        "child": 999
+      }
+    },
+    "inclusions": [
+      "06 Nights\u2019 Accommodation with breakfast in Bali at above mentioned or similar category hotel",
+      "Full Day Kintamani Volcano Tour with Ubud Village + Tegenungan Waterfall + Bali swin g",
+      "Watersports at Benoa Beach \u2013 Padang -Padang Beach \u2013 Uluwatu Temple with Kecak Dance",
+      "White River Rafting at Ayung river + 1 Hour ATV Ride",
+      "Balinese Massage 120 mins at Kalpika Spa",
+      "West Nusa Penida Day Trip (Angel Billabong, Broken Beach, Kelingking Beach, Crystal Bay) with Indian",
+      "Lunch",
+      "Gates of Heaven Lempuyang Temple & Tirth Ganga Temple",
+      "All Transfers and Sightseeing on PVT basis",
+      "Complimentary Forex Card"
+    ],
+    "exclusions": [
+      "Return Airfare",
+      "Visa Cost",
+      "Travel Insurance",
+      "Early check in & late check -out",
+      "Any hike in currency exchange rate can alter the package cost at the time of confirmation",
+      "Meals & Drinks not mentioned in the itinerary",
+      "Entrance or Exit RT PCR Tests (if Applicable)",
+      "Camera & video permit. , Any expenses of a personal nature",
+      "Any other expenses not mentioned above",
+      "Tips & Portages",
+      "15"
+    ],
+    "sourceFile": "Tripoly Bali.pdf"
+  },
+  {
+    "id": "bali-balinese-adventure",
+    "destination": "Bali",
+    "name": "Balinese Adventure",
+    "durationNights": 6,
+    "durationDays": 7,
+    "cities": [],
+    "days": [
+      {
+        "day": 1,
+        "title": "Bali Arrival",
+        "meals": "Nil",
+        "description": "On arrival at Bali Airport, meet our representative at the arrival hall and proceed to your Hotel. Check into Hotel as per the standard check in p olicy of the Hotel. Overnight in Hotel.",
+        "optionalActivities": null
+      },
+      {
+        "day": 2,
+        "title": "Full Day Kintamani Volcano Tour with Ubud Village + Tegenungan Waterfall + Bali swing",
+        "meals": "Breakfast",
+        "description": "After Breakfast, Proceed to visit Kintamani Volcano which is a rare opportunity to experi ence one of Bali\u2019s last remaining active volcanos up close. This is one of the most popular and best day trip in Bali . The tour continues to the Mount & Lake Batur in Kintamani village for some stunning views of the beautiful locales in this region. Proce ed to enjoy Balinese Swing which is made of ropes and bamboo, which is suspended high above the ground in a scenic location, click some amazing pictures with bali swing, latter proceed to Tegenungan Waterfall which stands high above, at 40 meters. It's con nected to the Tukad Petanu River and There's so much to do here. Swimming is a great option. Evening back to hotel, Overnight in Hotel. 16",
+        "optionalActivities": null
+      },
+      {
+        "day": 3,
+        "title": "Watersports at Benoa Beach \u2013 Padang -Padang Beach \u2013 Uluwatu Temple with Kecak Dance",
+        "meals": "Bre akfast",
+        "description": "After breakfast, embark to Banoa Beach for Watersports Enjoy Jet Ski, Banana Boat Ride and a thrilling Parasailing on the waters. In the afternoon, head to the southern part of the island to visit Padang -Padang Beach a stunning 100 meter -long stretc h of sand that's accessible down a flight of stairs and through a unique hollow rock entrance and latter proceed to Uluwatu Temple, a stunning cliff -top temple known for its breathtaking ocean sunset views. This temple is one of Bali's six spiritual pillar s and offers a glimpse into traditional Balinese architecture. Don't miss out on this southern Bali trip and overnight in Hotel.",
+        "optionalActivities": null
+      },
+      {
+        "day": 4,
+        "title": "West Nusa Penida Day Trip (Angel Billabong, Broken Beach, Kelingking Beach, Crystal Bay) with Indian Lunch",
+        "meals": "Breakfast, Lunch",
+        "description": "After breakfast, embark on a memorable tour of West Nusa Penida Island, where you'll visit captivating attractions like Broken Beach, Angel Billabong, Klingking Clif, and Crystal Bay Dive into the crystal -clear waters for snor kelling adventures, followed by a satisfying Indian lunch. Get ready to explore stunning landscapes and vibrant marine life on this unforgettable island excursion! Overnight in Hotel.",
+        "optionalActivities": null
+      },
+      {
+        "day": 5,
+        "title": "White River Rafting + 1 Hour ATV Ride - Check in at Private Pool Villa Ubud",
+        "meals": "Breakfast",
+        "description": "After Breakfast Check out from Hotel, proceed to ayung river for White River Rafting, The longest Bali rafting track with crystal clear water, Easy access on start and finish point. latter proceed for 1 Hour ATV ride which offers you a four -wheeled motorcycle ride with unforgettable experience and challenging adventure. Latter Proceed for Ubud towards the paradise of your own private pool villa in Ubud. Check in into villa, Spend a day with your loved one in Priv ate pool villa. Overnight in Villa.",
+        "optionalActivities": null
+      },
+      {
+        "day": 6,
+        "title": "Day at ubud Private pool villa",
+        "meals": "Breakfast",
+        "description": "Today at Breakfast have an option al of Floating Breakfast in your private pool villa, spend a day with your loved one exploring the Luxury villa. Ov ernight at Villa",
+        "optionalActivities": null
+      },
+      {
+        "day": 7,
+        "title": "Departure",
+        "meals": "Breakfast",
+        "description": "After breakfast, it\u2019s time to say good bye to this beautiful and amazing country. Transfer to the airport for your return flight back home.",
+        "optionalActivities": null
+      }
+    ],
+    "hotelCities": [
+      "Bali Ubud"
+    ],
+    "costByTier": {
+      "STANDARD": {
+        "adult": 4499,
+        "child": 9
+      },
+      "DELUXE": {
+        "adult": 4899,
+        "child": 9
+      },
+      "LUXURY": {
+        "adult": 5699,
+        "child": 9
+      }
+    },
+    "inclusions": [
+      "04 Nights\u2019 Accommodation with breakfast in Bali at above mentioned or similar category hotel",
+      "02 Nights\u2019 Accommodation with breakfast in ubud at above mentioned or similar category hotel",
+      "Full Day Kintamani Volcano Tour with Ubud Village + Tegenungan Waterfall + Bali swing",
+      "Waters ports at Benoa Beach \u2013 Padang -Padang Beach \u2013 Uluwatu Temple with Kecak Dance",
+      "White River Rafting at Ayung river + 1 Hour ATV Ride",
+      "West Nusa Penida Day Trip (Angel Billabong, Broken Beach, Kelingking Beach, Crystal Bay) with",
+      "Indian Lunch",
+      "All Transfers an d Sightseeing on PVT basis",
+      "Complimentary Forex Card"
+    ],
+    "exclusions": [
+      "Return Airfare & Visa Cost",
+      "Travel Insurance",
+      "Early check in & late check -out",
+      "Any hike in currency exchange rate can alter the package cost at the time of confirmation",
+      "Meals & Drinks not ment ioned in the itinerary",
+      "Entrance or Exit RT PCR Tests (if Applicable)",
+      "Camera & video permit. , Any expenses of a personal nature",
+      "Any other expenses not mentioned above & Tips & Portages",
+      "18"
+    ],
+    "sourceFile": "Tripoly Bali.pdf"
+  },
+  {
+    "id": "bali-balinese-serenity",
+    "destination": "Bali",
+    "name": "Balinese Serenity",
+    "durationNights": 7,
+    "durationDays": 8,
+    "cities": [
+      {
+        "city": "Bali",
+        "nights": 5
+      },
+      {
+        "city": "I Ubud",
+        "nights": 2
+      }
+    ],
+    "days": [
+      {
+        "day": 1,
+        "title": "Bali Arrival",
+        "meals": "Nil",
+        "description": "On arrival at Bali Airport, meet our representative at the arrival hall and proceed to your Hotel. Check into Hotel as per the standard check in policy of the Hotel. Overnight in Hotel.",
+        "optionalActivities": null
+      },
+      {
+        "day": 2,
+        "title": "Full Day Kintamani Volcano Tour with Ubud Village + Tegenungan Waterfall + Bali swing",
+        "meals": "Breakfast",
+        "description": "After Breakfast, Proceed to visit Kintamani Volcano which is a rare opportunity to experience one of Bali\u2019s last remaining active volcanos up close. This is one of th e most popular and best day trip in Bali . The tour continues to the Mount & Lake Batur in Kintamani village for some stunning views of the beautiful locales in this region. Proceed to enjoy Balinese Swing which is made of ropes and bamboo, which is suspend ed high above the ground in a scenic location, click some amazing pictures with bali swing, latter proceed to Tegenungan Waterfall which stands high above, at 40 meters. It's connected to the Tukad Petanu River and There's so much to do here. Swimming is a great option. Evening back to hotel, Overnight in Hotel.",
+        "optionalActivities": null
+      },
+      {
+        "day": 3,
+        "title": "Watersports at Benoa Beach \u2013 Padang -Padang Beach \u2013 Uluwatu Temple with Kecak Dance",
+        "meals": "Breakfast",
+        "description": "After breakfast, embark to Banoa Beach for Watersports Enjoy Jet Ski, Bana na Boat Ride and a thrilling Parasailing on the waters. In the afternoon, head to the southern part of the island to visit Padang -Padang 19 Beach a stunning 100 meter -long stretch of sand that's accessible down a flight of stairs and through a unique hollow r ock entrance and latter proceed to Uluwatu Temple, a stunning cliff -top temple known for its breathtaking ocean sunset views. This temple is one of Bali's six spiritual pillars and offers a glimpse into traditional Balinese architecture. Don't miss out on this southern Bali trip and overnight in Hotel.",
+        "optionalActivities": null
+      },
+      {
+        "day": 4,
+        "title": "West Nusa Penida Day Trip (Angel Billabong, Broken Beach, Kelingking Beach, Crystal Bay) with indian Lunch",
+        "meals": "Breakfast, Lunch",
+        "description": "After breakfast, embark on a memorable tour of West Nusa Penida Island, where you'll visit captivating attractions like Broken Beach, Angel Billabong, Klingking Clif, and Crystal Bay Dive into the crystal -clear waters for snorkelling adventures, followed by a satisfying indian lunch. Get ready to explore s tunning landscapes and vibrant marine life on this unforgettable island excursion! Overnight in Hotel.",
+        "optionalActivities": null
+      },
+      {
+        "day": 5,
+        "title": "Balinese Massage 120 mins at Kalpika Spa - Half Day Tanah lot temple tour",
+        "meals": "Breakfast",
+        "description": "After Breakfast Evening Proceed to Enj oy a Balinese Massage 120 mins at the most luxurious kalpika Spa. In the evening, proceed to visit Tanah lot temple tour one of Bali's most important landmarks, which is famed for its unique offshore setting and sunset backdrops. An ancient Hindu shrine p erched on top of an outcrop amidst constantly crashing waves. Tanah Lot Temple is simply among Bali's not -to-be-missed icons. Overnight in Hotel",
+        "optionalActivities": null
+      },
+      {
+        "day": 6,
+        "title": "Bali - White River Rafting + 1 Hour ATV Ride to Ubud Private Pool Villa",
+        "meals": "Breakfas t",
+        "description": "After breakfast, check out from hotel proceed to ayung river for White River Rafting, The longest Bali rafting track with crystal clear water, Easy access on start and finish point. latter proceed for 1 Hour ATV ride which offers you a four -wheeled motor cycle ride with unforgettable experience and challenging adventure. Latter proceed for Ubud towards the paradise of your own private pool villa in Ubud. Check in into villa, Spend a day with your loved one in Private pool villa. Overnight in Villa.",
+        "optionalActivities": null
+      },
+      {
+        "day": 7,
+        "title": "Day at ubud Private pool villa",
+        "meals": "Breakfast",
+        "description": "Today at Breakfast have an option al of Floating Breakfast in your private pool villa, spend a day with your loved one exploring the Luxury villa. Overnight at Villa Optional Activities on thi s Day : Full Day Bali Safari Park (Jungle Hopper Pass) @ INR 5000 Per Person",
+        "optionalActivities": null
+      },
+      {
+        "day": 8,
+        "title": "Departure",
+        "meals": "Breakfast",
+        "description": "After breakfast, it\u2019s time to say good bye to this beautiful and amazing country. Transfer to the airport for your return flight back home. 20",
+        "optionalActivities": null
+      }
+    ],
+    "hotelCities": [
+      "Bali Ubud"
+    ],
+    "costByTier": {
+      "STANDARD": {
+        "adult": 4999,
+        "child": 9
+      },
+      "DELUXE": {
+        "adult": 5499,
+        "child": 9
+      },
+      "LUXURY": {
+        "adult": 6499,
+        "child": 9
+      }
+    },
+    "inclusions": [
+      "05 Nights\u2019 Accommodation with breakfast in Bali at above mentioned or similar category hotel",
+      "02 Nights\u2019 Accommodation with breakfast in ubud at above mentioned or similar category hotel",
+      "Full Day Kintamani Volcano Tour with Ubud Village + Tegenungan Waterfall + Bali swing",
+      "Watersp orts at Benoa Beach \u2013 Padang -Padang Beach \u2013 Uluwatu Temple with Kecak Dance",
+      "White River Rafting at Ayung river + 1 Hour ATV Ride",
+      "Balinese Massage 120 mins at Kalpika Spa",
+      "Half Day Tanh Lot Temple Tour",
+      "West Nusa Penida Day Trip (Angel Billabong, Broken Beac h, Kelingking Beach, Crystal Bay) with Indian",
+      "Lunch",
+      "All Transfers and Sightseeing on PVT basis",
+      "Complimentary Forex Card",
+      "21"
+    ],
+    "exclusions": [
+      "Return Airfare & Visa Cost",
+      "Travel Insurance",
+      "Early check in & late check -out",
+      "Any hike in currency exchange rate can a lter the package cost at the time of confirmation",
+      "Meals & Drinks not mentioned in the itinerary",
+      "Entrance or Exit RT PCR Tests (if Applicable)",
+      "Camera & video permit. , Any expenses of a personal nature",
+      "Any other expenses not mentioned above & Tips & Portag es",
+      "22"
+    ],
+    "sourceFile": "Tripoly Bali.pdf"
+  },
+  {
+    "id": "bali-bali-romance-retreat",
+    "destination": "Bali",
+    "name": "Bali Romance Retreat",
+    "durationNights": 7,
+    "durationDays": 8,
+    "cities": [
+      {
+        "city": "Bali",
+        "nights": 4
+      },
+      {
+        "city": "I Nusa Penida",
+        "nights": 1
+      },
+      {
+        "city": "I Ubud",
+        "nights": 2
+      }
+    ],
+    "days": [
+      {
+        "day": 1,
+        "title": "Bali Arrival \u2013 Candle light Dinner at Bintang Bali",
+        "meals": "Nil",
+        "description": "On arrival at Bali Airport, meet our representative at the arrival hal l and proceed to your hotel. Check into Hotel as per the standard check in policy of the Hotel. In the evening, start your tour with the Stunning Romantic Candle Night Dinner at Bintang Bali . Overnight in Hotel.",
+        "optionalActivities": null
+      },
+      {
+        "day": 2,
+        "title": "Full Day Kintamani Volca no Tour with Ubud Village + Tegenungan Waterfall + Bali swing",
+        "meals": "Breakfast",
+        "description": "After Breakfast, proceed to visit Kintamani Volcano which is a rare opportunity to experience one of Bali\u2019s last remaining active volcanos up close. This is one of the most popular and best day trip in Bali . The tour continues to the Mount & Lake Batur in Kintamani village for some stunning views of the beautiful locales in this region. Proceed to enjoy Balinese Swing which is made of ropes and bamboo, which is suspended high above the ground in a scenic location, click some amazing pictures with bali swing, latter proceed to Tegenungan Waterfall which stands high above, at 40 meters. It's connected to the Tukad Petanu River and There's so much to do here. Swimming is a great option. Evening back to hotel, Overnight in Hotel. 31",
+        "optionalActivities": null
+      },
+      {
+        "day": 3,
+        "title": "Watersports at Benoa Beach \u2013 Padang -Padang Beach \u2013 Uluwatu Temple with Kecak Dance",
+        "meals": "Breakfast",
+        "description": "After breakfast, embark to Banoa Beach for Watersports Enjoy Jet Ski, Banana Boat Ride and a thrilling Parasailing on the waters. In the afternoon, head to the southern part of the island to visit Padang -Padang Beach a stunning 100-meter -long stretch of sand that's accessible down a flight of stairs and through a unique hollow rock entr ance and latter proceed to Uluwatu Temple, a stunning cliff -top temple known for its breathtaking ocean sunset views. This temple is one of Bali's six spiritual pillars and offers a glimpse into traditional Balinese architecture. Don't miss out on this sou thern Bali trip and overnight in hotel .",
+        "optionalActivities": null
+      },
+      {
+        "day": 4,
+        "title": "White River Rafting + 1 Hour ATV Ride + Balinese Massage 60 mins at Kalpika Spa",
+        "meals": "Breakfast",
+        "description": "After Breakfast proceed to ayung river for White River Rafting, The longest Bali rafting track with crystal clear water, Easy access on start and finish point. latter proceed for 1 Hour ATV ride which offers you a four - wheeled motorcycle ride with unforgettable experience and challenging adventure. Enjoy 60 Mins Balinese Massage at Kalpika, Back to Hotel",
+        "optionalActivities": null
+      },
+      {
+        "day": 5,
+        "title": "West Nusa Penida Day Trip (Angel Billabong, Broken Beach, Kelingking Beach, Crystal Bay) with Indian Lunch",
+        "meals": "Breakfast, Lunch",
+        "description": "After breakfast, Check out from hotel & embark on a memorable tour of West Nusa Penida Island, where you'll visit captivating attractions like Broken Beach, Angel Billabong, Klingking Clif, and Crystal Bay Dive into the crystal -clear waters for snorkelling adventures, followed by a satisfying Indian lunch. Get ready to explore stunning landscapes an d vibrant marine life on this unforgettable island excursion! Overnight in Nusa Penida .",
+        "optionalActivities": null
+      },
+      {
+        "day": 6,
+        "title": "Nusa Penida Ferry Transfer - Check in at Private Pool Villa Ubud",
+        "meals": "Breakfast",
+        "description": "After breakfast at the hotel, check out and transfer to the ferry Terminal . Later Proceed for Ubud towards the paradise of your own private pool villa in Ubud. Check in into villa, spend a day with your loved one in Private pool villa. Overnight in Villa.",
+        "optionalActivities": null
+      },
+      {
+        "day": 7,
+        "title": "Day at ubud Private pool villa",
+        "meals": "Br eakfast",
+        "description": "Today Start your day with Stunning Floating Breakfast in your private pool villa, spend a day with your loved one exploring the Luxury villa. Overnight at Villa",
+        "optionalActivities": null
+      },
+      {
+        "day": 8,
+        "title": "Departure",
+        "meals": "Breakfast",
+        "description": "After breakfast, it\u2019s time to say good bye to this beautiful and amazing country. Transfer to the airport for your return flight back home. 32",
+        "optionalActivities": null
+      }
+    ],
+    "hotelCities": [
+      "Bali Nusa Penida",
+      "Ubud"
+    ],
+    "costByTier": {
+      "STANDARD": {
+        "adult": 5899,
+        "child": 9
+      },
+      "DELUXE": {
+        "adult": 6699,
+        "child": 9
+      },
+      "LUXURY": {
+        "adult": 7699,
+        "child": 9
+      }
+    },
+    "inclusions": [
+      "04 Nights\u2019 Accommodation with breakfast in Bali at above mentioned or similar category hotel",
+      "01 Nights\u2019 Accommodation with breakfast in Nusa Penida at above mentioned or similar category",
+      "hotel",
+      "02 Nights\u2019 Accommodation with breakfast in Ubud at above mentioned or similar category hotel",
+      "Full Day Kintamani Volcano Tour with Ubud Village + Tegenungan Waterfall + Bali swing",
+      "Candle light Dinner at Bintang Bali",
+      "White River Rafting at Ayung river + 1 Hour ATV Ride",
+      "Balinese Massage 60 mins at Kalpika Spa",
+      "West Nusa Penida Day Trip (Angel Billabong, Broken Beach, Kelingking Beach, Crystal Bay) with Indian",
+      "Lunch",
+      "Return Tickets of Nusa Penida Ferry",
+      "33",
+      "All Transfers and Sightseeing on PVT basis",
+      "Complimentary Forex Card"
+    ],
+    "exclusions": [
+      "Return Airfare & Visa Cost",
+      "Travel Insurance",
+      "Early check in & l ate check -out",
+      "Any hike in currency exchange rate can alter the package cost at the time of confirmation",
+      "Meals & Drinks not mentioned in the itinerary",
+      "Entrance or Exit RT PCR Tests (if Applicable)",
+      "Camera & video permit. , Any expenses of a personal nature",
+      "Any other expenses not mentioned above & Tips & Portages",
+      "34",
+      "Notes",
+      "All the above Packages are Valid Till 30 Sep 2026 \u2013 (Excluding New year Dates & Peak Dates)",
+      "Tripoly reserves the right to modify the itinerary in the event of emergency situations or unforeseen",
+      "circumst ances",
+      "Above rates are tentative and can be changed at the time of final quotation",
+      "Package Price is based on minimum 2 passengers travelling together",
+      "Package Price is Subject to availability",
+      "Rates are calculated as per Exchange rate on 01 Feb 2025",
+      "Foreign E xchange rate is volatile / dynamic and the same may fluctuate at the time of final Payment.",
+      "International Check In Time - 1400 Hrs. & Check Out Time - 1100 Hrs.",
+      "Any special request are subject to av"
+    ],
+    "sourceFile": "Tripoly Bali.pdf"
+  },
+  {
+    "id": "dubai-amazing-dubai",
+    "destination": "Dubai",
+    "name": "Amazing Dubai",
+    "durationNights": 3,
+    "durationDays": 4,
+    "cities": [
+      {
+        "city": "Dubai",
+        "nights": 3
+      }
+    ],
+    "days": [
+      {
+        "day": 1,
+        "title": "Arrival Dubai - Marina Dhow Cruise with Dinner",
+        "meals": "Dinner",
+        "description": "Welcome to Dubai. Arrive at Dubai airport and transfer to your hotel. This evening, enjoy a cruise along the banks of historic Dubai Creek where the Dhow Cruise combines the best of culinary delights and stunning views of old and new Dubai. On board you will have a sumpt uous buffet dinner. Enjoy stunning views of the creek and a selection of the best of Arabic lounge music. Overnight stay at Dubai hotel.",
+        "optionalActivities": null
+      },
+      {
+        "day": 2,
+        "title": "Dubai City tour + Burj Khalifa Tour 124, 125 Floor Visit",
+        "meals": "Breakfast",
+        "description": "Morning breakfast at hotel. Proceed for Dubai city tour, in this tour you will experience the historic sites and vibrant cosmopolitan life of Dubai on this comprehensive sightseeing tour of the city. Visit the famous Jumeirah Mosque, stop at Jumeriah Public Beach, passing by Jumeirah Beach Hotel, and stop for photo at Burj Al Arab the most luxurious and tallest standing hotel in the world. Later take another photo stop in front of Atlantis, The palm. Later visit the tallest building in the world \u2013 Burj Khalifa building over 828 metres (2,716.5 feet) and more than 160 stories. You will get access to the observation deck, from where you will get amazing view of Dubai city being at 124th Floor. Overnight stay at Dubai hotel. 3",
+        "optionalActivities": null
+      },
+      {
+        "day": 3,
+        "title": "4 X 4 Desert Safari with BBQ Dinner",
+        "meals": "Breakfast, Dinner",
+        "description": "Morning breakfast at hotel. First half is at leisure to explore shopping areas Gold souk, Spice souk or Meena Bazaar on own. Later in the evening proceed for Desert Safari. The drive continues across the desert. St op to watch the beautiful sunset before reaching the campsite, where you have the opportunity to do a camel ride, sand boarding (at additional cost). After working up an appetite, enjoy a delicious barbeque dinner followed by belly dancing performance. R eturn to hotel with amazing memories of the desert safari. Overnight stay at Dubai hotel.",
+        "optionalActivities": null
+      },
+      {
+        "day": 4,
+        "title": "Departure",
+        "meals": "Breakfast",
+        "description": "After breakfast, it\u2019s time to say good bye to this beautiful and amazing country. Transfer to the airport for your return flight back home.",
+        "optionalActivities": null
+      }
+    ],
+    "hotelCities": [
+      "Dubai"
+    ],
+    "costByTier": {
+      "STANDARD": {
+        "adult": 21999,
+        "child": 16999
+      },
+      "DELUXE": {
+        "adult": 23999,
+        "child": 17999
+      },
+      "LUXURY": {
+        "adult": 26999,
+        "child": 19599
+      }
+    },
+    "inclusions": [
+      "03 Nights\u2019 Accommodation with breakfast in Dubai at above mentioned or similar category hotel",
+      "Marina Dhow Cruise with Dinner",
+      "Dubai City tour",
+      "Burj Khalifa Tour 124, 125 Floor Visit",
+      "4 X 4 Desert Safari with BBQ Dinner",
+      "All Transfers and Sightseeing on Sic basis",
+      "Complimentary Forex Card"
+    ],
+    "exclusions": [
+      "Airfare",
+      "Visa Cost",
+      "Travel Insurance",
+      "Early check in & late check -out",
+      "Any hike in currency exchange rate can alter the package cost at the time of confirmation",
+      "Meals & Drinks not mentioned in the itinerary",
+      "Entrance or Exit PCR Tests (if Applicable)",
+      "Camera & video permit",
+      "Any expenses of a personal nature",
+      "Any other expenses not mentioned above",
+      "Tips and Porterag e",
+      "5",
+      "Highlights of Dubai"
+    ],
+    "sourceFile": "Tripoly Dubai.pdf"
+  },
+  {
+    "id": "dubai-dubai-splendour",
+    "destination": "Dubai",
+    "name": "Dubai Splendour",
+    "durationNights": 5,
+    "durationDays": 6,
+    "cities": [
+      {
+        "city": "Dubai",
+        "nights": 5
+      }
+    ],
+    "days": [
+      {
+        "day": 1,
+        "title": "Arrival Dubai - Marina Dhow Cruise with Dinner",
+        "meals": "Dinner",
+        "description": "Welcome to Dubai. Arrive at Dubai airport and transfer to your hotel. This evening, enjoy a cruise along the banks of historic Dubai Creek where the Dhow Cruise combines the best of culinary delights and stunning views of old and new Dubai. On board you will have a sumptuous buffet dinner. Enjoy stunning views of the creek and a selection of the best of Arabic lounge music. Overnight stay at Dubai hotel.",
+        "optionalActivities": null
+      },
+      {
+        "day": 2,
+        "title": "Dubai City tour + Burj Khalifa Tour 124, 125 Floor Visit",
+        "meals": "Breakfast",
+        "description": "Morning breakfast at hotel. Proceed for Dubai city tour, in this tour you will experience the historic sites and vibrant cosmopolitan life of Dubai on this comprehensive sightseeing tour of the city. Visit the famous Jumeirah Mosque, stop at Jumeriah Public Beach, passing by Jumeirah Beach Hotel, and stop for photo at Burj Al Arab the most luxurious and tallest standing hotel in the world. Later take another photo stop in front of Atlantis, The palm. Later visit the tallest building in the world \u2013 Burj Khalifa building over 828 metres (2,716.5 feet) and more than 160 stories. You will get access to the observation deck, from where you will get amazing view of Dubai city being at 124th Floor. Overnight stay at Dubai hotel. 9",
+        "optionalActivities": null
+      },
+      {
+        "day": 3,
+        "title": "4 X 4 Desert Safari with BBQ Dinner",
+        "meals": "Breakfast, Dinner",
+        "description": "Morning breakfast at hotel. First half is at leisure to explore shopping areas Gold souk, Spice souk or Meena Bazaar on own. Later in the evening p roceed for Desert Safari. The drive continues across the desert. Stop to watch the beautiful sunset before reaching the campsite, where you have the opportunity to do a camel ride, sand boarding (at additional cost). After working up an appetite, enjoy a delicious barbeque dinner followed by belly dancing performance. Return to hotel with amazing memories of the desert safari. Overnight stay at Dubai hotel.",
+        "optionalActivities": null
+      },
+      {
+        "day": 4,
+        "title": "Full Day Abu Dhabi city tour with Ferrari world Theme Park",
+        "meals": "Breakfast",
+        "description": "Morning breakfast at hotel. Today see the best of Abu Dhabi, the UAE\u2019s capital city, and visit the Ferrari World theme park on a full -day trip from Dubai.Visit the splendid Sheikh Zayed Mosque, discover Bedouin crafts at the Heritage Village, and view the city\u2019s flagship mall and other landmarks. Finish at Ferrari World, the world\u2019s biggest indoor theme park, and enjoy its exciting Ferrari -inspired rides, stores and caf\u00e9s. Overnight stay at Dubai Hotel.",
+        "optionalActivities": null
+      },
+      {
+        "day": 5,
+        "title": "Aqua Venture Waterpa rk and Lost Chambers Aquarium",
+        "meals": "Breakfast",
+        "description": "Morning breakfast at hotel. Proceed for Aqua Venture Waterpark Feel the thrill of entering the Aquaventure Waterpark and then brave the world's first dual waterslide within a waterslide. Set your pulse rac ing on 30 slides and attractions, laugh your way down Dubai's longest Lazy River, and relax on 500 meters of private beach Latter Visit Lost Chambers Aquirium which is home to 65,000 marine animals. Embark on an under - the-sea adventure within the lost city of Atlantis as you explore Dubai's most immersive and themed aquarium. Evening back to Hotel, Overnight in Hotel.",
+        "optionalActivities": null
+      },
+      {
+        "day": 6,
+        "title": "Departure",
+        "meals": "Breakfast",
+        "description": "After breakfast, it\u2019s time to say good bye to this beautiful and amazing country. Transfer to the airport for your return flight back home.",
+        "optionalActivities": null
+      }
+    ],
+    "hotelCities": [
+      "Dubai"
+    ],
+    "costByTier": {
+      "STANDARD": {
+        "adult": 47999,
+        "child": 38999
+      },
+      "DELUXE": {
+        "adult": 49999,
+        "child": 39999
+      },
+      "LUXURY": {
+        "adult": 55999,
+        "child": 42999
+      }
+    },
+    "inclusions": [
+      "05 Nights\u2019 Accommodation with breakfast in Dubai at above mentioned or similar category hotel",
+      "Marina Dhow Cruise with Dinner",
+      "Dubai City tour",
+      "Burj Khalifa Tour 124, 125 Floor Visit",
+      "4 X 4 Desert Safari with BBQ Dinner",
+      "Full Day Abu Dhabi city tour with Ferrari world Th eme Park",
+      "Aqua Venture Waterpark and Lost Chambers Aquarium",
+      "All Transfers and Sightseeing on Sic basis",
+      "Complimentary Forex Card"
+    ],
+    "exclusions": [
+      "Airfare, Visa Cost, Travel Insurance",
+      "Early check in & late check -out",
+      "Any hike in currency exchange rate can alter the package cost at the time of confirmation",
+      "Meals & Drinks not mentioned in the itinerary",
+      "Entrance or Exit PCR Tests (if Applicable)",
+      "Camera & video permit",
+      "Any expenses of a personal nature",
+      "Any other expenses not mentioned above",
+      "Tips and Porterage",
+      "11"
+    ],
+    "sourceFile": "Tripoly Dubai.pdf"
+  },
+  {
+    "id": "dubai-explore-dubai",
+    "destination": "Dubai",
+    "name": "Explore  Dubai",
+    "durationNights": 6,
+    "durationDays": 7,
+    "cities": [
+      {
+        "city": "Dubai",
+        "nights": 6
+      }
+    ],
+    "days": [
+      {
+        "day": 1,
+        "title": "Arrival Dubai - Marina Dhow Cruise with Dinner",
+        "meals": "Dinner",
+        "description": "Welcome to Dubai. Arrive at Dubai airport and transfer to your hotel. This evening, enjoy a cruise along the banks of historic Dubai Creek where the Dhow Cruise combines the best of culinary delights and stunning views of old and new Dubai. On board you will have a sumptuous buffet dinner. Enjoy stunning views of the creek and a selection of the best of Arabic lounge music. Overnight stay at Dubai hotel.",
+        "optionalActivities": null
+      },
+      {
+        "day": 2,
+        "title": "Dubai City tour + Burj Khalifa Tour 124, 125 Floor Visit",
+        "meals": "Breakfast",
+        "description": "Morning breakfast at hotel. Proceed for Dubai city tour, in this tour you will experience the historic sites and vibrant cosmopolitan life of Dubai on this com prehensive sightseeing tour of the city. Visit the famous Jumeirah Mosque, stop at Jumeriah Public Beach, passing by Jumeirah Beach Hotel, and stop for photo at Burj Al Arab the most luxurious and tallest standing hotel in the world. Later take another photo stop in front of Atlantis, The palm. Later visit the tallest building in the world \u2013 Burj Khalifa building over 828 metres (2,716.5 feet) and more than 160 stories. You will get access to the observation deck, from where you will get amazing view of Dubai city being at 124th Floor. Overnight stay at Dubai hotel. 12",
+        "optionalActivities": null
+      },
+      {
+        "day": 3,
+        "title": "4 X 4 Desert Safari with BBQ Dinner",
+        "meals": "Breakfast, Dinner",
+        "description": "Morning breakfast at hotel. First half is at leisure to explore shopping areas Gold souk, Spice sou k or Meena Bazaar on own. Later in the evening proceed for Desert Safari. The drive continues across the desert. Stop to watch the beautiful sunset before reaching the campsite, where you have the opportunity to do a camel ride, sand boarding (at addition al cost). After working up an appetite, enjoy a delicious barbeque dinner followed by belly dancing performance. Return to hotel with amazing memories of the desert safari. Overnight stay at Dubai hotel.",
+        "optionalActivities": null
+      },
+      {
+        "day": 4,
+        "title": "Ski Dubai with Dubai Dolphinar ium",
+        "meals": "Breakfast",
+        "description": "Morning breakfast at Hotel, proceed to Visit Ski Dubai, an indoor ski resort in Dubai with 22,500 square meters of indoor ski area, Enjoy Mall of Emirates, Latter visit Dubai Dolphinarium that features dolphin and seal shows, swimming with dolphins, and other activities, Evening back to Hotel, Over night in Hotel",
+        "optionalActivities": null
+      },
+      {
+        "day": 5,
+        "title": "Full Day Abu Dhabi city tour with Ferrari world Theme Park",
+        "meals": "Breakfast",
+        "description": "Morning breakfast at hotel. Today see the best of Abu Dhabi, the UA E\u2019s capital city, and visit the Ferrari World theme park on a full -day trip from Dubai.Visit the splendid Sheikh Zayed Mosque, discover Bedouin crafts at the Heritage Village, and view the city\u2019s flagship mall and other landmarks. Finish at Ferrari World , the world\u2019s biggest indoor theme park, and enjoy its exciting Ferrari -inspired rides, stores and caf\u00e9s. Overnight stay at Dubai Hotel.",
+        "optionalActivities": null
+      },
+      {
+        "day": 6,
+        "title": "Aqua Venture Waterpark and Lost Chambers Aquarium",
+        "meals": "Breakfast",
+        "description": "Morning breakfast at hotel. Proceed for Aqua Venture Waterpark Feel the thrill of entering the Aquaventure Waterpark and then brave the world's first dual waterslide within a waterslide. Set your pulse racing on 30 slides and attractions, laugh your way down Dubai's longest La zy River, and relax on 500 meters of private beach Latter Visit Lost Chambers Aquirium which is home to 65,000 marine animals. Embark on an under - the-sea adventure within the lost city of Atlantis as you explore Dubai's most immersive and themed aquarium. Evening back to Hotel, Overnight in Hotel.",
+        "optionalActivities": null
+      },
+      {
+        "day": 7,
+        "title": "Departure",
+        "meals": "Breakfast",
+        "description": "After breakfast, it\u2019s time to say good bye to this beautiful and amazing country. Transfer to the airport for your return flight back home.",
+        "optionalActivities": null
+      }
+    ],
+    "hotelCities": [
+      "Dubai"
+    ],
+    "costByTier": {
+      "STANDARD": {
+        "adult": 59999,
+        "child": 49999
+      },
+      "DELUXE": {
+        "adult": 62999,
+        "child": 50999
+      },
+      "LUXURY": {
+        "adult": 69999,
+        "child": 54999
+      }
+    },
+    "inclusions": [
+      "06 Nights\u2019 Accommodation with breakfast in Dubai at above mentioned or similar category hotel",
+      "Half Day Tanh Lot Temple Tour",
+      "Marina Dhow Cruise with Dinner",
+      "Dubai City tour",
+      "Burj Khalifa Tour 124, 125 Floor Visit",
+      "4 X 4 Desert Safari with BBQ Dinner",
+      "Ski Dubai with Dubai Dolphinarium",
+      "Full Day Abu Dhabi city tour with Ferrari world Theme Park",
+      "Aqua Venture Water park and Lost Chambers Aquarium",
+      "All Transfers and Sightseeing on Sic basis",
+      "Complimentary Fo rex Card"
+    ],
+    "exclusions": [
+      "Airfare, Visa Cost, Travel Insurance",
+      "Early check in & late check -out",
+      "Any hike in currency exchange rate can alter the package cost at the time of confirmation",
+      "Meals & Drinks not mentioned in the itinerary",
+      "Camera & video permit",
+      "Any ex penses of a personal nature",
+      "Any other expenses not mentioned above",
+      "14"
+    ],
+    "sourceFile": "Tripoly Dubai.pdf"
+  },
+  {
+    "id": "dubai-discover-dubai",
+    "destination": "Dubai",
+    "name": "Discover Dubai",
+    "durationNights": 7,
+    "durationDays": 8,
+    "cities": [
+      {
+        "city": "Dubai",
+        "nights": 7
+      }
+    ],
+    "days": [
+      {
+        "day": 1,
+        "title": "Arrival Dubai - Marina Dhow Cruise with Dinner",
+        "meals": "Dinner",
+        "description": "Welcome to Dubai. Arrive at Dubai airport and transfer to your hotel. This evening, enjoy a cruise along the banks of historic Dubai Creek where the Dhow Cruise combines the best of culinary delights and stunning views of old and new Dubai. On board you will have a sumptuo us buffet dinner. Enjoy stunning views of the creek and a selection of the best of Arabic lounge music. Overnight stay at Dubai hotel.",
+        "optionalActivities": null
+      },
+      {
+        "day": 2,
+        "title": "Dubai City tour + Burj Khalifa Tour 124, 125 Floor Visit",
+        "meals": "Breakfast",
+        "description": "Morning breakfast at hotel. Proceed for Dubai city tour, in this tour you will experience the historic sites and vibrant cosmopolitan life of Dubai on this comprehensive sightseeing tour of the city. Visit the famous Jumeirah Mosque, stop at Jumeriah Public Beach, passing by Jumeirah Beach Hotel, and stop for photo at Burj Al Arab the most luxurious and tallest standing hotel in the world. Later take another photo stop in front of Atlantis, The palm. Later visit the tallest building in the world \u2013 Burj Khalifa building ove r 828 metres (2,716.5 feet) and more than 160 stories. You will get access to the observation deck, from where you will get amazing view of Dubai city being at 124th Floor. Overnight stay at Dubai hotel. 15",
+        "optionalActivities": null
+      },
+      {
+        "day": 3,
+        "title": "4 X 4 Desert Safari with BBQ Dinner",
+        "meals": "Breakfast, Dinner",
+        "description": "Morning breakfast at hotel. First half is at leisure to explore shopping areas Gold souk, Spice souk or Meena Bazaar on own. Later in the evening proceed for Desert Safari. The drive continues across the desert. Stop t o watch the beautiful sunset before reaching the campsite, where you have the opportunity to do a camel ride, sand boarding (at additional cost). After working up an appetite, enjoy a delicious barbeque dinner followed by belly dancing performance. Retur n to hotel with amazing memories of the desert safari. Overnight stay at Dubai hotel.",
+        "optionalActivities": null
+      },
+      {
+        "day": 4,
+        "title": "Full Day Abu Dhabi city tour with Ferrari world Theme Park",
+        "meals": "Breakfast",
+        "description": "Morning breakfast at hotel. Today see the best of Abu Dhabi, the UAE\u2019s capital city, and visit the Ferrari World theme park on a full -day trip from Dubai.Visit the splendid Sheikh Zayed Mosque, discover Bedouin crafts at the Heritage Village, and view th e city\u2019s flagship mall and other landmarks. Finish at Ferrari World, the world\u2019s biggest indoor theme park, and enjoy its exciting Ferrari -inspired rides, stores and caf\u00e9s. Overnight stay at Dubai Hotel.",
+        "optionalActivities": null
+      },
+      {
+        "day": 5,
+        "title": "Aqua Venture Waterpark and Los t Chambers Aquarium",
+        "meals": "Breakfast",
+        "description": "Morning breakfast at hotel. Proceed for Aqua Venture Waterpark Feel the thrill of entering the Aquaventure Waterpark and then brave the world's first dual waterslide within a waterslide. Set your pulse racing on 30 slides and attractions, laugh your way down Dubai's longest Lazy River, and relax on 500 meters of private beach Latter Visit Lost Chambers Aquirium which is home to 65,000 marine animals. Embark on an under - the-sea adventure within the lost city of Atlant is as you explore Dubai's most immersive and themed aquarium. Evening back to Hotel, Overnight in Hotel.",
+        "optionalActivities": null
+      },
+      {
+        "day": 6,
+        "title": "Dubai Dolphinarium + Aya Universe",
+        "meals": "Breakfast",
+        "description": "Morning breakfast at hotel. Proceed for Dubai Dolphinarium which is an first indoor air -conditioned dolphinarium in the Middle East. It showcases bottlenose dolphins and fur seals displaying their talent and skills as they dance, juggle, sing, play ball and jump through hoops, Latter Visit AYA Universe which is an interactive and experiential entertainment park in Dubai that provides immersive experiences combining art and technology. The park has 12 zones, all of which utilise light, sounds and mirrors to create an ethereal experience and a transformative journey to the visitors. Afrernoon back to hotel, over night in Hotel.",
+        "optionalActivities": null
+      },
+      {
+        "day": 7,
+        "title": "Day Free for Leisure and Shopping",
+        "meals": "Breakfast",
+        "description": "Morning breakfast at Hotel, today the day is free for Leisure and Shopping, over night in Hotel. 16",
+        "optionalActivities": null
+      },
+      {
+        "day": 8,
+        "title": "Departure",
+        "meals": "Breakfast",
+        "description": "After breakfast, it\u2019s time to say good bye to this beautiful and amazing country. Transfer to the airport for your return flight back home.",
+        "optionalActivities": null
+      }
+    ],
+    "hotelCities": [
+      "Dubai"
+    ],
+    "costByTier": {
+      "STANDARD": {
+        "adult": 70999,
+        "child": 53999
+      },
+      "DELUXE": {
+        "adult": 77999,
+        "child": 57999
+      },
+      "LUXURY": {
+        "adult": 90999,
+        "child": 63999
+      }
+    },
+    "inclusions": [
+      "07 Nights\u2019 Accommodation with breakfast in Dubai at above mentioned or similar category hotel",
+      "Half Day Tanh Lot Temple Tour",
+      "Marina Dhow Cruise with Dinner",
+      "Dubai City tour",
+      "Burj Khalifa Tour 124, 125 Floor Visit",
+      "4 X 4 Desert Safari with BBQ Dinner",
+      "Full Day Abu Dhabi city tour with Ferra ri world Theme Park",
+      "Aqua Venture Waterpark and Lost Chambers Aquarium",
+      "Dubai Dolphinarium",
+      "Aya Universe",
+      "All Transfers and Sightseeing on Sic basis",
+      "Complimentary Forex Card",
+      "17"
+    ],
+    "exclusions": [
+      "Airfare",
+      "Visa Cost",
+      "Travel Insurance",
+      "Early check in & late check -out",
+      "Any hike in currency exchange rate can alter the package cost at the time of confirmation",
+      "Meals & Drinks not mentioned in the itinerary",
+      "Entrance or Exit PCR Tests (if Applicable)",
+      "Camera & video permit",
+      "Any expenses of a personal nature",
+      "Any other expenses no t mentioned above",
+      "Tips and Porterage",
+      "18",
+      "Dubai with Abu Dhabi"
+    ],
+    "sourceFile": "Tripoly Dubai.pdf"
+  },
+  {
+    "id": "dubai-dubai-with-abu-dhabi",
+    "destination": "Dubai",
+    "name": "Dubai with Abu Dhabi",
+    "durationNights": 7,
+    "durationDays": 8,
+    "cities": [
+      {
+        "city": "Dubai",
+        "nights": 5
+      },
+      {
+        "city": "I Abu Dhabi",
+        "nights": 2
+      }
+    ],
+    "days": [
+      {
+        "day": 1,
+        "title": "Arrival Dubai - Marina Dhow Cruise with Dinner",
+        "meals": "Dinner",
+        "description": "Welcome to Dubai. Arrive at Dubai airport and transfer to your hotel. This evening, enjoy a cruise along the banks of historic Dubai Creek where the Dhow Cruise combines the best of culinary delights and stunning views of old and new Dubai. On board you will have a sumptuous buffet dinner. Enjoy stunning views of the creek and a selection of the best of Arabic lounge music. Overnight stay at Dubai hotel.",
+        "optionalActivities": null
+      },
+      {
+        "day": 2,
+        "title": "Dubai City tour + Burj Khalifa Tour 124, 125 Floor Visit",
+        "meals": "Breakfast",
+        "description": "Morning breakfast at hotel. Proceed for Dubai city tour, in this tour you will experience the historic sites and vibrant cosmopolitan life of Dubai on this comprehensive sightseeing tour of the city. Visit the famous Jumeirah Mosque, stop at Jumeriah Pub lic Beach, passing by Jumeirah Beach Hotel, and stop for photo at Burj Al Arab the most luxurious and tallest standing hotel in the world. Later take another photo stop in front of Atlantis, The palm. Later visit the tallest building in the world \u2013 Burj Khalifa building over 828 metres (2,716.5 feet) and more than 160 stories. You will get access to the observation deck, from where you will get amazing view of Dubai city being at 124th Floor. Overnight stay at Dubai hotel. 19",
+        "optionalActivities": null
+      },
+      {
+        "day": 3,
+        "title": "4 X 4 Desert Safari with BBQ Dinner",
+        "meals": "Breakfast, Dinner",
+        "description": "Morning breakfast at hotel. First half is at leisure to explore shopping areas Gold souk, Spice souk or Meena Bazaar on own. Later in the evening proceed for Desert Safari. The drive continues ac ross the desert. Stop to watch the beautiful sunset before reaching the campsite, where you have the opportunity to do a camel ride, sand boarding (at additional cost). After working up an appetite, enjoy a delicious barbeque dinner followed by belly dan cing performance. Return to hotel with amazing memories of the desert safari. Overnight stay at Dubai hotel.",
+        "optionalActivities": null
+      },
+      {
+        "day": 4,
+        "title": "Ski Dubai with Dubai Dolphinarium",
+        "meals": "Breakfast",
+        "description": "Morning breakfast at Hotel, proceed to Visit Ski Dubai, an indoor ski resort in Dubai with 22,500 square meters of indoor ski area, Enjoy Mall of Emirates, Latter visit Dubai Dolphinarium that features dolphin and seal shows, swimming with dolphins, and other activities, Evening back to Hotel, Over night in Hotel",
+        "optionalActivities": null
+      },
+      {
+        "day": 5,
+        "title": "Aqua Venture Waterpark and Lost Chambers Aquarium",
+        "meals": "Breakfast",
+        "description": "Morning breakfast at hotel. Proceed for Aqua Venture Waterpark Feel the thrill of entering the Aquaventure Waterpark and then brave the world's first dual waterslide within a w aterslide. Set your pulse racing on 30 slides and attractions, laugh your way down Dubai's longest Lazy River, and relax on 500 meters of private beach Latter Visit Lost Chambers Aquirium which is home to 65,000 marine animals. Embark on an under - the-sea a dventure within the lost city of Atlantis as you explore Dubai's most immersive and themed aquarium. Evening back to Hotel, Overnight in Hotel.",
+        "optionalActivities": null
+      },
+      {
+        "day": 6,
+        "title": "Dubai - Abu Dhabi - Abu Dhabi city tour with Ferrari world Theme Park",
+        "meals": "Breakfast",
+        "description": "Morning breakfast at hotel. Check out from Dubai Hotel Transfer to Abu Dhabi Today see the best of Abu Dhabi, the UAE\u2019s capital city, and visit the Ferrari World theme park on a full -day trip from Dubai. Visit the splendid Sheikh Zayed Mosque, discover Be douin crafts at the Heritage Village, and view the city\u2019s flagship mall and other landmarks. Afternoon check in at Hotel. Proceed to enjoy the world\u2019s biggest indoor theme park, and enjoy its exciting Ferrari -inspired rides, stores and caf\u00e9s. Overnight s tay at Abu Dhabi Hotel.",
+        "optionalActivities": null
+      },
+      {
+        "day": 7,
+        "title": "Dubai - Warner Bros. world Abu Dhabi",
+        "meals": "Breakfast",
+        "description": "Morning breakfast at hotel. proceed to Worner bro dubai Experience the excitement of 29 exhilarating rides and attractions, Meet over 35 live characters from DC and Animation, including beloved superheroes and iconic cartoon figures. Overnight stay at Abu Dhabi Hotel.",
+        "optionalActivities": null
+      },
+      {
+        "day": 8,
+        "title": "Departure",
+        "meals": "Breakfast",
+        "description": "After breakfast, it\u2019s time to say good bye to this beautiful and amazing country. Transf er to the airport for your return flight back home. 20",
+        "optionalActivities": null
+      }
+    ],
+    "hotelCities": [
+      "Dubai",
+      "Abu Dhabi"
+    ],
+    "costByTier": {
+      "STANDARD": {
+        "adult": 74999,
+        "child": 61999
+      },
+      "DELUXE": {
+        "adult": 81999,
+        "child": 64999
+      },
+      "LUXURY": {
+        "adult": 103999,
+        "child": 75999
+      }
+    },
+    "inclusions": [
+      "05 Nights\u2019 Accommodation with breakfast in Dubai at above mentioned or similar category hotel",
+      "02 Nights\u2019 Accommodation with breakfast in Abu Dhabi Yas Island at above mentioned or similar",
+      "category hotel",
+      "Marina Dhow Cruise with Dinner",
+      "Dubai City tour",
+      "Burj Khalifa Tour 124, 125 Floor Visit",
+      "4 X 4 Desert Safari with BBQ Dinner",
+      "Ski Dubai with Dubai Dolphinarium",
+      "Aqua Venture Waterpark and Lost Chambers Aquarium",
+      "Abu Dhabi city tour with Ferrari world Theme Park",
+      "Warner Bros. World Abu Dhabi Theme Park",
+      "21",
+      "All Transfers and Sightseeing on Sic basis",
+      "Complimentary Forex Card"
+    ],
+    "exclusions": [
+      "Airfare",
+      "Visa Cost",
+      "Travel Insurance",
+      "Early check in & late check -out",
+      "Any hike in currency exchange rate can alter the package cost at the time of confirmation",
+      "Meals & Drinks not mentioned in the itinerary",
+      "Entrance or Exit PCR Tests (if Applicable)",
+      "Camera & video permit",
+      "Any expenses of a personal nature",
+      "Any other expenses not mentioned above",
+      "Tips and Porterage",
+      "22",
+      "Notes",
+      "All the above Packages are Valid Till \u2013 31 July 2025",
+      "Tripoly reserves the right to modify the itinerary in the event of emergency situations or unforeseen",
+      "circumstances",
+      "Above rates are tentative and can be changed at the time of final quotation",
+      "Package Price is based on minimum 2 passengers travelling together",
+      "Package Price is Subject to availability",
+      "Rates are calculated as per Exchange rate on 01 Feb 2025",
+      "Foreign Exchange rate is volatile / dynamic and the same may fluctuate at the time of final Payment.",
+      "International Check In Time - 1400 Hrs. & Check Out Time - 1100 Hrs.",
+      "Any special request are subject to availability & confirmation",
+      "Passport Validity Requirements"
+    ],
+    "sourceFile": "Tripoly Dubai.pdf"
+  }
+]
