@@ -17,7 +17,7 @@ import { buildSummaryRows, isTripComplete } from "@/lib/fields";
 
 function SummaryRow({ label, value }: { label: string; value: string }) {
   return (
-    <div className="flex items-center justify-between border-b border-tripoly-border py-3 last:border-b-0">
+    <div className="flex items-center justify-between py-3">
       <span className="font-sans text-[13px] text-tripoly-text-muted">{label}</span>
       <span className="font-sans text-sm font-semibold text-tripoly-text">{value}</span>
     </div>
@@ -53,8 +53,14 @@ export function TripSummaryCard({ onConfirm }: TripSummaryCardProps = {}) {
         </p>
       ) : (
         <div className="mt-2">
-          {rows.map((r) => (
-            <SummaryRow key={r.label} label={r.label} value={r.value} />
+          {rows.map((r, i) => (
+            <div
+              key={r.label}
+              className="summary-row-enter border-b border-tripoly-border last:border-b-0"
+              style={{ animationDelay: `${i * 40}ms` }}
+            >
+              <SummaryRow label={r.label} value={r.value} />
+            </div>
           ))}
         </div>
       )}

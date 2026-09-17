@@ -172,7 +172,7 @@ export function ItineraryScreen() {
       setField("isProcessing", false);
 
       if (!res.ok || data.valid === false || !data.trip_summary || !data.days) {
-        setStatus({ kind: "error", text: "Sorry, I couldn't make that change — please try rephrasing." });
+        setStatus({ kind: "error", text: "Sorry, I couldn't make that change. Please try rephrasing." });
         if (source === "voice") speak("Sorry, I couldn't make that change. Please try rephrasing.");
         return;
       }
@@ -184,7 +184,7 @@ export function ItineraryScreen() {
       if (source === "voice") speak("Your itinerary has been updated.");
     } catch {
       setField("isProcessing", false);
-      setStatus({ kind: "error", text: "Sorry, I couldn't make that change — please try again." });
+      setStatus({ kind: "error", text: "Sorry, I couldn't make that change. Please try again." });
       if (source === "voice") speak("Sorry, something went wrong. Please try again.");
     }
   }

@@ -77,7 +77,7 @@ export function ProgressBar() {
             <div className="flex flex-1 flex-col items-center gap-1">
               <div
                 className={[
-                  "flex h-4 w-4 items-center justify-center rounded-full text-[9px] font-sans",
+                  "flex h-4 w-4 items-center justify-center rounded-full text-[9px] font-sans transition-colors duration-200",
                   isCompleted || isActive
                     ? "bg-tripoly-green text-white"
                     : "bg-white border border-tripoly-border text-tripoly-text-muted",
@@ -87,7 +87,7 @@ export function ProgressBar() {
               </div>
               <div
                 className={[
-                  "font-sans text-[9px] font-medium",
+                  "font-sans text-[9px] font-medium transition-colors duration-200",
                   isCompleted || isActive ? "text-tripoly-text" : "text-tripoly-text-muted",
                 ].join(" ")}
               >
@@ -98,7 +98,7 @@ export function ProgressBar() {
             {i < BUCKETS.length - 1 && (
               <div
                 className={[
-                  "mb-[13px] h-0.5 flex-1",
+                  "mb-[13px] h-0.5 flex-1 transition-colors duration-200",
                   isCompleted ? "bg-tripoly-green" : "bg-tripoly-border",
                 ].join(" ")}
               />

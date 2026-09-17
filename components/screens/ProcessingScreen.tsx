@@ -149,7 +149,7 @@ export function ProcessingScreen() {
         router.push("/itinerary");
       })
       .catch(() => {
-        bounceToChat("Something went wrong generating your itinerary — let's try that again!");
+        bounceToChat("Something went wrong generating your itinerary. Let's try that again!");
       });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

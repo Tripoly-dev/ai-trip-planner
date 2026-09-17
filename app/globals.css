@@ -236,3 +236,23 @@ body {
     transform: translateX(120%);
   }
 }
+
+/* Chat screen — TripSummaryCard recap rows (components/ui/TripSummaryCard). A rare,
+   once-per-session moment (the recap only appears once every field is answered), so a
+   brief staggered fade-up is appropriate here per Emil Kowalski's "delight budget" tier.
+   fill-mode backwards so the row stays at its 0% (opacity:0) state during its
+   animation-delay instead of flashing visible before its turn. */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.summary-row-enter {
+  animation: fadeInUp 300ms ease-out backwards;
+}
