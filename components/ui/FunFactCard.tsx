@@ -1,9 +1,21 @@
 "use client";
 
 // Screen 02A/02B — inspiration nudge card in the fun fact carousel.
-// Per TRIPOLY_HANDOFF.md section 7: #F0FDF7 bg. Sized larger than the original 295x88
-// spec per your live-portal feedback ("quote section width, height and length") — see
-// the carousel in HomeScreen.tsx for the auto-advance behavior added alongside this.
+// Per TRIPOLY_HANDOFF.md section 7: #F0FDF7 bg.
+//
+// Width: per your feedback ("I want to see 1 quote at a time and not 2") — sized to
+// exactly fill the mobile scroll row's visible width (100vw minus the page's 20px left
+// inset — HomeScreen.tsx's content wrapper is px-5, and the scroller bleeds to the true
+// right edge via -mr-5, so the scroller's rendered width IS 100vw-20px), so no sliver of
+// the next card is ever visible. See HomeScreen.tsx's FunFactCarousel, which measures
+// this same rendered width live (not a hardcoded number) to drive auto-advance/dots.
+//
+// Badge: per your feedback ("Tripoly logo instead of plain star design") — swapped the
+// ✨ emoji for the real TripolyMark icon. The icon is green-on-transparent (see
+// TripolyMark.tsx), so the badge background changed from tripoly-green to white —
+// green-on-green would've had no contrast.
+
+import { TripolyMark } from "@/components/ui/TripolyMark";
 
 export interface FunFactCardProps {
   text: string;
@@ -12,20 +24,20 @@ export interface FunFactCardProps {
 }
 
 // lg:w-full lg:flex-shrink — on desktop these sit in a CSS grid (HomeScreen), which sizes
-// the column; the fixed mobile pixel width and flex-shrink-0 only apply below lg.
-// Widened/heightened from the original 295x88 spec — see HomeScreen.tsx's carousel
-// STEP constant, which must stay in sync with this width + its gap.
+// the column; the mobile width and flex-shrink-0 only apply below lg. snap-start pairs
+// with the scroller's snap-x snap-mandatory (HomeScreen.tsx) for crisp one-card swipes;
+// harmless on desktop, where the grid doesn't scroll-snap at all.
 const cardClass =
-  "flex w-[320px] min-h-[108px] flex-shrink-0 items-start gap-3.5 rounded-2xl bg-tripoly-muted p-4 px-5 text-left lg:w-full lg:flex-shrink";
+  "flex w-[calc(100vw-20px)] min-h-[108px] flex-shrink-0 snap-start items-start gap-3.5 rounded-2xl bg-tripoly-muted p-4 px-5 text-left lg:w-full lg:flex-shrink";
 
 function CardContent({ text, ctaLabel }: { text: string; ctaLabel: string }) {
   return (
     <>
       <span
         aria-hidden="true"
-        className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full bg-tripoly-green text-base"
+        className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full bg-white shadow-[0_1px_4px_rgba(0,0,0,0.1)]"
       >
-        ✨
+        <TripolyMark size={20} />
       </span>
       <span className="flex flex-col">
         <span className="mb-2 font-sans text-[14.5px] leading-relaxed text-[#1a1a1a]">{text}</span>

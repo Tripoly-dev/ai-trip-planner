@@ -23,11 +23,15 @@ import { FunFactCard } from "@/components/ui/FunFactCard";
 import { DESTINATION_CAROUSEL, FUN_FACTS, WALL_DESTINATIONS } from "@/lib/constants";
 import { useTripStore } from "@/store/useTripStore";
 
+// Per your feedback ("didn't like good afternoon traveler... something friendly and
+// catchy, related to travel") — replaced the plain "Good morning/afternoon/evening"
+// with a travel-themed line, still varying by time of day. The name line below this
+// (displayName, further down) is unchanged.
 function getGreeting() {
   const hour = new Date().getHours();
-  if (hour < 12) return "Good morning";
-  if (hour < 17) return "Good afternoon";
-  return "Good evening";
+  if (hour < 12) return "Rise & wander ☀️";
+  if (hour < 17) return "Escape awaits";
+  return "Dream big, travel far ✨";
 }
 
 function ContinueTripPrompt() {
@@ -64,18 +68,29 @@ function ContinueTripPrompt() {
   );
 }
 
+// Gap between cards in the mobile scroll row — must match the scroller's own `gap-2.5`
+// class below (2.5 = 10px). Kept as one named constant so the two can't drift apart.
+const FUN_FACT_GAP_PX = 10;
+
 function FunFactCarousel() {
   const scrollerRef = useRef<HTMLDivElement>(null);
   const [activeIndex, setActiveIndex] = useState(0);
 
-  // Card width (320px, per FunFactCard) + gap (10px) — used both to derive which card is
-  // nearest the left edge as the user scrolls (dot indicator) and to auto-advance below.
-  const STEP = 330;
+  // Per your feedback ("I want to see 1 quote at a time and not 2") — each FunFactCard is
+  // now sized in CSS to exactly fill the scroll row's visible width (see FunFactCard.tsx's
+  // w-[calc(100vw-20px)]), so there's never a sliver of the next card peeking in. That
+  // means "one card's width" is whatever the browser actually rendered, not a number we
+  // pick — read live from the scroller's own clientWidth rather than a hardcoded pixel
+  // step (a hardcoded STEP is exactly what drifted out of sync with the real card size
+  // last time).
+  function stepPx(el: HTMLDivElement) {
+    return el.clientWidth + FUN_FACT_GAP_PX;
+  }
 
   function handleScroll() {
     const el = scrollerRef.current;
     if (!el) return;
-    const index = Math.round(el.scrollLeft / STEP);
+    const index = Math.round(el.scrollLeft / stepPx(el));
     setActiveIndex(Math.min(Math.max(index, 0), FUN_FACTS.length - 1));
   }
 
@@ -87,21 +102,23 @@ function FunFactCarousel() {
   // there beyond the harmless state updates.
   useEffect(() => {
     const id = setInterval(() => {
+      const el = scrollerRef.current;
+      if (!el) return;
       setActiveIndex((prev) => {
         const next = (prev + 1) % FUN_FACTS.length;
-        scrollerRef.current?.scrollTo({ left: next * STEP, behavior: "smooth" });
+        el.scrollTo({ left: next * stepPx(el), behavior: "smooth" });
         return next;
       });
     }, 4000);
     return () => clearInterval(id);
-  }, [STEP]);
+  }, []);
 
   return (
     <div className="mb-5">
       <div
         ref={scrollerRef}
         onScroll={handleScroll}
-        className="no-scrollbar -mr-5 flex gap-2.5 overflow-x-auto lg:mr-0 lg:grid lg:grid-cols-3 lg:gap-4 lg:overflow-visible"
+        className="no-scrollbar -mr-5 flex snap-x snap-mandatory gap-2.5 overflow-x-auto lg:mr-0 lg:grid lg:grid-cols-3 lg:gap-4 lg:overflow-visible lg:snap-none"
       >
         {FUN_FACTS.map((fact) => (
           <FunFactCard key={fact.id} text={fact.text} />
@@ -149,7 +166,7 @@ export function HomeScreen() {
 
         <Link
           href="/chat"
-          className="home-cta-pulse mb-5 flex h-14 items-center justify-center rounded-2xl bg-tripoly-green font-sans text-base font-semibold text-white transition-transform active:scale-[0.97]"
+          className="home-cta-shimmer relative mb-5 flex h-14 items-center justify-center overflow-hidden rounded-2xl bg-tripoly-green font-sans text-base font-semibold text-white shadow-[0_4px_20px_rgba(22,207,118,0.25)] transition-transform active:scale-[0.97]"
         >
           Plan a Trip ✈️
         </Link>

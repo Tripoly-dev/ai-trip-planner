@@ -202,22 +202,37 @@ body {
   animation-play-state: paused;
 }
 
-/* Home — "Plan a Trip" CTA. Per your live-portal feedback ("very plain and vanila and
-   no motion or effects") — an ambient pulsing glow so the button reads as alive/tappable
-   even before a finger touches it, plus a tactile press-scale (applied inline via
-   active:scale-[0.97] in HomeScreen.tsx, not here — that's a one-off utility, not
-   reusable). ease-in-out + alternating box-shadow strength, not a transform, so it never
-   fights the press-scale transform above. */
-@keyframes ctaPulseGlow {
-  0%,
-  100% {
-    box-shadow: 0 4px 20px rgba(22, 207, 118, 0.25);
-  }
-  50% {
-    box-shadow: 0 4px 28px rgba(22, 207, 118, 0.55);
-  }
+/* Home — "Plan a Trip" CTA. First tried a shadow-only pulse; per your follow-up
+   feedback ("CTA effect is not showing as highlight factor") that was too subtle to
+   read as a highlight against an already-green button, so replaced with a shimmer
+   sweep — a soft light streak crossing the button every few seconds, a much more
+   noticeable "look here" pattern. Needs `relative overflow-hidden` on the button
+   itself (applied inline in HomeScreen.tsx) so the sweep is clipped to its rounded
+   shape; the button's own static shadow (also inline) stays untouched by this.
+   Tactile press-scale (active:scale-[0.97], inline) is unrelated and unaffected. */
+.home-cta-shimmer::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    115deg,
+    transparent 30%,
+    rgba(255, 255, 255, 0.55) 48%,
+    rgba(255, 255, 255, 0.55) 52%,
+    transparent 70%
+  );
+  transform: translateX(-120%);
+  animation: ctaShimmerSweep 3s ease-in-out infinite;
 }
 
-.home-cta-pulse {
-  animation: ctaPulseGlow 2.4s ease-in-out infinite;
+@keyframes ctaShimmerSweep {
+  0% {
+    transform: translateX(-120%);
+  }
+  35% {
+    transform: translateX(120%);
+  }
+  100% {
+    transform: translateX(120%);
+  }
 }
