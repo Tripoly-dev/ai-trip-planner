@@ -30,7 +30,13 @@ export interface FunFactCardProps {
 const cardClass =
   "flex w-[calc(100vw-20px)] min-h-[108px] flex-shrink-0 snap-start items-start gap-3.5 rounded-2xl bg-tripoly-muted p-4 px-5 text-left lg:w-full lg:flex-shrink";
 
-function CardContent({ text, ctaLabel }: { text: string; ctaLabel: string }) {
+// Design-audit fix: ctaLabel used to render unconditionally, even in the (currently
+// only-ever-used) non-interactive <div> variant below — a "Plan this with Tripoly →"
+// line that looked like a link but did nothing on tap, since HomeScreen.tsx never
+// passes onClick. Root-caused rather than just deleting the text: CardContent now only
+// receives/shows ctaLabel when the card is genuinely interactive, so the label
+// reappears on its own if a future onClick wiring makes these cards clickable again.
+function CardContent({ text, ctaLabel }: { text: string; ctaLabel?: string }) {
   return (
     <>
       <span
@@ -40,8 +46,10 @@ function CardContent({ text, ctaLabel }: { text: string; ctaLabel: string }) {
         <TripolyMark size={20} />
       </span>
       <span className="flex flex-col">
-        <span className="mb-2 font-sans text-[14.5px] leading-relaxed text-[#1a1a1a]">{text}</span>
-        <span className="font-sans text-[13.5px] font-semibold text-tripoly-accent">{ctaLabel}</span>
+        <span className={`font-sans text-[14.5px] leading-relaxed text-[#1a1a1a] ${ctaLabel ? "mb-2" : ""}`}>
+          {text}
+        </span>
+        {ctaLabel && <span className="font-sans text-[13.5px] font-semibold text-tripoly-accent">{ctaLabel}</span>}
       </span>
     </>
   );
@@ -58,7 +66,7 @@ export function FunFactCard({ text, ctaLabel = "Plan this with Tripoly →", onC
 
   return (
     <div className={cardClass}>
-      <CardContent text={text} ctaLabel={ctaLabel} />
+      <CardContent text={text} />
     </div>
   );
 }

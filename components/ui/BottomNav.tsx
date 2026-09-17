@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Briefcase, Home, Mic } from "lucide-react";
 import { TripolyMark } from "@/components/ui/TripolyMark";
 
 // Navigation. Per TRIPOLY_HANDOFF.md section 12: shown on Home (02A/02B) and Itinerary
@@ -27,31 +28,21 @@ export interface BottomNavProps {
 const INACTIVE = "#BDBDBD";
 const ACTIVE = "#16CF76";
 
+// Design-audit fix (item 7): these three were hand-rolled inline SVGs, the third icon
+// strategy alongside ChatBubble's emoji-as-icon and lucide-react everywhere else after
+// this fix — now standardized on lucide-react so every icon in the app shares the same
+// stroke width and design language. Sizes/stroke-width kept close to the originals
+// (22px @ 1.8 stroke for nav icons, 20px for the Ask FAB) so nothing visually jumps.
 function HomeIcon({ color }: { color: string }) {
-  return (
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.8" aria-hidden="true">
-      <path d="M3 10.5 12 3l9 7.5" />
-      <path d="M5 9.5V21h14V9.5" />
-    </svg>
-  );
+  return <Home width={22} height={22} color={color} strokeWidth={1.8} aria-hidden="true" />;
 }
 
 function TripsIcon({ color }: { color: string }) {
-  return (
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.8" aria-hidden="true">
-      <rect x="3" y="7" width="18" height="13" rx="2" />
-      <path d="M9 7V5a2 2 0 012-2h2a2 2 0 012 2v2" />
-    </svg>
-  );
+  return <Briefcase width={22} height={22} color={color} strokeWidth={1.8} aria-hidden="true" />;
 }
 
 function AskIcon() {
-  return (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-      <path d="M12 15a3 3 0 003-3V6a3 3 0 10-6 0v6a3 3 0 003 3z" fill="#fff" />
-      <path d="M19 11a7 7 0 01-14 0M12 18v3" stroke="#fff" strokeWidth="2" strokeLinecap="round" />
-    </svg>
-  );
+  return <Mic width={20} height={20} color="#fff" strokeWidth={2} aria-hidden="true" />;
 }
 
 function NavItem({

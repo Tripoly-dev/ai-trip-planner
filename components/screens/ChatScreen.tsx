@@ -498,13 +498,13 @@ export function ChatScreen() {
 
       <div ref={scrollRef} className="flex-1 space-y-3.5 overflow-y-auto p-5">
         {messages.map((m) => (
-          <ChatBubble key={m.id} role={m.role}>
-            {m.content}
-          </ChatBubble>
+          <div key={m.id} className="chat-bubble-enter">
+            <ChatBubble role={m.role}>{m.content}</ChatBubble>
+          </div>
         ))}
 
         {showDurationChips && (
-          <div className="flex flex-wrap gap-2 pl-[34px]">
+          <div className="chat-chip-group-enter flex flex-wrap gap-2 pl-[34px]">
             {DURATION_QUICK_OPTIONS.map((d) => (
               <QuickChip key={d} label={`${d} days`} onClick={() => pickDuration(d)} />
             ))}
@@ -512,7 +512,7 @@ export function ChatScreen() {
         )}
 
         {showBudgetChips && (
-          <div className="flex flex-wrap gap-2 pl-[34px]">
+          <div className="chat-chip-group-enter flex flex-wrap gap-2 pl-[34px]">
             {BUDGET_QUICK_OPTIONS.map((b) => (
               <QuickChip key={b.value} label={b.label} onClick={() => pickBudget(b)} />
             ))}
@@ -521,7 +521,7 @@ export function ChatScreen() {
         )}
 
         {showGroupChips && (
-          <div className="flex flex-wrap gap-2 pl-[34px]">
+          <div className="chat-chip-group-enter flex flex-wrap gap-2 pl-[34px]">
             {GROUP_TYPE_OPTIONS.map((g) => (
               <QuickChip key={g} label={g} onClick={() => pickGroupType(g)} />
             ))}
@@ -529,7 +529,7 @@ export function ChatScreen() {
         )}
 
         {showThemeChips && (
-          <div className="flex flex-wrap gap-2.5 pl-[34px]">
+          <div className="chat-chip-group-enter flex flex-wrap gap-2.5 pl-[34px]">
             {TRAVEL_THEMES.map(({ theme, emoji }) => (
               <ThemeChip key={theme} theme={theme} emoji={emoji} onClick={handleThemeChipClick} />
             ))}

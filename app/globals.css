@@ -262,6 +262,32 @@ body {
   animation: fadeInUp 300ms ease-out backwards;
 }
 
+/* Chat screen — message bubbles and quick-chip groups (ChatScreen.tsx). Bubbles reuse
+   the fadeInUp keyframe already defined above for TripSummaryCard's recap rows (same
+   effect — opacity + a 4px rise — just a shorter 200ms here, since this plays once per
+   chat turn rather than once per session). Chip groups get a separate scale+fade
+   entrance, since a picker appearing all at once reads better as one settling unit than
+   a rising list. Both are CSS animations (not transitions), so they play correctly on
+   mount — a plain transition can't animate a React element's very first render. */
+.chat-bubble-enter {
+  animation: fadeInUp 200ms ease-out backwards;
+}
+
+@keyframes scaleFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.chat-chip-group-enter {
+  animation: scaleFadeIn 160ms ease-out backwards;
+}
+
 /* Design-audit fix: reduced-motion support (previously missing entirely). Stops the
    continuous/looping animations for visitors with prefers-reduced-motion enabled —
    the destination wall's auto-scroll, the CTA shimmer, the itinerary pin's pulse ring,

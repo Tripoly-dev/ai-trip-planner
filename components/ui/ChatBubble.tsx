@@ -1,7 +1,15 @@
+import { AlertTriangle, Compass } from "lucide-react";
 import type { Message } from "@/store/useTripStore";
 
 // Screen 3 — chat bubble. 4 variants per TRIPOLY_HANDOFF.md section 7: bot, user,
 // off-topic, error.
+//
+// Design-audit fix (item 7): OffTopicAvatar and ErrorAvatar used to be emoji (✈️, a
+// plain "!") sitting alongside BotAvatar's real SVG mark — three icon strategies at
+// once. BotAvatar itself is left untouched: it's the Tripoly brand mark (matches
+// TripolyMark.tsx elsewhere), not a generic functional icon, so it's not part of this
+// consistency fix. The other two now use lucide-react, matching BottomNav.tsx and
+// ItineraryDayCard.tsx after the same fix.
 
 export interface ChatBubbleProps {
   role: Message["role"];
@@ -23,9 +31,9 @@ function OffTopicAvatar() {
   return (
     <span
       aria-hidden="true"
-      className="flex h-[26px] w-[26px] flex-shrink-0 items-center justify-center rounded-full bg-tripoly-bubble-offtopic text-xs"
+      className="flex h-[26px] w-[26px] flex-shrink-0 items-center justify-center rounded-full bg-tripoly-bubble-offtopic"
     >
-      ✈️
+      <Compass width={14} height={14} strokeWidth={2} className="text-tripoly-text-muted" />
     </span>
   );
 }
@@ -34,9 +42,9 @@ function ErrorAvatar() {
   return (
     <span
       aria-hidden="true"
-      className="flex h-[26px] w-[26px] flex-shrink-0 items-center justify-center rounded-full bg-tripoly-bubble-error text-xs font-semibold text-tripoly-error"
+      className="flex h-[26px] w-[26px] flex-shrink-0 items-center justify-center rounded-full bg-tripoly-bubble-error"
     >
-      !
+      <AlertTriangle width={14} height={14} strokeWidth={2} className="text-tripoly-error" />
     </span>
   );
 }
