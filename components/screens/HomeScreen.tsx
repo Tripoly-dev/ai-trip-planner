@@ -1,28 +1,26 @@
 "use client";
 
-// Screen 02A (Returning User) / 02B (New User) — Home.
-// Per TRIPOLY_HANDOFF.md section 7. Which variant renders is decided exactly as the
-// handoff doc specifies: "check Zustand store for existing itinerary."
+// Screen 02 — Home. Originally two mockup variants (02A returning-user "Upcoming
+// Journey" card / 02B new-user Bento mosaic), switched on whether the Zustand store had
+// an itinerary. That split is gone now, at your request: the store never actually
+// distinguished a "returning" user from a "new" one in any durable sense — itinerary was
+// plain in-memory state with no persistence, so it only meant "hasn't refreshed the tab
+// yet." One unified layout now, for everyone: the new scrolling destination wall, a
+// compact "continue" prompt when there IS a current trip (in addition to, not instead of,
+// the wall), then the same CTA / Fun Facts / "Where to next?" carousel as before,
+// untouched.
 //
-// Known simplification: 02A's mockup shows a green "in 24 days" countdown badge on the
-// Journey card. There's no real trip-start date in the data model yet (trip_summary only
-// carries a free-text `dates_suggested` string, and persisted/saved trips are explicitly
-// Phase 2 — section 18) — so rather than fabricate a day count, the badge shows the
-// itinerary's duration instead. Revisit once Phase 2 adds real trip dates.
+// Every generated trip is now saved to the Trips tab (useTripStore.ts's savedTrips,
+// localStorage-persisted) — that's the durable "your trips" surface; this compact prompt
+// is just a shortcut back to whichever one you were most recently looking at.
 
-import { useRef, useState } from "react";
 import Link from "next/link";
+import { useRef, useState } from "react";
 import { BottomNav, DESKTOP_SIDEBAR_WIDTH_CLASS } from "@/components/ui/BottomNav";
 import { DestinationCard } from "@/components/ui/DestinationCard";
+import { DestinationWall } from "@/components/ui/DestinationWall";
 import { FunFactCard } from "@/components/ui/FunFactCard";
-import {
-  BENTO_ROW_1,
-  BENTO_ROW_2,
-  DESTINATION_CAROUSEL,
-  FUN_FACTS,
-  UNSPLASH_ATTRIBUTION_URL,
-  type BentoDestination,
-} from "@/lib/constants";
+import { DESTINATION_CAROUSEL, FUN_FACTS, WALL_DESTINATIONS } from "@/lib/constants";
 import { useTripStore } from "@/store/useTripStore";
 
 function getGreeting() {
@@ -32,32 +30,37 @@ function getGreeting() {
   return "Good evening";
 }
 
-// Attribution kept to a photographer-only initial-cap tag (not the full "Photo by X on
-// Unsplash" wording DestinationCard uses) — these tiles run as small as 76px tall, no room
-// for two linked labels without it reading as visual noise. Still real credit + a real link
-// back to their Unsplash profile, satisfying the same guideline as DestinationCard.
-function BentoTile({ name, imageUrl, photographerName, photographerProfileUrl, className }: BentoDestination & { className: string }) {
+function ContinueTripPrompt() {
+  const itinerary = useTripStore((s) => s.itinerary);
+  if (!itinerary) return null;
+
+  const { trip_summary: summary } = itinerary;
+
   return (
-    <div className={`relative flex-shrink-0 overflow-hidden rounded-lg ${className}`}>
-      {imageUrl ? (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img src={imageUrl} alt={name} className="absolute inset-0 h-full w-full object-cover" />
-      ) : (
-        <div className="absolute inset-0 bg-gradient-to-br from-tripoly-green/40 to-black/40" />
-      )}
-      <div className="absolute inset-0 bg-gradient-to-b from-black/0 from-50% to-black/60" />
-      {imageUrl && (
-        <a
-          href={photographerProfileUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="absolute right-1.5 top-1.5 font-sans text-[7px] leading-none text-white/55 hover:text-white/85"
-        >
-          {photographerName}
-        </a>
-      )}
-      <div className="absolute bottom-1.5 left-2 font-sans text-[10px] font-semibold text-white">{name}</div>
-    </div>
+    <Link
+      href="/itinerary"
+      className="mb-4 flex h-[68px] items-center gap-3 rounded-2xl border border-tripoly-border bg-white px-3 shadow-[0_2px_10px_rgba(0,0,0,0.05)]"
+    >
+      <div className="relative h-[46px] w-[46px] flex-shrink-0 overflow-hidden rounded-xl">
+        {summary.photo ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img src={summary.photo.url} alt={summary.destination} className="absolute inset-0 h-full w-full object-cover" />
+        ) : (
+          <div className="absolute inset-0 bg-gradient-to-br from-tripoly-green/40 to-black/40" />
+        )}
+      </div>
+      <div className="min-w-0 flex-1">
+        <div className="font-sans text-[10px] font-semibold uppercase tracking-wide text-tripoly-green">
+          Continue planning
+        </div>
+        <div className="truncate font-sans text-[14px] font-bold text-tripoly-text">
+          {summary.destination} · {summary.duration_nights} nights
+        </div>
+      </div>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" className="flex-shrink-0" aria-hidden="true">
+        <path d="M9 6l6 6-6 6" stroke="#BDBDBD" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+      </svg>
+    </Link>
   );
 }
 
@@ -106,9 +109,6 @@ function FunFactCarousel() {
 
 export function HomeScreen() {
   const name = useTripStore((s) => s.name);
-  const itinerary = useTripStore((s) => s.itinerary);
-  const hasSavedTrip = itinerary !== null;
-
   const displayName = name || "Traveler";
   const avatarLetter = displayName.charAt(0).toUpperCase();
 
@@ -126,85 +126,9 @@ export function HomeScreen() {
           </div>
         </div>
 
-        {hasSavedTrip && itinerary ? (
-          // Screen 02A — Upcoming Journey card. itinerary.trip_summary.photo is set
-          // server-side (app/api/generate-itinerary + lib/unsplash.ts) and can be absent —
-          // falls back to the same gradient either way.
-          <Link
-            href="/itinerary"
-            className="relative mb-5 block h-[190px] overflow-hidden rounded-[20px] shadow-[0_4px_20px_rgba(0,0,0,0.08)]"
-          >
-            {itinerary.trip_summary.photo ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img
-                src={itinerary.trip_summary.photo.url}
-                alt={itinerary.trip_summary.destination}
-                className="absolute inset-0 h-full w-full object-cover"
-              />
-            ) : (
-              <div className="absolute inset-0 bg-gradient-to-br from-tripoly-green/40 to-black/40" />
-            )}
-            <div className="absolute inset-0 bg-gradient-to-b from-black/5 to-black/70" />
-            <div className="absolute right-3.5 top-3.5 rounded-xl bg-tripoly-green px-3 py-1.5 font-sans text-[11px] font-semibold text-white">
-              {itinerary.trip_summary.duration_nights} nights
-            </div>
-            {itinerary.trip_summary.photo && (
-              // Plain text, not a link — this card is already a Link to /itinerary, and an
-              // anchor can't legally nest inside one. Still real, visible photographer credit
-              // (required by Unsplash's API attribution guideline); the clickable version of
-              // the same credit is on the PDF hero for this same photo. Sits directly below
-              // the nights badge rather than disturbing that badge's existing position.
-              <div className="absolute right-3.5 top-[42px] font-sans text-[8px] leading-none text-white/70">
-                📷 {itinerary.trip_summary.photo.photographerName} / Unsplash
-              </div>
-            )}
-            <div className="absolute inset-x-4 bottom-4 flex items-end justify-between">
-              <div>
-                <div className="font-sans text-[19px] font-bold text-white">
-                  {itinerary.trip_summary.destination}
-                </div>
-                <div className="mt-0.5 font-sans text-[13px] text-white/90">
-                  {itinerary.trip_summary.dates_suggested}
-                </div>
-              </div>
-              <div className="flex h-[30px] w-[30px] items-center justify-center rounded-full bg-white/25">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                  <path d="M9 6l6 6-6 6" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
-                </svg>
-              </div>
-            </div>
-          </Link>
-        ) : (
-          // Screen 02B — Bento mosaic for new users
-          <>
-            <div className="mb-5 flex flex-col gap-1 overflow-hidden rounded-[20px]">
-              <div className="flex h-[110px] gap-1">
-                <BentoTile {...BENTO_ROW_1[0]} className="w-[42%]" />
-                <BentoTile {...BENTO_ROW_1[1]} className="w-[29%]" />
-                <BentoTile {...BENTO_ROW_1[2]} className="w-[29%]" />
-              </div>
-              <div className="flex h-[76px] gap-1">
-                <BentoTile {...BENTO_ROW_2[0]} className="flex-1" />
-                <BentoTile {...BENTO_ROW_2[1]} className="flex-1" />
-                <BentoTile {...BENTO_ROW_2[2]} className="flex-1" />
-              </div>
-            </div>
-            <div className="text-center font-sans text-[13px] text-tripoly-text-muted">
-              Where will your story begin?
-            </div>
-            {/* One shared Unsplash link for the whole mosaic — each tile above already credits
-                its own photographer; this covers the "link to Unsplash itself" half of the same
-                attribution guideline without repeating it six times. */}
-            <a
-              href={UNSPLASH_ATTRIBUTION_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="mb-5 block text-center font-sans text-[10px] text-tripoly-text-muted/70 hover:text-tripoly-text-muted"
-            >
-              Photos via Unsplash
-            </a>
-          </>
-        )}
+        <ContinueTripPrompt />
+
+        <DestinationWall photos={WALL_DESTINATIONS} />
 
         <Link
           href="/chat"

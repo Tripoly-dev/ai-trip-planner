@@ -108,18 +108,30 @@ export const BENTO_ROW_1: BentoDestination[] = [
   DESTINATION_CAROUSEL[2], // Vietnam
 ];
 
+// Extracted to a named const (rather than left inline in BENTO_ROW_2) so
+// WALL_DESTINATIONS below can reuse it too, without a fragile array-index reference.
+const SWITZERLAND: BentoDestination = {
+  id: "switzerland",
+  name: "Switzerland",
+  imageUrl:
+    "https://images.unsplash.com/photo-1533326150585-8692556a5f04?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=800",
+  photographerName: "Timon Studler",
+  photographerProfileUrl: "https://unsplash.com/@derstudi?utm_source=tripoly&utm_medium=referral",
+};
+
 export const BENTO_ROW_2: BentoDestination[] = [
   DESTINATION_CAROUSEL[4], // Dubai
-  {
-    id: "switzerland",
-    name: "Switzerland",
-    imageUrl:
-      "https://images.unsplash.com/photo-1533326150585-8692556a5f04?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=800",
-    photographerName: "Timon Studler",
-    photographerProfileUrl: "https://unsplash.com/@derstudi?utm_source=tripoly&utm_medium=referral",
-  },
+  SWITZERLAND,
   DESTINATION_CAROUSEL[3], // Maldives
 ];
+
+// Home screen's two-column scrolling image wall (new — not part of the original
+// TRIPOLY_HANDOFF.md mockup). Seeded for now with the same 6 photos already used
+// elsewhere on Home (DESTINATION_CAROUSEL + Switzerland) — deliberately temporary: a
+// larger, dedicated set of ~10 more international destinations was sourced separately
+// (scripts/fetch-more-destinations.mjs) so the wall doesn't just repeat the "Where to
+// next?" carousel below it. Swap this array once that set lands.
+export const WALL_DESTINATIONS: BentoDestination[] = [...DESTINATION_CAROUSEL, SWITZERLAND];
 
 export const TRAVEL_THEMES: { theme: TravelTheme; emoji: string; claudeInstruction: string }[] = [
   { theme: "Relaxed", emoji: "🌅", claudeInstruction: "Slow pace, leisure activities, no packed schedule, spa, beach time, long lunches" },

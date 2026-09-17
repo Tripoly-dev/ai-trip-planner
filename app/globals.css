@@ -161,3 +161,43 @@ body {
   offset-path: path("M70,240 Q160,100 300,90");
   animation: planeLoop 2s linear forwards;
 }
+
+/* Home — scrolling destination wall (components/ui/DestinationWall). Two columns,
+   opposite directions, continuous linear loop. Each column's photo list is rendered
+   twice back-to-back (see the component) so a translateY(-50%) <-> translateY(0%)
+   cycle has no visible seam — at exactly -50% the duplicated second half lines up
+   pixel-for-pixel with where the first half started, and vice versa. Slightly
+   different durations on the two columns (32s/38s) so they don't look robotically
+   synced. animation-play-state pauses on hover so a desktop user can actually stop
+   and look at (or click the credit on) a tile — mobile has no hover, so this is a
+   desktop-only nicety with no downside there. */
+@keyframes wallScrollDown {
+  from {
+    transform: translateY(-50%);
+  }
+  to {
+    transform: translateY(0%);
+  }
+}
+
+@keyframes wallScrollUp {
+  from {
+    transform: translateY(0%);
+  }
+  to {
+    transform: translateY(-50%);
+  }
+}
+
+.home-wall-col-down {
+  animation: wallScrollDown 32s linear infinite;
+}
+
+.home-wall-col-up {
+  animation: wallScrollUp 38s linear infinite;
+}
+
+.home-wall-col-down:hover,
+.home-wall-col-up:hover {
+  animation-play-state: paused;
+}

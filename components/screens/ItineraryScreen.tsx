@@ -162,7 +162,9 @@ export function ItineraryScreen() {
         return;
       }
 
-      setItinerary({ trip_summary: data.trip_summary, days: data.days });
+      // isAmendment: true — this updates the same Trips-tab entry in place rather than
+      // forking a new one; see useTripStore.ts's setItinerary for why.
+      setItinerary({ trip_summary: data.trip_summary, days: data.days }, { isAmendment: true });
       setStatus({ kind: "info", text: "Itinerary updated!" });
       if (source === "voice") speak("Your itinerary has been updated.");
     } catch {

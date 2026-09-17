@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import { persist } from "zustand/middleware";
 
 // Matches TRIPOLY_HANDOFF.md section 6, minus the ChatStep/currentStep/setStep fixed
 // step machine that used to live here. Pure-conversational rebuild (confirmed with
@@ -77,6 +78,27 @@ export interface Itinerary {
   days: DayPlan[];
 }
 
+// One entry in the "Trips" tab. Every itinerary the user ever generates gets saved here —
+// distinct from `itinerary` below, which is just "whichever trip is currently being
+// viewed/edited." Persisted to localStorage (see the `persist` wrapper at the bottom of
+// this file) so it survives a reload — this app has no backend/login, so "device-local
+// only" is the deliberate, agreed scope (confirmed with you): no Supabase, no auth.
+export interface SavedTrip {
+  id: string;
+  savedAt: string; // ISO timestamp — set on first save, bumped on every amendment
+  itinerary: Itinerary;
+}
+
+function newId() {
+  return typeof crypto !== "undefined" && "randomUUID" in crypto
+    ? crypto.randomUUID()
+    : `${Date.now()}-${Math.random()}`;
+}
+
+// Bounds unbounded localStorage growth over months of real use. Well above what any
+// single user is likely to accumulate; just a safety net, not an expected ceiling.
+const MAX_SAVED_TRIPS = 30;
+
 export interface TripStore {
   // Collected inputs
   name: string;
@@ -95,9 +117,18 @@ export interface TripStore {
   isProcessing: boolean;
   isExtracting: boolean; // true while a chat turn is being resolved via /api/chat-turn
 
-  // Generated itinerary
+  // Generated itinerary — "the trip currently being viewed/edited" (ItineraryScreen,
+  // PdfScreen, Home's continue-trip prompt). Persisted, so it survives a reload.
   itinerary: Itinerary | null;
   itineraryView: ItineraryView; // default: '05A'
+  // Which savedTrips entry (if any) `itinerary` corresponds to — lets an amendment
+  // update that same entry in place instead of forking a duplicate. Null right after
+  // resetTrip(), or if the current itinerary somehow isn't tracked yet.
+  activeTripId: string | null;
+
+  // Every itinerary ever generated, newest last. Persisted. Deliberately NOT reset by
+  // resetTrip() — starting a new chat flow to plan another trip must never wipe history.
+  savedTrips: SavedTrip[];
 
   // Actions
   setField: <K extends keyof TripStore>(key: K, value: TripStore[K]) => void;
@@ -110,7 +141,12 @@ export interface TripStore {
   // of the two fields arrived this turn (or whether both did).
   applyFields: (fields: Partial<TripStore>) => void;
   addMessage: (message: Message) => void;
-  setItinerary: (itinerary: Itinerary | null) => void;
+  // opts.isAmendment: true when this is ItineraryScreen's amend flow updating the trip
+  // already being viewed (updates that same savedTrips entry in place). Omitted/false —
+  // ProcessingScreen's fresh "generate" — appends a brand-new savedTrips entry instead.
+  setItinerary: (itinerary: Itinerary | null, opts?: { isAmendment?: boolean }) => void;
+  // Trips tab: reopen a previously-saved trip as the active one.
+  loadSavedTrip: (id: string) => void;
   resetTrip: () => void;
 }
 
@@ -132,21 +168,88 @@ const initialState = {
 
   itinerary: null,
   itineraryView: "05A" as ItineraryView,
+  activeTripId: null as string | null,
 };
 
-export const useTripStore = create<TripStore>((set) => ({
-  ...initialState,
+// Only these three survive a reload — everything else in initialState is transient,
+// in-progress chat-flow state that shouldn't resume stale after closing the tab.
+type PersistedTripState = Pick<TripStore, "itinerary" | "activeTripId" | "savedTrips">;
 
-  setField: (key, value) => set({ [key]: value } as Pick<TripStore, typeof key>),
-  applyFields: (fields) =>
-    set((state) => {
-      const totalBudget = fields.totalBudget ?? state.totalBudget;
-      const travelerCount = fields.travelerCount ?? state.travelerCount;
-      const perPersonBudget =
-        totalBudget > 0 && travelerCount > 0 ? Math.round(totalBudget / travelerCount) : state.perPersonBudget;
-      return { ...fields, perPersonBudget };
+export const useTripStore = create<TripStore>()(
+  persist(
+    (set) => ({
+      ...initialState,
+      savedTrips: [], // outside initialState on purpose — resetTrip() must not clear this
+
+      setField: (key, value) => set({ [key]: value } as Pick<TripStore, typeof key>),
+      applyFields: (fields) =>
+        set((state) => {
+          const totalBudget = fields.totalBudget ?? state.totalBudget;
+          const travelerCount = fields.travelerCount ?? state.travelerCount;
+          const perPersonBudget =
+            totalBudget > 0 && travelerCount > 0 ? Math.round(totalBudget / travelerCount) : state.perPersonBudget;
+          return { ...fields, perPersonBudget };
+        }),
+      addMessage: (message) => set((state) => ({ messages: [...state.messages, message] })),
+
+      setItinerary: (itinerary, opts) =>
+        set((state) => {
+          if (itinerary === null) {
+            return { itinerary: null, activeTripId: null };
+          }
+
+          if (opts?.isAmendment && state.activeTripId) {
+            const savedAt = new Date().toISOString();
+            return {
+              itinerary,
+              savedTrips: state.savedTrips.map((trip) =>
+                trip.id === state.activeTripId ? { ...trip, itinerary, savedAt } : trip,
+              ),
+            };
+          }
+
+          // Fresh generation (or an amendment with no tracked active trip, which
+          // shouldn't happen in practice but is handled the same safe way either way).
+          const id = newId();
+          const entry: SavedTrip = { id, savedAt: new Date().toISOString(), itinerary };
+          return {
+            itinerary,
+            activeTripId: id,
+            savedTrips: [...state.savedTrips, entry].slice(-MAX_SAVED_TRIPS),
+          };
+        }),
+
+      loadSavedTrip: (id) =>
+        set((state) => {
+          const trip = state.savedTrips.find((t) => t.id === id);
+          return trip ? { itinerary: trip.itinerary, activeTripId: trip.id } : {};
+        }),
+
+      resetTrip: () => set({ ...initialState }),
     }),
-  addMessage: (message) => set((state) => ({ messages: [...state.messages, message] })),
-  setItinerary: (itinerary) => set({ itinerary }),
-  resetTrip: () => set({ ...initialState }),
-}));
+    {
+      name: "tripoly-trips",
+      // Strips each saved trip's per-day photos before writing to localStorage (keeps
+      // trip_summary.photo, the one the Trips-tab card actually displays). Each day photo
+      // is a base64-embedded JPEG (lib/unsplash.ts) — up to 10 of them per itinerary — and
+      // localStorage's ~5-10MB-per-origin quota would fill up after only a handful of
+      // saved trips otherwise. The live in-memory `itinerary` for the trip currently being
+      // viewed is untouched by this (partialize only affects what's written to storage),
+      // so PdfScreen/ItineraryScreen still show full day photos in the same session that
+      // generated them. A trip reopened from the Trips tab after a reload falls back to
+      // the same gradient placeholder every other missing-photo case already uses.
+      partialize: (state): PersistedTripState => ({
+        itinerary: state.itinerary,
+        activeTripId: state.activeTripId,
+        savedTrips: state.savedTrips.map((trip) => ({
+          ...trip,
+          itinerary: {
+            ...trip.itinerary,
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars -- destructuring to drop `photo`, not to use it
+            days: trip.itinerary.days.map(({ photo, ...day }) => day),
+          },
+        })),
+      }),
+    },
+  ),
+);
