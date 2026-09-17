@@ -77,8 +77,19 @@ export function PdfScreen() {
           <div className="relative h-[260px] flex-shrink-0">
             {/* bg-white here is a required opaque base, not decoration — this sits in front of the
                 world-map watermark, and the gradient alone (all translucent stops) would let it
-                bleed through as mottled blobs instead of a clean placeholder. */}
-            <div className="absolute inset-0 bg-white bg-gradient-to-br from-tripoly-green/40 to-black/40" />
+                bleed through as mottled blobs instead of a clean placeholder. summary.photo is set
+                server-side (app/api/generate-itinerary + lib/unsplash.ts) and can be absent —
+                falls back to the same gradient either way. */}
+            {summary.photo ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={summary.photo.url}
+                alt={summary.destination}
+                className="absolute inset-0 h-full w-full bg-white object-cover"
+              />
+            ) : (
+              <div className="absolute inset-0 bg-white bg-gradient-to-br from-tripoly-green/40 to-black/40" />
+            )}
             <div className="absolute inset-0 bg-gradient-to-b from-black/[0.05] from-40% to-black/[0.72]" />
             {/* TripolyMark's "white" variant is now the full icon+"tripoly" lockup image (the
                 real logo), not just the icon — the separate hand-styled "tripoly" text that used
@@ -87,6 +98,18 @@ export function PdfScreen() {
             <div className="absolute left-5 top-5 flex items-center">
               <TripolyMark variant="white" size={22} />
             </div>
+            {summary.photo && (
+              // Photographer credit — required by Unsplash's API attribution guideline for every
+              // displayed photo, same treatment as the Home-screen cards and PdfDayCard.
+              <a
+                href={summary.photo.photographerProfileUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="absolute right-5 top-5 font-sans text-[10px] leading-none text-white/80 hover:text-white"
+              >
+                📷 {summary.photo.photographerName} / Unsplash
+              </a>
+            )}
             <div className="absolute inset-x-5 bottom-5">
               <div className="font-serif text-[26px] font-bold text-white">
                 {summary.name}&apos;s {summary.destination} Escape

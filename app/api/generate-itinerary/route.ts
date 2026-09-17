@@ -5,8 +5,25 @@
 // handling the result (redirect to /itinerary, or bounce back to /chat on
 // destination_not_found) is Step 8's job per the build order — not wired here.
 import { NextRequest, NextResponse } from "next/server";
-import { amendItinerary, generateItinerary, type TripFields } from "@/lib/claude";
+import { amendItinerary, generateItinerary, type ClaudeItineraryResult, type TripFields } from "@/lib/claude";
+import { enrichItineraryWithPhotos } from "@/lib/unsplash";
 import type { Itinerary, Language } from "@/store/useTripStore";
+
+// Adds destination/day photos to a valid result before it goes to the client. Its own
+// try/catch is redundant with enrichItineraryWithPhotos's internal per-location handling
+// (that function is designed to never throw), but kept here anyway as a second layer —
+// a photo-service problem must never turn into a failed itinerary generation, and this
+// guarantees that even if a future change to that function's error handling slips.
+async function withPhotos(result: ClaudeItineraryResult): Promise<ClaudeItineraryResult> {
+  if (!result.valid) return result;
+  try {
+    const enriched = await enrichItineraryWithPhotos(result);
+    return { valid: true, ...enriched };
+  } catch (err) {
+    console.error("[api/generate-itinerary] photo enrichment failed, continuing without photos:", err);
+    return result;
+  }
+}
 
 const MIN_AMENDMENT_LENGTH = 10; // handoff section 8: "Amendment field ... Min 10 chars."
 
@@ -96,11 +113,11 @@ export async function POST(req: NextRequest) {
       }
 
       const result = await amendItinerary(fields, body.currentItinerary as Itinerary, amendmentRequest);
-      return NextResponse.json(result);
+      return NextResponse.json(await withPhotos(result));
     }
 
     const result = await generateItinerary(fields);
-    return NextResponse.json(result);
+    return NextResponse.json(await withPhotos(result));
   } catch (err) {
     console.error("[api/generate-itinerary]", err);
     return NextResponse.json({ error: "generation_failed" }, { status: 502 });

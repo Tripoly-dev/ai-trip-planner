@@ -13,8 +13,30 @@ export function PdfDayCard({ day }: { day: DayPlan }) {
     <div className="mx-4 mb-4 overflow-hidden rounded-2xl bg-white shadow-tripoly-card">
       {/* bg-white is a required opaque base (not decoration) — this card sits in front of the
           world-map watermark, and the gradient alone (all translucent stops) would let it bleed
-          through as mottled blobs instead of a clean placeholder. */}
-      <div className="h-[140px] w-full bg-white bg-gradient-to-br from-tripoly-green/40 to-black/40" />
+          through as mottled blobs instead of a clean placeholder. day.photo is set server-side
+          (app/api/generate-itinerary + lib/unsplash.ts) and can be absent (lookup failed, no
+          result, or key not configured) — falls back to the same gradient either way. */}
+      <div className="relative h-[140px] w-full bg-white">
+        {day.photo ? (
+          <>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={day.photo.url} alt={day.location} className="absolute inset-0 h-full w-full object-cover" />
+            {/* Photographer credit — required by Unsplash's API attribution guideline for every
+                displayed photo, same as the Home-screen cards (DestinationCard/BentoTile). */}
+            <a
+              href={day.photo.photographerProfileUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="absolute bottom-1.5 right-2 font-sans text-[8px] leading-none text-white/75 hover:text-white"
+              style={{ textShadow: "0 1px 2px rgba(0,0,0,0.6)" }}
+            >
+              📷 {day.photo.photographerName} / Unsplash
+            </a>
+          </>
+        ) : (
+          <div className="absolute inset-0 bg-gradient-to-br from-tripoly-green/40 to-black/40" />
+        )}
+      </div>
 
       <div className="p-4">
         <div className="font-sans text-[10px] font-semibold uppercase tracking-[1px] text-tripoly-green">

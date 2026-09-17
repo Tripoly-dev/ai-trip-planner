@@ -21,6 +21,20 @@ export interface Message {
   timestamp: Date;
 }
 
+// A photo credit for a dynamically-fetched Unsplash image (lib/unsplash.ts), as opposed
+// to the hardcoded ones in lib/constants.ts for the fixed Home-screen destination set.
+// `url` is a base64 data URI, not a live Unsplash hotlink — see lib/unsplash.ts for why
+// (images.unsplash.com doesn't reliably send CORS headers, which taints the html2canvas
+// capture used for PDF export; embedding avoids that for both the PDF and on-screen use).
+// Optional everywhere it's used: a failed/missing photo lookup must never block itinerary
+// generation, so these fields are absent rather than the itinerary failing outright — every
+// call site already has a gradient-placeholder fallback for the no-photo case.
+export interface PhotoCredit {
+  url: string;
+  photographerName: string;
+  photographerProfileUrl: string;
+}
+
 export interface DayPlan {
   day: number;
   title: string;
@@ -44,6 +58,7 @@ export interface DayPlan {
   drive_time: string;
   day_description: string;
   tip: string;
+  photo?: PhotoCredit;
 }
 
 export interface Itinerary {
@@ -57,6 +72,7 @@ export interface Itinerary {
     group_type: string;
     theme: string;
     dates_suggested: string;
+    photo?: PhotoCredit;
   };
   days: DayPlan[];
 }

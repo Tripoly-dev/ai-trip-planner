@@ -127,16 +127,37 @@ export function HomeScreen() {
         </div>
 
         {hasSavedTrip && itinerary ? (
-          // Screen 02A — Upcoming Journey card
+          // Screen 02A — Upcoming Journey card. itinerary.trip_summary.photo is set
+          // server-side (app/api/generate-itinerary + lib/unsplash.ts) and can be absent —
+          // falls back to the same gradient either way.
           <Link
             href="/itinerary"
             className="relative mb-5 block h-[190px] overflow-hidden rounded-[20px] shadow-[0_4px_20px_rgba(0,0,0,0.08)]"
           >
-            <div className="absolute inset-0 bg-gradient-to-br from-tripoly-green/40 to-black/40" />
+            {itinerary.trip_summary.photo ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={itinerary.trip_summary.photo.url}
+                alt={itinerary.trip_summary.destination}
+                className="absolute inset-0 h-full w-full object-cover"
+              />
+            ) : (
+              <div className="absolute inset-0 bg-gradient-to-br from-tripoly-green/40 to-black/40" />
+            )}
             <div className="absolute inset-0 bg-gradient-to-b from-black/5 to-black/70" />
             <div className="absolute right-3.5 top-3.5 rounded-xl bg-tripoly-green px-3 py-1.5 font-sans text-[11px] font-semibold text-white">
               {itinerary.trip_summary.duration_nights} nights
             </div>
+            {itinerary.trip_summary.photo && (
+              // Plain text, not a link — this card is already a Link to /itinerary, and an
+              // anchor can't legally nest inside one. Still real, visible photographer credit
+              // (required by Unsplash's API attribution guideline); the clickable version of
+              // the same credit is on the PDF hero for this same photo. Sits directly below
+              // the nights badge rather than disturbing that badge's existing position.
+              <div className="absolute right-3.5 top-[42px] font-sans text-[8px] leading-none text-white/70">
+                📷 {itinerary.trip_summary.photo.photographerName} / Unsplash
+              </div>
+            )}
             <div className="absolute inset-x-4 bottom-4 flex items-end justify-between">
               <div>
                 <div className="font-sans text-[19px] font-bold text-white">
