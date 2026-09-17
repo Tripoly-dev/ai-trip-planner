@@ -19,7 +19,7 @@ export function ThemeChip({ theme, emoji, selected = false, onClick }: ThemeChip
       onClick={() => onClick?.(theme)}
       aria-pressed={selected}
       className={[
-        "flex h-11 items-center gap-1.5 rounded-2xl px-4 font-sans text-[13px] font-semibold transition-colors",
+        "flex h-11 items-center gap-1.5 rounded-2xl px-4 font-sans text-[13px] font-semibold transition active:scale-[0.97]",
         selected
           ? "bg-tripoly-green text-white"
           : "border-[1.5px] border-tripoly-green bg-tripoly-muted text-tripoly-accent",

@@ -21,7 +21,7 @@ function TripListCard({ trip, onOpen }: { trip: SavedTrip; onOpen: () => void })
     <button
       type="button"
       onClick={onOpen}
-      className="relative block h-[150px] w-full overflow-hidden rounded-[20px] text-left shadow-[0_4px_20px_rgba(0,0,0,0.08)]"
+      className="relative block h-[150px] w-full overflow-hidden rounded-[20px] text-left shadow-[0_4px_20px_rgba(0,0,0,0.08)] transition-transform active:scale-[0.98]"
     >
       {summary.photo ? (
         // eslint-disable-next-line @next/next/no-img-element
