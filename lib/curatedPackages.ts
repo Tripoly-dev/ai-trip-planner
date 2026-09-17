@@ -8,14 +8,31 @@
 // validation gate — day sequence must be exactly 1..durationDays, cost tiers must be
 // present, no suspiciously-short day descriptions). Anything that fails that gate is
 // simply absent from this file, so it falls back to full AI generation automatically —
-// same as any destination with no brochure at all. Pilot scope (confirmed with you):
-// Thailand, Bali, Dubai only, 19 of 23 packages in those three brochures passed the gate
-// (83% — above your 75% bar). The 4 excluded ones are either genuine source-content
-// defects (Thailand "Beauty Of Thailand" is missing its Bangkok days; Dubai "Highlights
-// of Dubai" mislabels a day) or one-off structural variants we deliberately chose not to
-// special-case (Bali "Balinese Escape" prices by group size, not hotel tier; Bali "Bali
-// Paradise" has one day with no stated meal plan) — not worth the added parsing
-// complexity for a single package each.
+// same as any destination with no brochure at all.
+//
+// Pilot scope (confirmed with you): Thailand, Bali, Dubai only, 19 of 23 packages in
+// those three brochures passed the gate (83% — above your 75% bar). The 4 excluded ones
+// are either genuine source-content defects (Thailand "Beauty Of Thailand" is missing
+// its Bangkok days; Dubai "Highlights of Dubai" mislabels a day) or one-off structural
+// variants we deliberately chose not to special-case (Bali "Balinese Escape" prices by
+// group size, not hotel tier; Bali "Bali Paradise" has one day with no stated meal plan)
+// — not worth the added parsing complexity for a single package each.
+//
+// First expansion batch (confirmed with you): Himachal, Kashmir, Kerala, Leh, Seven
+// Sisters, Sikkim, Australia, Georgia, Hong Kong, Malaysia, Turkey — 51 of 71 packages
+// across these 11 brochures passed the same gate (72%). The rejects here are mostly a
+// day-table-appears-twice parsing bug on longer combo packages (Hong Kong & Macau,
+// Malaysia with Bintan, Seven Sisters' 8-9 night combos) rather than source-content
+// defects — left unfixed for now rather than special-cased, same call as the pilot's
+// exclusions. Sikkim's 15 packages and Seven Sisters' 6 include some Sikkim+Darjeeling /
+// Arunachal+Assam / Meghalaya+Assam combo packages filed under the umbrella destination
+// name rather than split out — flagged to you, not yet revisited.
+//
+// Explicitly NOT attempted: Mauritius, Philippines, Singapore (every package rejected —
+// these three brochures use a different layout the parser doesn't understand at all, not
+// a one-off gap) and Maldives (a resort/room-rate brochure, no day-by-day itinerary
+// content to extract). Tripoly Asia.pdf was excluded before parsing — it's multi-country
+// combo packages (e.g. "Singapore & Malaysia & Thailand"), not a single destination.
 
 import curatedPackagesData from "./data/curatedPackages.json";
 
