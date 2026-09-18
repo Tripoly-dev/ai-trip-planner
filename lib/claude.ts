@@ -355,6 +355,162 @@ export function generateItinerary(fields: TripFields): Promise<ClaudeItineraryRe
   return callClaude(buildCuratedExtensionPrompt(fields, pkg, tier, newDaysCount), fields.travelDate);
 }
 
+export interface StreamProgress {
+  day: number;
+  totalDays: number;
+}
+
+/**
+ * Streaming counterpart to callClaude, added to fix a real failure confirmed via Vercel's
+ * own logs: a fully-curated 8-day Bali trip took 62.5s end to end (60.44s of that inside
+ * the single Anthropic call), the server finished with a valid 200, but the client's
+ * connection was dropped before the response ever arrived — a single request/response
+ * with zero bytes sent for 60+ seconds is exactly what a mobile network or an in-between
+ * proxy will kill as idle. Streaming keeps real bytes flowing the whole time instead of
+ * one silent gap, and the same bytes double as a progress signal (see onProgress below)
+ * so the Processing screen can show real "day N of M" progress instead of a blind wait.
+ *
+ * Progress detection: counts completed "tip" fields in the accumulating raw text — "tip"
+ * is always the LAST field the per-day schema in SYSTEM_PROMPT asks for, so the Nth
+ * complete "tip" field appearing means day N is essentially done generating. This relies
+ * on Claude emitting the "days" array in order, which the schema already guarantees in
+ * practice (it's a single array Claude fills top to bottom). It's a text-pattern heuristic,
+ * not a real JSON parse of the (necessarily incomplete, mid-stream) buffer — deliberately
+ * simple rather than a full incremental JSON parser, since it only drives a progress bar,
+ * never the actual parsed result (that still comes from a normal JSON.parse once the
+ * stream ends, same validation as callClaude above).
+ *
+ * totalDaysEstimate is a best-effort denominator for the progress bar only: the hybrid
+ * (curated) path knows the real final day count exactly (pkg.durationDays + newDaysCount),
+ * but a pure-AI trip's day count isn't fixed by anything in SYSTEM_PROMPT — nights+1 is
+ * the convention every curated package and this app's own data already follows, so it's
+ * used as an estimate. If Claude ever produces more days than estimated, onProgress below
+ * widens totalDays to match rather than letting the percentage overshoot 100%.
+ */
+async function callClaudeStreaming(
+  userPrompt: string,
+  travelDate: string,
+  totalDaysEstimate: number,
+  onProgress: (progress: StreamProgress) => void,
+): Promise<ClaudeItineraryResult> {
+  const key = process.env.ANTHROPIC_API_KEY;
+  if (!key) {
+    throw new Error("ANTHROPIC_API_KEY is not configured");
+  }
+
+  const res = await fetch(ANTHROPIC_MESSAGES_URL, {
+    method: "POST",
+    headers: {
+      "x-api-key": key,
+      "anthropic-version": ANTHROPIC_VERSION,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      model: MODEL,
+      max_tokens: MAX_TOKENS,
+      system: SYSTEM_PROMPT,
+      messages: [{ role: "user", content: userPrompt }],
+      stream: true,
+    }),
+  });
+
+  if (!res.ok || !res.body) {
+    throw new Error(`Claude API failed (${res.status}): ${await res.text()}`);
+  }
+
+  const reader = res.body.getReader();
+  const decoder = new TextDecoder();
+  let textBuffer = ""; // the model's own output text, accumulated across every delta
+  let sseBuffer = ""; // raw bytes not yet resolved into a complete SSE frame
+  let stopReason: string | null = null;
+  let tipCount = 0;
+  const TIP_FIELD_RE = /"tip"\s*:\s*"(?:[^"\\]|\\.)*"/g;
+
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    sseBuffer += decoder.decode(value, { stream: true });
+
+    // SSE frames are separated by a blank line — drain every complete one we have.
+    let frameEnd: number;
+    while ((frameEnd = sseBuffer.indexOf("\n\n")) !== -1) {
+      const frame = sseBuffer.slice(0, frameEnd);
+      sseBuffer = sseBuffer.slice(frameEnd + 2);
+
+      let eventType = "";
+      let dataLine = "";
+      for (const line of frame.split("\n")) {
+        if (line.startsWith("event:")) eventType = line.slice("event:".length).trim();
+        else if (line.startsWith("data:")) dataLine += line.slice("data:".length).trim();
+      }
+      if (!dataLine) continue;
+
+      let payload: { delta?: { type?: string; text?: string; stop_reason?: string } };
+      try {
+        payload = JSON.parse(dataLine);
+      } catch {
+        continue; // a malformed frame is skipped, not fatal — the next frame can recover
+      }
+
+      if (eventType === "content_block_delta" && payload.delta?.type === "text_delta" && payload.delta.text) {
+        textBuffer += payload.delta.text;
+        const newTipCount = (textBuffer.match(TIP_FIELD_RE) || []).length;
+        if (newTipCount > tipCount) {
+          tipCount = newTipCount;
+          onProgress({ day: tipCount, totalDays: Math.max(totalDaysEstimate, tipCount) });
+        }
+      } else if (eventType === "message_delta" && payload.delta?.stop_reason) {
+        stopReason = payload.delta.stop_reason;
+      }
+    }
+  }
+
+  const jsonText = stripMarkdownFences(textBuffer);
+  let parsed: unknown;
+  try {
+    parsed = JSON.parse(jsonText);
+  } catch (parseError) {
+    // Same diagnostic shape as callClaude's own parse-error branch above, for consistency.
+    const reason = parseError instanceof Error ? parseError.message : String(parseError);
+    throw new Error(
+      `Claude streamed response was not valid JSON. stop_reason=${stopReason} length=${jsonText.length} parseError=${reason}\n--- head ---\n${jsonText.slice(0, 500)}\n--- tail ---\n${jsonText.slice(-500)}`,
+    );
+  }
+
+  return applyTravelDateOverride(sanitizeItineraryCoordinates(parsed as ClaudeItineraryResult), travelDate);
+}
+
+/**
+ * Streaming counterpart to generateItinerary — same curated-package matching and hybrid
+ * prompt selection, only the underlying Claude call and progress reporting differ. Used
+ * exclusively by the initial-generation path (ProcessingScreen.tsx via the "generate" mode
+ * of app/api/generate-itinerary/route.ts); amendItinerary is untouched and still uses the
+ * plain, non-streaming callClaude — amendments are smaller edits, not the request shape
+ * that produced the 60+ second calls this was built to fix.
+ */
+export function generateItineraryStreaming(
+  fields: TripFields,
+  onProgress: (progress: StreamProgress) => void,
+): Promise<ClaudeItineraryResult> {
+  const pkg = findBestCuratedPackage(fields.destination, fields.duration);
+  if (!pkg) {
+    // nights+1 is this app's own convention (every curated package follows it too) — see
+    // the totalDaysEstimate doc comment on callClaudeStreaming for why this is safe as an
+    // estimate even when it's wrong.
+    return callClaudeStreaming(buildUserPrompt(fields), fields.travelDate, fields.duration + 1, onProgress);
+  }
+
+  const newDaysCount = fields.duration - pkg.durationNights;
+  const tier = pickHotelTier(pkg, fields.perPersonBudget);
+  const totalDays = pkg.durationDays + newDaysCount; // exact, not an estimate, for the hybrid path
+  return callClaudeStreaming(
+    buildCuratedExtensionPrompt(fields, pkg, tier, newDaysCount),
+    fields.travelDate,
+    totalDays,
+    onProgress,
+  );
+}
+
 /** Applies a natural-language amendment to an existing itinerary. */
 export function amendItinerary(
   fields: TripFields,

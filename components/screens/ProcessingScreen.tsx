@@ -58,6 +58,10 @@ export function ProcessingScreen() {
   const setItinerary = useTripStore((s) => s.setItinerary);
 
   const [activeLine, setActiveLine] = useState(0);
+  // Real progress from the streamed response (see the fetch loop below) — null until the
+  // first "progress" SSE frame arrives, so nothing renders before there's a real number to
+  // show (no flash of "Day 0 of 0").
+  const [progress, setProgress] = useState<{ day: number; totalDays: number } | null>(null);
   const started = useRef(false);
 
   useEffect(() => {
@@ -92,34 +96,90 @@ export function ProcessingScreen() {
     // which would skip the MIN_DISPLAY_MS floor below on any failure; capturing
     // outcomes instead keeps Promise.all waiting for the slower of the two on
     // every path, not just the success path.
-    type ApiOutcome =
-      | { ok: true; data: { valid: boolean; error?: string } & Partial<Itinerary> }
-      | { ok: false; error: string };
+    type ApiResultData = { valid: boolean; error?: string } & Partial<Itinerary>;
+    type ApiOutcome = { ok: true; data: ApiResultData } | { ok: false; error: string };
 
-    const apiOutcome: Promise<ApiOutcome> = fetch("/api/generate-itinerary", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        name,
-        destination,
-        duration,
-        travelDate,
-        totalBudget,
-        perPersonBudget,
-        travelerCount,
-        groupType,
-        travelTheme,
-        language,
-      }),
-    })
-      .then(async (res): Promise<ApiOutcome> => {
-        const data = await res.json();
-        if (!res.ok) {
-          return { ok: false, error: typeof data?.error === "string" ? data.error : "generation_failed" };
+    // Reads app/api/generate-itinerary/route.ts's streamed Server-Sent Events instead of
+    // one blocking res.json() — fixes a real failure (confirmed via Vercel's request logs):
+    // a fully-curated 8-day trip took 60+ seconds server-side with zero bytes sent back
+    // until the very end, and the connection was dropped before the response arrived even
+    // though the server finished successfully. Reading the stream keeps bytes flowing the
+    // whole time, and doubles as the source for the real "day N of M" progress below
+    // (setProgress), replacing the old blind wait.
+    const apiOutcome: Promise<ApiOutcome> = (async (): Promise<ApiOutcome> => {
+      try {
+        const res = await fetch("/api/generate-itinerary", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            name,
+            destination,
+            duration,
+            travelDate,
+            totalBudget,
+            perPersonBudget,
+            travelerCount,
+            groupType,
+            travelTheme,
+            language,
+          }),
+        });
+
+        if (!res.ok || !res.body) {
+          return { ok: false, error: "network_error" };
         }
-        return { ok: true, data };
-      })
-      .catch((): ApiOutcome => ({ ok: false, error: "network_error" }));
+
+        const reader = res.body.getReader();
+        const decoder = new TextDecoder();
+        let sseBuffer = ""; // raw bytes not yet resolved into a complete SSE frame
+        let outcome: ApiOutcome | null = null;
+
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+          sseBuffer += decoder.decode(value, { stream: true });
+
+          // SSE frames are separated by a blank line — drain every complete one we have.
+          let frameEnd: number;
+          while ((frameEnd = sseBuffer.indexOf("\n\n")) !== -1) {
+            const frame = sseBuffer.slice(0, frameEnd);
+            sseBuffer = sseBuffer.slice(frameEnd + 2);
+
+            let eventType = "";
+            let dataLine = "";
+            for (const line of frame.split("\n")) {
+              if (line.startsWith("event:")) eventType = line.slice("event:".length).trim();
+              else if (line.startsWith("data:")) dataLine += line.slice("data:".length).trim();
+            }
+            if (!dataLine) continue;
+
+            let payload: unknown;
+            try {
+              payload = JSON.parse(dataLine);
+            } catch {
+              continue; // a malformed frame is skipped, not fatal
+            }
+
+            if (eventType === "progress") {
+              const p = payload as { day: number; totalDays: number };
+              setProgress(p);
+            } else if (eventType === "result") {
+              outcome = { ok: true, data: payload as ApiResultData };
+            } else if (eventType === "error") {
+              const e = payload as { error?: string };
+              outcome = { ok: false, error: e.error || "generation_failed" };
+            }
+            // "photos" event carries no data needed here — it only exists so the stream
+            // keeps sending bytes during the (brief) photo-enrichment step after
+            // generation finishes, same idle-connection reasoning as the rest of this.
+          }
+        }
+
+        return outcome ?? { ok: false, error: "generation_failed" };
+      } catch {
+        return { ok: false, error: "network_error" };
+      }
+    })();
 
     Promise.all([apiOutcome, minDelay])
       .then(([outcome]) => {
@@ -195,6 +255,24 @@ export function ProcessingScreen() {
             </div>
           ))}
         </div>
+
+        {/* Real progress from the streamed response — see the fetch loop above. Hidden
+            until the first "progress" event arrives (no fake starting point), and the
+            fill is clamped to 100% even if the actual day count runs past the estimate
+            used for a pure-AI (non-curated) trip. */}
+        {progress && (
+          <div className="mx-auto mt-5 w-full max-w-[220px]">
+            <div className="h-1.5 w-full overflow-hidden rounded-full bg-[#eeeeee]">
+              <div
+                className="h-full rounded-full bg-tripoly-green transition-[width] duration-500 ease-out"
+                style={{ width: `${Math.min(100, Math.round((progress.day / progress.totalDays) * 100))}%` }}
+              />
+            </div>
+            <div className="mt-2 font-sans text-xs text-tripoly-text-muted">
+              Day {Math.min(progress.day, progress.totalDays)} of {progress.totalDays}
+            </div>
+          </div>
+        )}
       </div>
 
       <div className="mb-[60px] mt-7 flex gap-2">

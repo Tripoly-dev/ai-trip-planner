@@ -5,7 +5,13 @@
 // handling the result (redirect to /itinerary, or bounce back to /chat on
 // destination_not_found) is Step 8's job per the build order — not wired here.
 import { NextRequest, NextResponse } from "next/server";
-import { amendItinerary, generateItinerary, type ClaudeItineraryResult, type TripFields } from "@/lib/claude";
+import {
+  amendItinerary,
+  generateItineraryStreaming,
+  type ClaudeItineraryResult,
+  type StreamProgress,
+  type TripFields,
+} from "@/lib/claude";
 import { enrichItineraryWithPhotos } from "@/lib/unsplash";
 import type { Itinerary, Language } from "@/store/useTripStore";
 
@@ -107,8 +113,12 @@ export async function POST(req: NextRequest) {
 
   const mode = body.mode === "amend" ? "amend" : "generate";
 
-  try {
-    if (mode === "amend") {
+  if (mode === "amend") {
+    // Unchanged from before streaming was added — amendments are smaller edits, not the
+    // request shape (a fully-curated multi-day trip) that produced the 60+ second calls
+    // the streaming path below exists to fix, so this keeps its original plain-JSON
+    // contract rather than being folded into the new streaming response shape.
+    try {
       const amendmentRequest = typeof body.amendmentRequest === "string" ? body.amendmentRequest.trim() : "";
       if (amendmentRequest.length < MIN_AMENDMENT_LENGTH) {
         return NextResponse.json({ error: "amendment_too_short" }, { status: 400 });
@@ -119,12 +129,60 @@ export async function POST(req: NextRequest) {
 
       const result = await amendItinerary(fields, body.currentItinerary as Itinerary, amendmentRequest);
       return NextResponse.json(await withPhotos(result));
+    } catch (err) {
+      console.error("[api/generate-itinerary]", err);
+      return NextResponse.json({ error: "generation_failed" }, { status: 502 });
     }
-
-    const result = await generateItinerary(fields);
-    return NextResponse.json(await withPhotos(result));
-  } catch (err) {
-    console.error("[api/generate-itinerary]", err);
-    return NextResponse.json({ error: "generation_failed" }, { status: 502 });
   }
+
+  // mode === "generate": streamed as Server-Sent Events instead of one blocking JSON
+  // response. Root cause this fixes (confirmed via Vercel's own request logs, not
+  // guessed): a fully-curated 8-day Bali trip took 62.5s end to end — the Anthropic call
+  // alone was 60.44s of that — and the request still came back 200 (the server finished
+  // fine), but the client never received it. A single response sending zero bytes for a
+  // full minute is exactly what a mobile network or an in-between proxy drops as idle.
+  // Streaming keeps real bytes flowing the entire time (each SSE frame below), which both
+  // avoids that drop and gives the client real "day N of M" progress to show, instead of
+  // ProcessingScreen.tsx's old fake rotating status text — see lib/claude.ts's
+  // generateItineraryStreaming and ProcessingScreen.tsx's stream-reading loop.
+  const encoder = new TextEncoder();
+  const stream = new ReadableStream({
+    async start(controller) {
+      function send(event: string, data: unknown) {
+        controller.enqueue(encoder.encode(`event: ${event}\ndata: ${JSON.stringify(data)}\n\n`));
+      }
+
+      try {
+        const result = await generateItineraryStreaming(fields, (progress: StreamProgress) => {
+          send("progress", progress);
+        });
+
+        if (!result.valid) {
+          // destination_not_found (or any other Claude-reported invalid) — a real,
+          // successful response, just not an itinerary. Same shape ProcessingScreen.tsx
+          // already handles via data.valid, unchanged.
+          send("result", result);
+          return;
+        }
+
+        send("photos", {});
+        const enriched = await withPhotos(result);
+        send("result", enriched);
+      } catch (err) {
+        console.error("[api/generate-itinerary/stream]", err);
+        send("error", { error: "generation_failed" });
+      } finally {
+        controller.close();
+      }
+    },
+  });
+
+  return new Response(stream, {
+    headers: {
+      "Content-Type": "text/event-stream",
+      "Cache-Control": "no-cache, no-transform",
+      Connection: "keep-alive",
+      "X-Accel-Buffering": "no",
+    },
+  });
 }
